@@ -1,0 +1,98 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.calendar {
+    width: 350px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header button {
+    background-color: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 24px;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.dates {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    grid-auto-rows: 60px;
+}
+
+.date {
+    padding: 15px 0;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.date.empty {
+    background-color: #f0f0f0;
+    visibility: hidden;
+}
+
+.event-bar {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background-color: #ff6347;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.event-title {
+    font-size: 12px;
+    text-align: center;
+    color: #ffffff;
+    margin: 0;
+    line-height: normal;
+    position: relative;
+    z-index: 2;
+    white-space: nowrap;
+}
+
+.weekday {
+    padding: 5px;
+}
+
+.weekday.sunday {
+    color: red;
+}
+
+.weekday.saturday {
+    color: blue;
+}

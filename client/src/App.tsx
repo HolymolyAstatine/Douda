@@ -1,17 +1,17 @@
-// src/App.tsx
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import SchoolSearch from './nice/Components/api';
+import React, { useState } from 'react';
+import SchoolSearch from './nice/Components/SchoolSearch';
+import MealInfo from './nice/Components/MealInfo';
 
-function App() {
+const App: React.FC = () => {
+  const [selectedSchool, setSelectedSchool] = useState<any | null>(null);
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<SchoolSearch />} />
-      </Routes>
-    </Router>
+    <div className="App">
+      <h1>도우다 - Douda</h1>
+      <SchoolSearch onSchoolSelect={setSelectedSchool} />
+      {selectedSchool && <MealInfo schoolInfo={selectedSchool} />}
+    </div>
   );
-}
+};
 
 export default App;
-

@@ -3,15 +3,28 @@ import styled from 'styled-components';
 import { searchMeal } from './schoolApi';
 
 const Container = styled.div`
-  max-width: 600px;
-  margin: 0 auto;
+  background-color: #f8f9fa;
+  border-radius: 8px;
   padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const Title = styled.h2`
+  color: #007bff;
+  margin-bottom: 20px;
+`;
+
+const Form = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
 `;
 
 const Input = styled.input`
-  width: 100%;
+  flex: 1;
   padding: 10px;
-  margin-bottom: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
 `;
 
 const Button = styled.button`
@@ -19,15 +32,21 @@ const Button = styled.button`
   background-color: #007bff;
   color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
 `;
 
 const MealInfoBox = styled.div`
-  margin-top: 20px;
-  border: 1px solid #ddd;
+  background-color: white;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
   padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 5px;
+  margin-top: 20px;
 `;
 
 const MealType = styled.h4`
@@ -43,9 +62,8 @@ const MenuList = styled.ul`
 const MenuItem = styled.li`
   margin-bottom: 5px;
   padding: 5px;
-  background-color: #ffffff;
+  background-color: #f8f9fa;
   border-radius: 3px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
 
 const NutritionInfo = styled.div`
@@ -59,6 +77,11 @@ const NutritionItem = styled.span`
   font-size: 0.9em;
   color: #495057;
   margin-right: 10px;
+`;
+
+const ErrorMessage = styled.p`
+  color: #dc3545;
+  margin-top: 10px;
 `;
 
 interface MealInfoProps {
@@ -103,15 +126,17 @@ const MealInfo: React.FC<MealInfoProps> = ({ schoolInfo }) => {
 
   return (
     <Container>
-      <h2>급식 정보 검색</h2>
-      <Input
-        type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-      />
-      <Button onClick={handleSearch}>검색</Button>
+      <Title>급식 정보 검색</Title>
+      <Form>
+        <Input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+        <Button onClick={handleSearch}>검색</Button>
+      </Form>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <ErrorMessage>{error}</ErrorMessage>}
 
       {mealInfo.length > 0 && (
         <MealInfoBox>

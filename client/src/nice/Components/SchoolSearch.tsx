@@ -3,21 +3,34 @@ import styled from 'styled-components';
 import { searchSchool } from './schoolApi';
 
 const Container = styled.div`
-  max-width: 600px;
-  margin: 0 auto;
+  background-color: #f8f9fa;
+  border-radius: 8px;
   padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const Title = styled.h2`
+  color: #007bff;
+  margin-bottom: 20px;
+`;
+
+const Form = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
 `;
 
 const Input = styled.input`
-  width: 100%;
+  flex: 1;
   padding: 10px;
-  margin-bottom: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
 `;
 
 const Select = styled.select`
-  width: 100%;
   padding: 10px;
-  margin-bottom: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
 `;
 
 const Button = styled.button`
@@ -25,13 +38,25 @@ const Button = styled.button`
   background-color: #007bff;
   color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
 `;
 
 const SchoolInfo = styled.div`
-  margin-top: 20px;
-  border: 1px solid #ddd;
+  background-color: white;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
   padding: 15px;
+`;
+
+const ErrorMessage = styled.p`
+  color: #dc3545;
+  margin-top: 10px;
 `;
 
 interface SchoolSearchProps {
@@ -63,25 +88,27 @@ const SchoolSearch: React.FC<SchoolSearchProps> = ({ onSchoolSelect }) => {
 
   return (
     <Container>
-      <h2>학교 검색</h2>
-      <Input
-        type="text"
-        value={schoolName}
-        onChange={(e) => setSchoolName(e.target.value)}
-        placeholder="학교 이름 입력"
-      />
-      <Select
-        value={schoolType}
-        onChange={(e) => setSchoolType(e.target.value)}
-      >
-        <option value="">학교 유형 선택</option>
-        <option value="초등학교">초등학교</option>
-        <option value="중학교">중학교</option>
-        <option value="고등학교">고등학교</option>
-      </Select>
-      <Button onClick={handleSearch}>검색</Button>
+      <Title>학교 검색</Title>
+      <Form>
+        <Input
+          type="text"
+          value={schoolName}
+          onChange={(e) => setSchoolName(e.target.value)}
+          placeholder="학교 이름 입력"
+        />
+        <Select
+          value={schoolType}
+          onChange={(e) => setSchoolType(e.target.value)}
+        >
+          <option value="">학교 유형 선택</option>
+          <option value="초등학교">초등학교</option>
+          <option value="중학교">중학교</option>
+          <option value="고등학교">고등학교</option>
+        </Select>
+        <Button onClick={handleSearch}>검색</Button>
+      </Form>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <ErrorMessage>{error}</ErrorMessage>}
 
       {schoolInfo && (
         <SchoolInfo>

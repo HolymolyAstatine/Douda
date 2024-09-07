@@ -3,15 +3,28 @@ import styled from 'styled-components';
 import { searchTimetable } from './schoolApi';
 
 const Container = styled.div`
-  max-width: 600px;
-  margin: 0 auto;
+  background-color: #f8f9fa;
+  border-radius: 8px;
   padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const Title = styled.h2`
+  color: #007bff;
+  margin-bottom: 20px;
+`;
+
+const Form = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
 `;
 
 const Input = styled.input`
-  width: 100%;
+  flex: 1;
   padding: 10px;
-  margin-bottom: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
 `;
 
 const Button = styled.button`
@@ -19,23 +32,33 @@ const Button = styled.button`
   background-color: #007bff;
   color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
 `;
 
 const TimetableBox = styled.div`
-  margin-top: 20px;
-  border: 1px solid #ddd;
+  background-color: white;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
   padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 5px;
+  margin-top: 20px;
 `;
 
 const TimetableItem = styled.div`
   margin-bottom: 10px;
   padding: 5px;
-  background-color: #ffffff;
+  background-color: #f8f9fa;
   border-radius: 3px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const ErrorMessage = styled.p`
+  color: #dc3545;
+  margin-top: 10px;
 `;
 
 interface TimeTableProps {
@@ -67,27 +90,29 @@ const TimeTable: React.FC<TimeTableProps> = ({ schoolInfo }) => {
 
   return (
     <Container>
-      <h2>시간표 검색</h2>
-      <Input
-        type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-      />
-      <Input
-        type="text"
-        value={grade}
-        onChange={(e) => setGrade(e.target.value)}
-        placeholder="학년"
-      />
-      <Input
-        type="text"
-        value={classNum}
-        onChange={(e) => setClassNum(e.target.value)}
-        placeholder="반"
-      />
-      <Button onClick={handleSearch}>검색</Button>
+      <Title>시간표 검색</Title>
+      <Form>
+        <Input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+        <Input
+          type="text"
+          value={grade}
+          onChange={(e) => setGrade(e.target.value)}
+          placeholder="학년"
+        />
+        <Input
+          type="text"
+          value={classNum}
+          onChange={(e) => setClassNum(e.target.value)}
+          placeholder="반"
+        />
+        <Button onClick={handleSearch}>검색</Button>
+      </Form>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <ErrorMessage>{error}</ErrorMessage>}
 
       {timetable.length > 0 && (
         <TimetableBox>

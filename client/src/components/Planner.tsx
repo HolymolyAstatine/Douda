@@ -1,60 +1,43 @@
-// src/components/Planner.tsx
-
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Plan } from '../types';
-import PlannerHeader from './PlannerHeader';
-import '../styles/planner.css';  // 스타일 파일 추가
+import './planner_styles.css';
 
-interface PlannerProps {
-    plansByDate: Record<string, Plan[]>;
+interface Plan {
+    date: Date;
+    startHour: number;
+    startMinute: number;
+    endHour: number;
+    endMinute: number;
 }
 
-const Planner: React.FC<PlannerProps> = ({ plansByDate }) => {
-    const { date } = useParams<{ date: string }>();
-    const [currentDate, setCurrentDate] = useState(new Date(date || new Date()));
+const Planner : React.FC = () => {
+    const [currentDate,setCurrentDate] = useState(new Date());
+    const [plans,setPlans] = useState<Plan[]>([]);
+    const [modalOpen,setModalOpen] = useState(false);
 
-    useEffect(() => {
-        if (date) {
-            setCurrentDate(new Date(date));
-        }
-    }, [date]);
 
-    const renderPlans = () => {
-        const plans = plansByDate[currentDate.toISOString().split('T')[0]] || [];
-        return plans.map((plan, index) => {
-            const startTime = new Date(`1970-01-01T${plan.start}:00`);
-            const endTime = new Date(`1970-01-01T${plan.end}:00`);
-            const duration = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 30); // 30분 단위로 계산
-            const topPosition = (startTime.getHours() * 60 + startTime.getMinutes()) / 30;
+    const updateDate = () => {
+        const dateString = currentDate.toISOString().split('T')[0];
+        return dateString;
+    };
 
-            const taskStyle = {
-                height: `${duration * 40}px`,
-                top: `${topPosition * 40}px`,
-                backgroundColor: plan.color
-            };
-
-            return (
-                <div key={index} className="task" style={taskStyle}>
-                    {plan.title}
-                </div>
-            );
+    const handlePrevDayClick = () => {
+        setCurrentDate(prevDate=>{
+            const newDate = new Date(prevDate);
+            newDate.setDate(newDate.getDate()-1);
+            return newDate;
         });
     };
 
+    const handleNextDayClick = () => {
+        setCurrentDate(nextDate => {
+            const newDate = new Date(nextDate);
+            newDate.setDate(newDate.getDate()+1);
+            return newDate;
+        });
+    };
     return (
-        <div className="planner-container">
-            <PlannerHeader currentDate={currentDate} setCurrentDate={setCurrentDate} />
-            <div className="time-blocks">
-                {[...Array(24)].map((_, i) => (
-                    <div key={i} className="time-block">
-                        <div className="time-label">{`${String(i).padStart(2, '0')}:00`}</div>
-                        <div className="task-block">
-                            {renderPlans()}
-                        </div>
-                    </div>
-                ))}
-            </div>
+        <div>
+
         </div>
     );
 };

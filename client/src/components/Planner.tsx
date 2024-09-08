@@ -37,6 +37,22 @@ const Planner : React.FC = () => {
             return newDate;
         });
     };
+
+    const createTimeRows = () => {
+        const rows = [];
+        for (let hour = startTime; hour <= endTime; hour++) {
+          rows.push(
+            <tr key={hour}>
+              <td>{hour.toString().padStart(2, '0')}:00</td>
+              {[...Array(6)].map((_, i) => (
+                <td key={i}></td>
+              ))}
+            </tr>
+          );
+        }
+        return rows;
+      };
+
     return (
         <div>
 

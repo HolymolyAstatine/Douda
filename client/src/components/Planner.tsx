@@ -13,6 +13,8 @@ const Planner : React.FC = () => {
     const [currentDate,setCurrentDate] = useState(new Date());
     const [plans,setPlans] = useState<Plan[]>([]);
     const [modalOpen,setModalOpen] = useState(false);
+    const startTime = 0;
+    const endTime = 23;
 
 
     const updateDate = () => {

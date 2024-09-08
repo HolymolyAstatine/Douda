@@ -1,0 +1,71 @@
+/* src/styles/calendar.css */
+
+.calendar {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px 0;
+}
+
+.calendar .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.calendar .days {
+    display: flex;
+    background-color: #e0e0e0;
+}
+
+.calendar .days div {
+    width: calc(100% / 7);
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.calendar .dates {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+.calendar .date {
+    width: calc(100% / 7);
+    height: 100px;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.calendar .date.empty {
+    background-color: #f9f9f9;
+    border: none;
+}
+
+.calendar .date .event-bar {
+    width: 100%;
+    height: 5px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.calendar .date .event-title {
+    font-size: 12px;
+    color: #fff;
+    padding: 2px 4px;
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.5);
+}

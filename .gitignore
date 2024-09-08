@@ -23,3 +23,6 @@ yarn-error.log*
 
 .DB_Store
 Thumbs.db
+
+#k
+/client/todo.md

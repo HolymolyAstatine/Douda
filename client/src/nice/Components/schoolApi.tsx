@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { SchoolInfo } from '../../types/types';
 
-const API_KEY = process.env.REACT_APP_NEIS_API_KEY;
-const SCHOOL_API_URL = 'https://open.neis.go.kr/hub/schoolInfo';
-const MEAL_API_URL = 'https://open.neis.go.kr/hub/mealServiceDietInfo';
-const TIMETABLE_API_URL = 'https://open.neis.go.kr/hub/';
+const API_KEY = process.env.REACT_APP_NEIS_API_KEY; 
+const SCHOOL_API_URL = 'https://open.neis.go.kr/hub/schoolInfo'; 
+const MEAL_API_URL = 'https://open.neis.go.kr/hub/mealServiceDietInfo'; 
+const TIMETABLE_API_URL = 'https://open.neis.go.kr/hub/'; 
+
+
 
 export const searchSchool = async (schoolName: string, schoolType: string) => {
   try {
@@ -18,9 +20,10 @@ export const searchSchool = async (schoolName: string, schoolType: string) => {
     });
 
     if (response.data.schoolInfo && response.data.schoolInfo[1].row) {
-      return response.data.schoolInfo[1].row[0];
+      console.log(response.data.schoolInfo[1].row);
+      return response.data.schoolInfo[1].row[0]; 
     }
-    return null;
+    return null; 
   } catch (error) {
     console.error('학교 검색 중 오류 발생:', error);
     throw error;

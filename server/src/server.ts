@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { SchoolInfo } from '../types/types'; // Import the type
 
 const app = express();
 const port:number = 3001;

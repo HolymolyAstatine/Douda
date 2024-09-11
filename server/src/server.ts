@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { SchoolInfo } from '../types/types'; // Import the type
 import axios from 'axios';
 
 const API_KEY = process.env.NEIS_API_KEY;

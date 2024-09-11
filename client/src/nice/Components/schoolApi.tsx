@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SchoolInfo } from '../../types/types';
 
 const API_KEY = process.env.REACT_APP_NEIS_API_KEY;
 const SCHOOL_API_URL = 'https://open.neis.go.kr/hub/schoolInfo';
@@ -26,7 +27,7 @@ export const searchSchool = async (schoolName: string, schoolType: string) => {
   }
 };
 
-export const searchMeal = async (schoolInfo: any, date: string) => {
+export const searchMeal = async (schoolInfo: SchoolInfo, date: string) => {
   try {
     const response = await axios.get(MEAL_API_URL, {
       params: {
@@ -48,7 +49,7 @@ export const searchMeal = async (schoolInfo: any, date: string) => {
   }
 };
 
-export const searchTimetable = async (schoolInfo: any, date: string, grade: string, classNum: string) => {
+export const searchTimetable = async (schoolInfo: SchoolInfo, date: string, grade: string, classNum: string) => {
   try {
     let timetableType;
     switch (schoolInfo.SCHUL_KND_SC_NM) {

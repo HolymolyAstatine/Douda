@@ -1,6 +1,13 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response,NextFunction } from 'express';
 import { SchoolInfo } from '../types/types';
 import axios from 'axios';
+import winston from 'winston';
+import path from 'path';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const logDir = path.join(__dirname, '../logs');
 
 const API_KEY = process.env.NEIS_API_KEY; //key
 const SCHOOL_API_URL = 'https://open.neis.go.kr/hub/schoolInfo'; //학교검색 api링크
@@ -9,13 +16,33 @@ const TIMETABLE_API_URL = 'https://open.neis.go.kr/hub/'; //시간표 api링크
 
 
 const app = express();
-const port:number = 3001; //포트 3001
+const port: number = parseInt(process.env.PORT || '3001', 10);
 app.use(express.json());
 
 interface UserInputData {
   SchoolName: string;
   SchoolType: string;
 }
+
+interface ApiResponseSchoolData {
+  data: Array<Array<string>>|null;
+  success: boolean;
+}
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.printf(({ timestamp, level, message }) => {
+          return `[${timestamp}] ${level.toUpperCase()}: ${message}`;
+      })
+  ),
+  transports: [
+      // 파일에 로그 저장
+      new winston.transports.File({ filename: path.join(logDir, 'error.log'), level: 'error' }),
+      new winston.transports.File({ filename: path.join(logDir, 'combined.log') }),
+  ],
+});
 
 /**
  * 학교 정보를 가지고 오는 비동기 함수
@@ -121,13 +148,46 @@ const fetchTimetableDataAPI = async (schoolInfo: SchoolInfo, date: string, grade
   }
 };
 
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  // 로그 파일에 에러 기록
+  logger.error(`${err.message} - ${req.method} ${req.url}`);
+
+  // 클라이언트에 에러 응답
+  res.status(500).json({
+      success: false,
+      message: 'An internal error occurred',
+  });
+});
+
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello, TypeScript with Express!');
 });
 
-app.get('/searchSchool',(req: Request<{}, {}, UserInputData>, res: Response)=>{
-  const {SchoolName,SchoolType} = req.body;
+app.get('/api/searchSchool',async(req: Request<{}, {}, UserInputData>, res: Response,next: NextFunction)=>{
+  const {SchoolName,SchoolType} = req.query;
+  try {
+        const returnSchoolName:Array<Array<string>>|null = await fetchSchoolDataAPI(SchoolName as string, SchoolType as string);
+        if (returnSchoolName!==null){
+          const resdata:ApiResponseSchoolData={
+            data:returnSchoolName,
+            success:true
+          }
+          logger.info('GET /api/searchSchool called and success!');
+          res.json(resdata);
+        }
 
+        else {
+          const resdata:ApiResponseSchoolData={
+            data:null,
+            success:false
+          }
+          logger.info('GET /api/searchSchool called but there is no data searched. 404 err');
+          res.status(404).json(resdata) //검색 결과 없으면 404
+        }
+
+  }catch (error){
+    next(error);
+  }
 });
 
 app.listen(port, () => {

@@ -4,6 +4,7 @@ import axios from 'axios';
 import winston from 'winston';
 import path from 'path';
 import dotenv from 'dotenv';
+import { Pool } from 'pg';
 
 dotenv.config();
 
@@ -18,6 +19,14 @@ const TIMETABLE_API_URL = 'https://open.neis.go.kr/hub/'; //시간표 api링크
 const app = express();
 const port: number = parseInt(process.env.PORT || '3000', 10);
 app.use(express.json());
+
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASS,
+  port: parseInt(process.env.DB_PORT || '5432', 10),
+});
 
 interface UserInputData {
   SchoolName: string;
@@ -148,6 +157,8 @@ const fetchTimetableDataAPI = async (schoolInfo: SchoolInfo, date: string, grade
   }
 };
 
+
+
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   // 로그 파일에 에러 기록
   logger.error(`${err.message} - ${req.method} ${req.url}`);
@@ -189,6 +200,7 @@ app.get('/api/searchSchool',async(req: Request<{}, {}, UserInputData>, res: Resp
     next(error);
   }
 });
+
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

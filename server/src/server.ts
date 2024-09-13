@@ -16,7 +16,7 @@ const TIMETABLE_API_URL = 'https://open.neis.go.kr/hub/'; //시간표 api링크
 
 
 const app = express();
-const port: number = parseInt(process.env.PORT || '3001', 10);
+const port: number = parseInt(process.env.PORT || '3000', 10);
 app.use(express.json());
 
 interface UserInputData {
@@ -25,7 +25,7 @@ interface UserInputData {
 }
 
 interface ApiResponseSchoolData {
-  data: Array<Array<string>>|null;
+  data: Array<SchoolInfo>|null;
   success: boolean;
 }
 
@@ -49,10 +49,10 @@ const logger = winston.createLogger({
  * 
  * @param {string} schoolName 학교명
  * @param {string} schoolType 학교급
- * @returns {Promise<Array<Array<string>> | null>} 결과있으면 리스트로 반환 / 검색결과 없으면 null
+ * @returns {Promise<Array<SchoolInfo> | null>} 결과있으면 리스트로 반환 / 검색결과 없으면 null
  * @throws {Error} api호출중 발생하는 오류 던짐
  */
-const fetchSchoolDataAPI = async (schoolName:string,schoolType:string): Promise<Array<Array<string>> | null> => {
+const fetchSchoolDataAPI = async (schoolName:string,schoolType:string): Promise<Array<SchoolInfo> | null> => {
   try{
     const response = await axios.get(SCHOOL_API_URL, {
       params: {
@@ -64,7 +64,7 @@ const fetchSchoolDataAPI = async (schoolName:string,schoolType:string): Promise<
     }); //api서버로 요청
 
     if (response.data.schoolInfo && response.data.schoolInfo[1].row) {
-      return response.data.schoolInfo[1].row[0]; //결과 있으면 결과반환
+      return response.data.schoolInfo[1].row; //결과 있으면 결과반환
     };
     return null; //결과 없으면 null
   } catch (error){
@@ -166,7 +166,7 @@ app.get('/', (req: Request, res: Response) => {
 app.get('/api/searchSchool',async(req: Request<{}, {}, UserInputData>, res: Response,next: NextFunction)=>{
   const {SchoolName,SchoolType} = req.query;
   try {
-        const returnSchoolName:Array<Array<string>>|null = await fetchSchoolDataAPI(SchoolName as string, SchoolType as string);
+        const returnSchoolName:Array<SchoolInfo>|null = await fetchSchoolDataAPI(SchoolName as string, SchoolType as string);
         if (returnSchoolName!==null){
           const resdata:ApiResponseSchoolData={
             data:returnSchoolName,

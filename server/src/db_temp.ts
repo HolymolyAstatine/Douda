@@ -3,6 +3,7 @@ import fs from 'fs';
 import { parse } from 'csv-parse';
 import path from 'path';
 import dotenv from 'dotenv';
+import { SchoolInfo } from '../types/types';
 
 dotenv.config();
 
@@ -99,4 +100,46 @@ const insertSchoolsFromCsv = async () => {
     }
   };
   
-  insertSchoolsFromCsv();
+//insertSchoolsFromCsv();
+
+/**
+ * 학교 정보를 검색하는 함수
+ * @param schoolName - 검색할 학교 이름
+ * @returns 검색된 학교 정보 또는 null
+ */
+const searchSchoolByName = async (schoolName: string): Promise<SchoolInfo[] | null> => {
+  try {
+    const client = await pool.connect();
+
+    // 학교 이름으로 검색하는 쿼리
+    const result = await client.query<SchoolInfo>(`
+      SELECT * FROM schools
+      WHERE LOWER(schul_nm) LIKE LOWER($1)
+    `, [`%${schoolName}%`]);
+
+    client.release();
+
+    // 검색된 결과가 있으면 반환, 없으면 null
+    if (result.rows.length > 0) {
+      return result.rows;
+    } else {
+      return null;
+    }
+  } catch (err) {
+    console.error('Error searching for school:', err);
+    return null;
+  }
+};
+
+// 테스트 예시
+searchSchoolByName('금호여자중학교')
+  .then((schools) => {
+    if (schools) {
+      console.log('Found schools:', schools);
+    } else {
+      console.log('No schools found');
+    }
+  })
+  .catch((err) => {
+    console.error('Error:', err);
+  });

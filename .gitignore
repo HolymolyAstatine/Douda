@@ -25,3 +25,5 @@ yarn-error.log*
 
 .DB_Store
 Thumbs.db
+/server/src/db/userdatadb.ts
+/server/src/db/db_temp.ts

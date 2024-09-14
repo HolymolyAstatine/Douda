@@ -32,6 +32,7 @@ export const searchSchool = async (schoolName: string, schoolType: string) => {
 
 export const searchMeal = async (schoolInfo: SchoolInfo, date: string) => {
   try {
+    console.log(date)
     const response = await axios.get(MEAL_API_URL, {
       params: {
         KEY: API_KEY,
@@ -43,6 +44,7 @@ export const searchMeal = async (schoolInfo: SchoolInfo, date: string) => {
     });
 
     if (response.data.mealServiceDietInfo && response.data.mealServiceDietInfo[1].row) {
+      console.log(response.data.mealServiceDietInfo[1].row)
       return response.data.mealServiceDietInfo[1].row;
     }
     return [];

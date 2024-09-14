@@ -1,4 +1,4 @@
-import { SchoolInfo } from '../types/types';
+import { SchoolInfo,MealInfo,TimetableInfo } from '../types/types';
 import axios from 'axios';
 import dotenv from 'dotenv';
 
@@ -13,7 +13,7 @@ const TIMETABLE_API_URL = 'https://open.neis.go.kr/hub/'; //시간표 api링크
  * 학교 정보를 가지고 오는 비동기 함수
  * 
  * @param {string} schoolName 학교명
- * @returns {Promise<Array<SchoolInfo> | null>} 결과있으면 리스트로 반환 / 검색결과 없으면 null
+ * @returns {Promise<SchoolInfo[] | null>} 결과있으면 리스트로 반환 / 검색결과 없으면 null
  * @throws {Error} api호출중 발생하는 오류 던짐
  */
 export const fetchSchoolDataAPI = async (schoolName:string): Promise<SchoolInfo[] | null> => {
@@ -38,11 +38,11 @@ export const fetchSchoolDataAPI = async (schoolName:string): Promise<SchoolInfo[
  * 학교급식을 가지고 오는 비동기 함수
  * 
  * @param {SchoolInfo} schoolInfo 학교정보 fetchSchoolDataAPI에서 가져와야함.
- * @param {string} date 급식 검색 날짜 (???형식)
- * @returns {Promise<Array<Array<string>>>} 결과있으면 리스트로 반환, 없으면 빈리스트
+ * @param {string} date 급식 검색 날짜 (yyyy-mm-dd형식)
+ * @returns {Promise<MealInfo[]>} 결과있으면 리스트로 반환, 없으면 빈리스트
  * @throws {Error} api호출중 생기는 에러 던짐
  */
-export const fetchMealDataAPI = async (schoolInfo:SchoolInfo, date: string):Promise<Array<Array<string>>>=>{
+export const fetchMealDataAPI = async (schoolInfo:SchoolInfo, date: string):Promise<MealInfo[]>=>{
 try{
     const response = await axios.get(MEAL_API_URL, {
     params: {
@@ -67,15 +67,15 @@ try{
  * 시간표 들고오는 비동기함수
  * 
  * @param {SchoolInfo} schoolInfo 학교정보: fetchSchoolDataAPI에서 가져와야함.
- * @param {string} date 검색할 날짜 (????형식)
+ * @param {string} date 검색할 날짜 (yyyy-mm-dd형식)
  * @param {string} grade 학년
  * @param {string} classNum 반
- * @returns {Promise<Array<Array<string>>>} 결과있으면 결과리스트 없으면 빈리스트
+ * @returns {Promise<TimetableInfo[]>} 결과있으면 결과리스트 없으면 빈리스트
  * @throws {Error} api호출중 에러발생시 던짐/지원하지 않는 학교급이면 던짐
  */
-export const fetchTimetableDataAPI = async (schoolInfo: SchoolInfo, date: string, grade: string, classNum: string):Promise<Array<Array<string>>>=> {
+export const fetchTimetableDataAPI = async (schoolInfo: SchoolInfo, date: string, grade: string, classNum: string):Promise<TimetableInfo[]>=> {
 try {
-    let timetableType;
+    let timetableType:string;
     switch (schoolInfo.SCHUL_KND_SC_NM) {
     case '초등학교':
         timetableType = 'elsTimetable';

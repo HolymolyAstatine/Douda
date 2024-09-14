@@ -73,4 +73,71 @@ export interface SchoolInfo {
   
   /** 수정일자 */
   LOAD_DTM: string;
+};
+
+export interface MealInfo{
+  /** 시도교육청코드*/
+  ATPT_OFCDC_SC_CODE:string;
+  /** 시도교육청명 */
+  ATPT_OFCDC_SC_NM:string;
+  /** 행정표준코드 */
+  SD_SCHUL_CODE:string;
+  /** 학교명 */
+  SCHUL_NM:string;
+  /**식사코드 */
+  MMEAL_SC_CODE:string;
+  /**식사명 */
+  MMEAL_SC_NM:string;
+  /**급식일자 */
+  MLSV_YMD:string;
+  /**급식인원수 */
+  MLSV_FGR:string;
+  /**요리명 */
+  DDISH_NM:string;
+  /**원산지정보 */
+  ORPLC_INFO:string;
+  /**칼로리정보 */
+  CAL_INFO:string;
+  /**영양정보 */
+  NTR_INFO:string;
+  /**급식시작일자 */
+  MLSV_FROM_YMD:string;
+  /**급식종료일자 */
+  MLSV_TO_YMD:string;
+  /**수정일자 */
+  LOAD_DTM:string;
+};
+export interface TimetableInfo{
+  /** 시도교육청코드*/
+  ATPT_OFCDC_SC_CODE:string;
+  /** 시도교육청명*/
+  ATPT_OFCDC_SC_NM:string;
+  /**행정표준코드 */
+  SD_SCHUL_CODE:string;
+  /**학교명 */
+  SCHUL_NM:string;
+  /**학년도 */
+  AY:string;
+  /**학기 */
+  SEM:string;
+  /**시간표일자 */
+  ALL_TI_YMD:string;
+  /**주야과정명 */
+  DGHT_CRSE_SC_NM:string;
+  /**계열명 */
+  ORD_SC_NM:string;
+  /**학과명 */
+  DDDEP_NM:string;
+  /**학년 */
+  GRADE:string;
+  /**강의실명 */
+  CLRM_NM:string;
+  /**학급명 */
+  CLASS_NM:string;
+  /**교시 */
+  PERIO:string;
+  /**수업내용 */
+  ITRT_CNTNT:string;
+  /**수정일자 */
+  LOAD_DTM:string;
 }

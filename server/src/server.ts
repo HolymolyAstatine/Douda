@@ -1,5 +1,5 @@
 import express, { Request, Response,NextFunction } from 'express';
-import { SchoolInfo } from '../types/types';
+import { SchoolInfo,MealInfo } from '../types/types';
 import winston from 'winston';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -16,6 +16,11 @@ app.use(express.json());
 
 interface UserInputData {
   SchoolName: string;
+}
+
+interface UserInputData2{
+  SchoolName:string;
+  date:string;
 }
 
 interface ApiResponseSchoolData {
@@ -96,6 +101,9 @@ app.get('/api/searchSchool',async(req: Request<{}, {}, UserInputData>, res: Resp
   }
 });
 
+app.get('/api/searchMeal',async(req: Request<{}, {}, UserInputData2>, res: Response,next: NextFunction)=>{
+  
+});
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

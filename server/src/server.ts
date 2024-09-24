@@ -3,7 +3,7 @@ import { SchoolInfo,MealInfo } from '../types/types';
 import winston from 'winston';
 import path from 'path';
 import dotenv from 'dotenv';
-import {searchSchoolByName,insertSchoolInDB} from './db/db'
+import {searchSchoolByName,insertSchoolInDB,searchMealData,insertMealDataInDB} from './db/db'
 import {fetchSchoolDataAPI,fetchMealDataAPI,fetchTimetableDataAPI} from './apiClient'
 
 dotenv.config();
@@ -19,13 +19,19 @@ interface UserInputData {
 }
 
 interface UserInputData2{
-  SchoolName:string;
-  date:string;
+  schoolCode:string;
+  atptCode:string;
+  month:string;
 }
 
 interface ApiResponseSchoolData {
   data: SchoolInfo[]|null;
   success: boolean;
+}
+
+interface ApiResponseMealData{
+  data:MealInfo[]|null;
+  success:boolean;
 }
 
 const logger = winston.createLogger({
@@ -102,7 +108,25 @@ app.get('/api/searchSchool',async(req: Request<{}, {}, UserInputData>, res: Resp
 });
 
 app.get('/api/searchMeal',async(req: Request<{}, {}, UserInputData2>, res: Response,next: NextFunction)=>{
-  
+  const {schoolCode,atptCode,month}=req.query;
+  try{
+    const monthMealData = await searchMealData(schoolCode as string,atptCode as string,month as string)
+    if (monthMealData!==null){
+      const resdata:ApiResponseMealData={
+        data:monthMealData,
+        success:true
+      };
+      logger.info('/api/searchMeal called and success! (return db data)');
+      res.json(resdata);
+    }
+    else{
+      
+      //const tryAddMeal = await fetchMealDataAPI()
+    }
+  }catch (error){
+    next(error);
+  }
+
 });
 
 app.listen(port, () => {

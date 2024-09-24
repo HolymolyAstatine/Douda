@@ -1,4 +1,4 @@
-import { SchoolInfo } from '../../types/types';
+import { SchoolInfo,MealInfo } from '../../types/types';
 import dotenv from 'dotenv';
 import { Pool } from 'pg';
 
@@ -94,10 +94,89 @@ export const insertSchoolInDB = async (schooldata:SchoolInfo): Promise<boolean>=
       ]);
     } catch(error){
       throw new Error(`err! ${error}`);
+    } finally{
+      client.release();
     }
-  client.release();
   return true;
   } catch(error){
     throw new Error(`err! ${error}`);
+  } 
+};
+
+/**
+ * 해당 학교의 검색한 달의 급식 내역을 보내주는 함수
+ * @param schoolCode - 행정 표준 코드 (SD_SCHUL_CODE)
+ * @param atptCode - 시도교육청 코드 (ATPT_OFCDC_SC_CODE)
+ * @param month - 검색할 달 format YYYYMM (e.g., 202409 <- 9월 2024년)
+ * @returns {Promise<MealInfo[]|null>} - 급식정보 or null
+ * @throws {Error} - 중간에 에러 발생하면 던짐
+ */
+export const searchMealData = async (schoolCode: string , atptCode: string, month: string): Promise<MealInfo[]|null> => {
+  const client = await pool.connect();
+
+  try {
+    const startOfMonth = `${month}01`; // e.g., '20240901' for September 1, 2024
+    const endOfMonth = `${month}31`; // e.g., '20240930' for September 30, 2024
+
+    const result = await client.query(`
+      SELECT * FROM meal_info
+      WHERE sd_schul_code = $1
+      AND atpt_ofcdc_sc_code = $2
+      AND mlsv_ymd BETWEEN $3 AND $4
+    `, [schoolCode, atptCode, startOfMonth, endOfMonth]);
+
+    if (result.rows.length > 0) {
+      return result.rows;
+    } else {
+      console.log('No meal data found for the given school and month.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error querying meal data:', error);
+    throw error;
+  } finally {
+    client.release();
   }
 };
+
+/**
+ * 학교 급식데이터를 db에 저장하는 함수
+ * @param {MealInfo[]} mealdatas - 급식 정보 리스트 1달치를 넣을것. 28,29,30,31일치 내용
+ * @returns {boolean} 성공하면 true
+ * @throws {Error} 에러발생하면 던짐
+ */
+export const insertMealDataInDB = async (mealdatas:MealInfo[]): Promise<boolean>=>{
+  const client = await pool.connect();
+  try{
+    for (const meal of mealdatas){
+      await client.query(`
+        INSERT INTO meal_info (
+          atpt_ofcdc_sc_code, atpt_ofcdc_sc_nm, sd_schul_code, schul_nm,
+          mmeal_sc_code, mmeal_sc_nm, mlsv_ymd, mlsv_fgr, ddish_nm, 
+          orplc_info, cal_info, ntr_info, mlsv_from_ymd, mlsv_to_ymd, load_dtm
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+      `, [
+        meal.ATPT_OFCDC_SC_CODE,
+        meal.ATPT_OFCDC_SC_NM,
+        meal.SD_SCHUL_CODE,
+        meal.SCHUL_NM,
+        meal.MMEAL_SC_CODE,
+        meal.MMEAL_SC_NM,
+        meal.MLSV_YMD,
+        meal.MLSV_FGR,
+        meal.DDISH_NM,
+        meal.ORPLC_INFO,
+        meal.CAL_INFO,
+        meal.NTR_INFO,
+        meal.MLSV_FROM_YMD,
+        meal.MLSV_TO_YMD,
+        meal.LOAD_DTM
+      ]);
+    }
+    return true
+  } catch(error){
+    throw new Error(`err! ${error}`);
+  } finally{
+    client.release();
+  }
+}

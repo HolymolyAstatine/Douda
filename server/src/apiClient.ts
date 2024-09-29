@@ -37,28 +37,36 @@ export const fetchSchoolDataAPI = async (schoolName:string): Promise<SchoolInfo[
 /**
  * 학교급식을 가지고 오는 비동기 함수
  * 
- * @param {SchoolInfo} schoolInfo 학교정보 fetchSchoolDataAPI에서 가져와야함.
- * @param {string} date 급식 검색 날짜 (yyyy-mm-dd형식)
- * @returns {Promise<MealInfo[]>} 결과있으면 리스트로 반환, 없으면 빈리스트
+ * @param {string} schoolCode 행정표준코드.
+ * @param {string} atptCode 시도교육청코드
+ * @param {string} month 급식 검색 날짜 (mm형식)
+ * @returns {Promise<Array<MealInfo[]|null>>} 결과있으면 리스트로 반환, 없으면 빈리스트
  * @throws {Error} api호출중 생기는 에러 던짐
  */
-export const fetchMealDataAPI = async (schoolInfo:SchoolInfo, date: string):Promise<MealInfo[]>=>{
+export const fetchMealDataAPI = async (schoolCode:string,atptCode:string, month: string):Promise<Promise<Array<MealInfo[]|null>>>=>{
 try{
-    const response = await axios.get(MEAL_API_URL, {
-    params: {
-        KEY: API_KEY,
-        Type: 'json',
-        ATPT_OFCDC_SC_CODE: schoolInfo.ATPT_OFCDC_SC_CODE,
-        SD_SCHUL_CODE: schoolInfo.SD_SCHUL_CODE,
-        MLSV_YMD: date.replace(/-/g, ''),
-    },
-    });
+    const resoult:Array<MealInfo[]|null>=[];
 
-    if (response.data.mealServiceDietInfo && response.data.mealServiceDietInfo[1].row) {
-    return response.data.mealServiceDietInfo[1].row;
-    };
+    for (let day = 1; day <= 30; day++) {
+      const date = `${month}${day.toString().padStart(2, '0')}`;
+      
+      const response = await axios.get(MEAL_API_URL, {
+        params: {
+          KEY: API_KEY,
+          Type: 'json',
+          SD_SCHUL_CODE: schoolCode,
+          ATPT_OFCDC_SC_CODE: atptCode,
+          MLSV_YMD: date,
+        },
+      });
 
-    return [];
+      const meals = response.data.mealServiceDietInfo?.[1]?.row as MealInfo[];
+
+      if (meals) {
+        resoult.push(meals)
+      }
+    }
+    return resoult;
 } catch(error){
     throw new Error(`Error fetching data: ${error}`);
 };

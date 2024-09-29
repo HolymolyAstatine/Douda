@@ -3,7 +3,7 @@ import { SchoolInfo,MealInfo } from '../types/types';
 import winston from 'winston';
 import path from 'path';
 import dotenv from 'dotenv';
-import {searchSchoolByName,insertSchoolInDB,searchMealData,insertMealDataInDB} from './db/db'
+import {searchSchoolByName,insertSchoolInDB} from './db/db'
 import {fetchSchoolDataAPI,fetchMealDataAPI,fetchTimetableDataAPI} from './apiClient'
 
 dotenv.config();
@@ -30,7 +30,7 @@ interface ApiResponseSchoolData {
 }
 
 interface ApiResponseMealData{
-  data:MealInfo[]|null;
+  data:Array<MealInfo[]|null>;
   success:boolean;
 }
 
@@ -110,19 +110,13 @@ app.get('/api/searchSchool',async(req: Request<{}, {}, UserInputData>, res: Resp
 app.get('/api/searchMeal',async(req: Request<{}, {}, UserInputData2>, res: Response,next: NextFunction)=>{
   const {schoolCode,atptCode,month}=req.query;
   try{
-    const monthMealData = await searchMealData(schoolCode as string,atptCode as string,month as string)
-    if (monthMealData!==null){
-      const resdata:ApiResponseMealData={
-        data:monthMealData,
-        success:true
-      };
-      logger.info('/api/searchMeal called and success! (return db data)');
-      res.json(resdata);
+    const resoult=await fetchMealDataAPI(schoolCode as string,atptCode as string,month as string);
+    logger.info('GET /api/searchMeal called and success! ');
+    const resdata:ApiResponseMealData={
+      data:resoult,
+      success:true
     }
-    else{
-      
-      //const tryAddMeal = await fetchMealDataAPI()
-    }
+    res.json(resdata);
   }catch (error){
     next(error);
   }

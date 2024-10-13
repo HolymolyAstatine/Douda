@@ -103,3 +103,17 @@ export const insertSchoolInDB = async (schooldata:SchoolInfo): Promise<boolean>=
   } 
 };
 
+export const finduser = async (idid:string,email:string):Promise<boolean>=>{
+  const client=await pool.connect();
+  try{
+     const result = await client.query(`
+          SELECT * FROM users WHERE email = $1
+      `, [email]);
+      return !!result.rows.length;
+  }catch(err){
+      console.log(err);
+      return false;
+  }finally{
+      client.release();
+  }
+}

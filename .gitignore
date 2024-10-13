@@ -27,3 +27,5 @@ yarn-error.log*
 Thumbs.db
 /server/src/db/userdatadb.ts
 /server/src/db/db_temp.ts
+/server/keys
+/client/keys

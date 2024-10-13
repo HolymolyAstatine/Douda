@@ -12,7 +12,8 @@ import axios from 'axios';
 import {searchSchoolByName,insertSchoolInDB,finduser} from './db/db'
 import {fetchSchoolDataAPI,fetchMealDataAPI,fetchTimetableDataAPI} from './apiClient'
 import { find_user_data,is_user_deleted_recently } from "./users_process/db";
-import UserRouter from "./users_process/users" 
+import UserRouter from "./users_process/users";
+import PostRouter from "./post_process/post"
 
 
 dotenv.config();
@@ -94,6 +95,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   });
 });
 app.use('/user_data', UserRouter);
+app.use('/post_data', PostRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.status(404).send('?')

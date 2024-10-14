@@ -220,7 +220,7 @@ const PostDetail: React.FC = () => {
 
       {currentUserId === post.author_id && (
         <div>
-          <button onClick={() => alert('게시글 수정 기능은 나중에 추가됩니다.')}>수정</button>
+          <button onClick={() => navigate(`/edit/${post.id}`)}>수정</button> {/* Update to navigate to PostEdit */}
           <button onClick={handleDeletePost}>삭제</button>
         </div>
       )}

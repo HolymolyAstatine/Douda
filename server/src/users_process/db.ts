@@ -128,4 +128,23 @@ export const is_user_deleted_recently = async (Gid: string) => {
     }
   
     return false;
-  };
+};
+
+export async function getUserIdByGid(Gid: string): Promise<number | null> {
+    try {
+        const query = `
+            SELECT id FROM users WHERE Gid = $1;
+        `;
+        const res = await pool.query(query, [Gid]);
+
+        if (res.rows.length > 0) {
+            return res.rows[0].id;  // id 값 반환
+        } else {
+            console.log('User not found.');
+            return null;
+        }
+    } catch (error) {
+        console.error('Error fetching user id:', error);
+        return null;
+    }
+}

@@ -1,4 +1,4 @@
-// server/src/post_process/post.ts
+// server/src/post_pro/post.ts
 import express, { Request, Response } from 'express';
 import { Storage } from '@google-cloud/storage';
 import multer from 'multer';
@@ -15,7 +15,8 @@ const pcdbm = new PostCommentDBManager()
 const router = express.Router();
 
 // Multer 설정 (메모리 저장소 사용)
-const upload = multer({ storage: multer.memoryStorage() });
+const multerStorage = multer.memoryStorage();
+const upload = multer({ storage: multerStorage });
 
 // Google Cloud Storage 설정
 const storage = new Storage({
@@ -36,12 +37,60 @@ function sanitizeFileName(filename: string): string {
       .replace(/^-+|-+$/g, ''); // 파일명 앞뒤의 '-'는 제거
 }
 
-router.post('/file_upload', auth, upload.single('file'), async (req, res) => {
+router.post('/image_upload', auth, upload.single('image'), async (req: Request, res: Response) => {
     try {
-        // 업로드된 파일이 있는지 확인
         if (!req.file) {
-            res.status(400).send('No file uploaded.'); // 파일없음 처리
-            return ;
+            res.status(400).send('No image uploaded.');
+            return;
+        }
+
+        // 파일 확장자가 이미지 형식인지 확인
+        const extension = path.extname(req.file.originalname).toLowerCase();
+        const allowedExtensions = ['.png', '.jpg', '.jpeg', '.gif'];
+        if (!allowedExtensions.includes(extension)) {
+            res.status(400).send('Only image files are allowed.');
+            return;
+        }
+
+        // 원본 파일 이름을 안전하게 변환
+        const originalName = path.parse(req.file.originalname).name;
+        const safeFileName = `${sanitizeFileName(originalName)}${extension}`;
+
+        // 고유한 파일 이름 생성
+        const fileName = `${uuidv4()}_${safeFileName}`;
+        const blob = bucket.file(fileName);
+        const blobStream = blob.createWriteStream({
+            resumable: false,
+        });
+
+        blobStream.on('error', (err) => {
+            console.error('Upload error:', err);
+            res.status(500).send('Failed to upload image.');
+        });
+
+        blobStream.on('finish', async () => {
+            try {
+                const publicUrl = `https://localhost:8080/post_data/files/${fileName}`; // 리버스 프록시 사용 URL
+                res.status(200).send({ message: 'Image uploaded successfully', url: publicUrl });
+            } catch (err) {
+                console.error('Error generating public URL:', err);
+                res.status(500).send('Failed to generate public URL.');
+            }
+        });
+
+        // 파일 데이터를 스트림에 작성
+        blobStream.end(req.file.buffer);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ code: 500, message: 'Server error' });
+    }
+});
+
+router.post('/file_upload', auth, upload.single('file'), async (req: Request, res: Response) => {
+    try {
+        if (!req.file) {
+            res.status(400).send('No file uploaded.'); // 파일이 없을 경우 처리
+            return;
         }
 
         // 원본 파일 이름을 안전하게 변환
@@ -54,35 +103,29 @@ router.post('/file_upload', auth, upload.single('file'), async (req, res) => {
         const blob = bucket.file(fileName);
         const blobStream = blob.createWriteStream({
             resumable: false,
-            contentType: req.file.mimetype === 'text/plain' ? 'text/plain; charset=utf-8' : req.file.mimetype,
-            metadata: {
-                contentType: req.file.mimetype === 'text/plain' ? 'text/plain; charset=utf-8' : req.file.mimetype,
-                cacheControl: 'no-cache',
-            },
         });
-
-        // UTF-8로 인코딩된 파일 처리
-        const buffer = req.file.buffer.toString('utf-8');
 
         blobStream.on('error', (err) => {
             console.error('Upload error:', err);
             res.status(500).send('Failed to upload file.');
-            return ;
         });
 
-        blobStream.on('finish', () => {
-            const publicUrl = `https://localhost:8080/post_data/files/${fileName}`; // 리버스 프록시를 사용할 URL
-            res.status(200).send({ message: 'File uploaded successfully', url: publicUrl });
-            return ;
+        blobStream.on('finish', async () => {
+            try {
+                // 사용자 정의 URL 생성
+                const publicUrl = `https://localhost:8080/post_data/files/${fileName}`; // 리버스 프록시를 사용할 URL
+                res.status(200).send({ message: 'File uploaded successfully', url: publicUrl });
+            } catch (err) {
+                console.error('Error generating public URL:', err);
+                res.status(500).send('Failed to generate public URL.');
+            }
         });
 
         // 파일 데이터를 스트림에 작성
-        blobStream.end(Buffer.from(buffer, 'utf-8')); // UTF-8 인코딩으로 파일 데이터 전송
-
+        blobStream.end(req.file.buffer);
     } catch (error) {
         console.log(error);
-        res.status(500).json({ code: 500, message: "Server error" });
-        return ;
+        res.status(500).json({ code: 500, message: 'Server error' });
     }
 });
 
@@ -235,6 +278,97 @@ router.post('/posts/:id/comments',auth,async (req:Request,res:Response)=>{
         console.log(error);
         res.status(500).json({code:500,message:"server error"});
     }
+});
+
+router.delete('/posts/:id',auth,async(req:Request,res:Response)=>{
+    const id=parseInt(req.params.id as string, 10);
+    const Gid: string | undefined = req.decoded?.id;
+
+    if (!id || !Gid){
+        res.status(400).json({code:400,message:"E"});
+        return;
+    }
+
+    try{
+        pcdbm.deletePost(id);
+        res.status(200).json({code:200,message:"delete success"});
+        return;
+    }catch(error){
+        console.log(error);
+        res.status(500).json({code:500,message:"server error"});
+        return;
+    }
+});
+
+router.delete('/posts/:id/comments/:commentId',auth,async(req:Request,res:Response)=>{
+    const id=parseInt(req.params.id as string, 10);
+    const commentid = parseInt(req.params.commentId as string,10);
+    const Gid: string | undefined = req.decoded?.id;
+
+    if(!id || !commentid || !Gid){
+        res.status(400).json({code:400,message:"E"});
+        return;
+    }
+
+    try{
+        await pcdbm.deleteComment(commentid);
+        res.status(200).json({code:200,message:"comment delete success!"});
+        return;
+
+    }catch(error){
+        console.log(error);
+        res.status(500).json({code:500,message:"server error"});
+        return;
+    }
+    
+});
+
+router.put('/posts/:id/comments/:commentId',auth,async(req:Request,res:Response)=>{
+    const id=parseInt(req.params.id as string, 10);
+    const commentid = parseInt(req.params.commentId as string,10);
+    const Gid: string | undefined = req.decoded?.id;
+    const {content}:{content:string}=req.body;
+
+    if(!id || !commentid || !Gid){
+        res.status(400).json({code:400,message:"E"});
+        return;
+    }
+
+    try{
+        await pcdbm.updateComment(commentid,content);
+        res.status(200).json({code:200,message:"comment update success!"});
+        return;
+
+    }catch(error){
+        console.log(error);
+        res.status(500).json({code:500,message:"server error"});
+        return;
+    }
+
+});
+
+router.put('/update_post/:id',auth,async(req:Request,res:Response)=>{
+    const id=parseInt(req.params.id as string, 10);
+    const Gid: string | undefined = req.decoded?.id;
+    const {title, content} : {title:string,content:string}=req.body;
+
+    if(!id || !Gid || !title || ! content){
+        res.status(400).json({code:400,message:"E"});
+        return;
+    }
+
+    try{
+        await pcdbm.updatePost(id,title,content);
+        res.status(200).json({code:200,message:"update post success!"});
+        return;
+
+    }catch(error){
+        console.log(error);
+        res.status(500).json({code:500,message:"server error"});
+        return;
+    }
+
 })
+
 
 export default router;

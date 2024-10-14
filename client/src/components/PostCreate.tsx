@@ -33,7 +33,12 @@ const PostCreate: React.FC = () => {
     }
   };
 
-  return <EditorComponent onSubmit={handleSubmit} />;
+  return (
+    <div style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+      <h2 style={{ textAlign: 'center' }}>게시글 작성</h2>
+      <EditorComponent onSubmit={handleSubmit} />
+    </div>
+  );
 };
 
 export default PostCreate;

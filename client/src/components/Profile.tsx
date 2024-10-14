@@ -94,7 +94,7 @@ const Profile: React.FC<ProfileProps> = ({ setIsLoggedIn }) => {
   // 로딩 상태
   if (isLoading) return <div style={{ textAlign: 'center' }}>Loading...</div>;
   // 오류 처리
-  if (error) return <div style={{ textAlign: 'center' }}>프로파일을 가져오는 데 오류가 발생했습니다.</div>;
+  if (error) return <div style={{ textAlign: 'center' }}>프로필을 가져오는 데 오류가 발생했습니다.</div>;
 
   return (
     <div style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
@@ -110,7 +110,7 @@ const Profile: React.FC<ProfileProps> = ({ setIsLoggedIn }) => {
       </div>
       {/* 프로파일 편집 버튼 */}
       <button onClick={() => setIsEditing(true)} style={{ margin: '5px', padding: '10px 15px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px' }}>
-        프로파일 편집
+        프로필 편집
       </button>
       {/* 로그아웃 버튼 */}
       <button onClick={handleLogout} style={{ margin: '5px', padding: '10px 15px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px' }}>

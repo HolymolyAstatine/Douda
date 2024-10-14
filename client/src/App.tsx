@@ -1,6 +1,6 @@
 //App.tsx
 import React, { useState, Dispatch, SetStateAction } from 'react';
-import { Route, Routes, useNavigate, Navigate } from 'react-router-dom'; // Navigate 추가
+import { Route, Routes, useNavigate, Navigate, Link } from 'react-router-dom'; // Link 추가
 import axios from 'axios';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import Login from './components/Login';
@@ -15,8 +15,9 @@ import Testpost2 from "./components/testpost2";
 import Board from './components/Board';
 import PostDetail from './components/PostDetail';
 import MealSchedule from './components/MealSchedule'; // 급식 스케줄러 컴포넌트 추가
-import { Link } from 'react-router-dom'; // Link 추가
+import PostEdit from './components/PostEdit';
 
+// GoogleAuthRedirectProps 인터페이스 정의
 interface GoogleAuthRedirectProps {
   setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
 }
@@ -56,29 +57,37 @@ const App = () => {
   );
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {/* 네비게이션 바 */}
-      <nav style={{ width: '200px', padding: '20px', backgroundColor: '#f9f9f9', borderRight: '1px solid #ddd' }}>
-        <h2 style={{ textAlign: 'center', color: '#333' }}>DOUDA</h2>
-        <ul style={{ listStyleType: 'none', padding: 0 }}>
-          <li style={{ margin: '10px 0' }}>
+      <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Link to="/"> {/* 홈으로 가는 링크 추가 */}
+            <img src={process.env.PUBLIC_URL + '/logo512.png'} alt="Logo" style={{ width: '40px', height: '40px', marginRight: '10px' }} /> {/* 로고 추가 */}
+          </Link>
+          <h2 style={{ color: '#333' }}>
+            <Link to="/" style={{ textDecoration: 'none', color: '#333' }}>DOUDA</Link> {/* DOUDA 텍스트를 홈으로 가는 링크로 변경 */}
+          </h2>
+        </div>
+        <ul style={{ listStyleType: 'none', display: 'flex', padding: 0, margin: 0 }}>
+          <li style={{ margin: '0 10px' }}>
             <Link to="/" style={{ textDecoration: 'none', color: '#007bff' }}>홈</Link>
           </li>
           {isLoggedIn && (
             <>
-              <li style={{ margin: '10px 0' }}>
+              <li style={{ margin: '0 10px' }}>
                 <Link to="/profile" style={{ textDecoration: 'none', color: '#007bff' }}>프로필</Link>
               </li>
-              <li style={{ margin: '10px 0' }}>
+              <li style={{ margin: '0 10px' }}>
                 <Link to="/board" style={{ textDecoration: 'none', color: '#007bff' }}>게시판</Link>
               </li>
-              <li style={{ margin: '10px 0' }}>
+              <li style={{ margin: '0 10px' }}>
                 <Link to="/meals" style={{ textDecoration: 'none', color: '#007bff' }}>급식표</Link> {/* 급식표 링크 추가 */}
               </li>
             </>
           )}
         </ul>
       </nav>
+      {/* ... existing code ... */}
 
       {/* 메인 콘텐츠 */}
       <div style={{ flex: 1, padding: '20px' }}>
@@ -89,17 +98,28 @@ const App = () => {
           <Route path="/signsettig" element={<SignupSet />} /> {/* 회원가입 추가정보 라우터 */}
           <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} /> {/*프로파일 라우터 */}
           <Route path='/ww' element={<PostForm />} /> {/*게시글 작성 폼 */}
-          <Route path='/wk' element={<Testpost />} />
+          <Route path='/edit/:postId' element={<PostEdit />} /> {/* 게시글 수정 폼 */}
           <Route path='/wi' element={<Testpost2 />} />
           <Route path='/board' element={<Board />} /> {/* 게시판 */}
           <Route path="/post/:id" element={<PostDetail />} /> {/* 게시글 상세 */}
           <Route path='/post/*' element={<Navigate to="/board" />} />
-          <Route path="/meals" element={<MealSchedule />} /> {/* 급식표 라우터 추가 */}
           <Route path="/auth/google/signup/redirect" element={<GoogleAuthRedirect setIsLoggedIn={setIsLoggedIn} />} /> {/*구글 로그인 리다이엑션 처리 라우터 */}
           <Route path="/auth/google/login/redirect" element={<GoogleAuthRedirect setIsLoggedIn={setIsLoggedIn} />} />
           <Route path='/*' element={<Notfound />} /> {/** 404 not found처리 라우터 */}
         </Routes>
       </div>
+      {/* ... existing code ... */}
+
+      {/* 푸터 추가 */}
+      <footer style={{ padding: '10px', backgroundColor: '#f1f1f1', textAlign: 'center', marginTop: 'auto' }}>
+        <p style={{ margin: 0 }}>© 2023 DOUDA team. All rights reserved.</p>
+        <p style={{ margin: 0 }}>
+          Created by 
+          <a href="https://github.com/hafskjfha" target="_blank" rel="noopener noreferrer" style={{ margin: '0 5px', textDecoration: 'none', color: '#007bff' }}>Teawon Jheng</a> 
+          & 
+          <a href="https://github.com/HolymolyAstatine" target="_blank" rel="noopener noreferrer" style={{ margin: '0 5px', textDecoration: 'none', color: '#007bff' }}>Jangho Yoon</a>
+        </p>
+      </footer>
     </div>
   );
 };

@@ -52,11 +52,14 @@ const PostEdit: React.FC = () => {
   };
 
   return (
-    <EditorComponent 
-      initialTitle={initialTitle} 
-      initialContent={initialContent} 
-      onSubmit={handleSubmit} 
-    />
+    <div style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+      <h2 style={{ textAlign: 'center' }}>게시글 수정</h2>
+      <EditorComponent 
+        initialTitle={initialTitle} 
+        initialContent={initialContent} 
+        onSubmit={handleSubmit} 
+      />
+    </div>
   );
 };
 

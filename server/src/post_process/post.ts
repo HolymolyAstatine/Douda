@@ -176,10 +176,7 @@ router.post('/create_post',auth,async (req:Request,res:Response)=>{
 
 router.get('/posts',async(req:Request,res:Response)=>{
     const { offset: offsetStr, limit: limitStr } = req.query;
-    if (!/^\d+$/.test(offsetStr as string) || !/^\d+$/.test(limitStr as string)){
-        res.status(400).json({code:200,message:"invail url"});
-        return;
-    }
+    
     const offset = parseInt(offsetStr as string, 10) || 0;
     const limit = parseInt(limitStr as string, 10) || 10;
     try{

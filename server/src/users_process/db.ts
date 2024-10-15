@@ -19,6 +19,7 @@ interface user_data{
     school?:string|null;
     grade?:number|null;
     classroom?:number|null;
+    shcode?:string|null;
 }
 
 export const insert_user=async (idid:string,email:string,nickname:string,school?:string|null,grade?:number|null,classroom?:number|null):Promise<boolean>=>{
@@ -45,7 +46,7 @@ export const insert_user=async (idid:string,email:string,nickname:string,school?
 
 };
 
-export const find_user_data = async (id:string,email:string):Promise<user_data[]>=>{
+export const find_user_data = async (email:string):Promise<user_data[]>=>{
     const client = await pool.connect();
     try{
         const result = await client.query<user_data>(`

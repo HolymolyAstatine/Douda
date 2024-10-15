@@ -9,11 +9,11 @@ import jwt from "jsonwebtoken";
 import cors from 'cors';
 import fs from 'fs';
 import axios from 'axios';
-import {searchSchoolByName,insertSchoolInDB,finduser} from './db/db'
-import {fetchSchoolDataAPI,fetchMealDataAPI,fetchTimetableDataAPI} from './apiClient'
+import {finduser} from './db/db'
 import { find_user_data,is_user_deleted_recently } from "./users_process/db";
 import UserRouter from "./users_process/users";
 import PostRouter from "./post_process/post"
+import APIRouter from "./api/api"
 
 
 dotenv.config();
@@ -96,69 +96,13 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 app.use('/user_data', UserRouter);
 app.use('/post_data', PostRouter);
+app.use('/api',APIRouter);
+
 
 app.get('/', (req: Request, res: Response) => {
   res.status(404).send('?')
 });
 
-app.get('/api/searchSchool',async(req: Request<{}, {}, UserInputData>, res: Response,next: NextFunction)=>{
-  const {SchoolName} = req.query;
-  try {
-      const listOfSchool = await searchSchoolByName(SchoolName as string);
-      if (listOfSchool!==null){
-        const resdata:ApiResponseSchoolData={
-          data:listOfSchool,
-          success:true
-        };
-        logger.info('GET /api/searchSchool called and success! (return db data)');
-        res.json(resdata);
-      }
-      else{
-        const tryAddSchool = await fetchSchoolDataAPI(SchoolName as string);
-        if (tryAddSchool!==null){
-          for (const inndata of tryAddSchool){
-            try{
-              const a = await insertSchoolInDB(inndata as SchoolInfo);
-            } catch(error){
-              next(error);
-            }
-          }
-          const resdata:ApiResponseSchoolData={
-            data:tryAddSchool,
-            success:true
-          };
-          logger.info('GET /api/searchSchool called and success! (return api data and insert data in db)');
-          res.json(resdata);
-        }
-        else{
-          const resdata:ApiResponseSchoolData={
-            data:null,
-            success:false
-            }
-            logger.info('GET /api/searchSchool called but there is no data searched. 404 err');
-            res.status(404).json(resdata); //검색 결과 없으면 404
-        }
-      }
-  }catch (error){
-    next(error);
-  }
-});
-
-app.get('/api/searchMeal',async(req: Request<{}, {}, UserInputData2>, res: Response,next: NextFunction)=>{
-  const {schoolCode,atptCode,month}=req.query;
-  try{
-    const resoult=await fetchMealDataAPI(schoolCode as string,atptCode as string,month as string);
-    logger.info('GET /api/searchMeal called and success! ');
-    const resdata:ApiResponseMealData={
-      data:resoult,
-      success:true
-    }
-    res.json(resdata);
-  }catch (error){
-    next(error);
-  }
-
-});
 
 app.get('/login', (req: Request, res: Response) => {
   let url = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -264,7 +208,7 @@ app.get('/profile', auth, async(req: Request, res: Response) => {
     res.status(401).json({ message: 'Unauthorized' });
     return;
   }
-  const user_data = await find_user_data(id as string,email as string);
+  const user_data = await find_user_data(email as string);
   try{
   if (user_data.length>0){
       const {id,email,nickname,school,grade,classroom}=user_data[0];

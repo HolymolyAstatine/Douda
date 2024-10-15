@@ -25,7 +25,7 @@ const storage = new Storage({
 });
 
 //버켓 설정
-const bucketName = process.env.bucketName as string;
+const bucketName = 'post-img-video';
 const bucket = storage.bucket(bucketName);
 
 // 파일 이름 변환 함수 (영어, 숫자 외의 문자는 제거하거나 인코딩)

@@ -152,7 +152,7 @@ app.get('/auth/google/login/redirect', async (req: Request, res: Response) => {
     const token = jwt.sign(
       { id, email },
       privateRSAKey,
-      { algorithm: 'RS512', expiresIn: "6ha", issuer: "your_issuer" }
+      { algorithm: 'RS512', expiresIn: "6h", issuer: "your_issuer" }
     );
     console.log('su');
     res.status(200).json({ code: 200, message: "Token created", token });

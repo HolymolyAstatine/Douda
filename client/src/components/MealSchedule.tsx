@@ -1,60 +1,63 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { MealInfo } from '../../../server/types/types'; // MealInfo 타입을 import
 
-const MealSchedule: React.FC = () => {
-  const [mealData, setMealData] = useState<MealInfo[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+interface MealInfo {
+    MMEAL_SC_CODE: string;
+    MMEAL_SC_NM: string;
+    MLSV_YMD: string;
+    DDISH_NM: string;
+    ORPLC_INFO: string;
+    CAL_INFO: string;
+    NTR_INFO: string;
+}
 
-  useEffect(() => {
-    const fetchMealData = async () => {
-      try {
-        const response = await axios.get('https://localhost:8080/meals'); // API 엔드포인트를 적절히 수정하세요
-        setMealData(response.data); // 응답 데이터를 상태에 저장
-      } catch (err) {
-        setError('급식 정보를 불러오는 데 오류가 발생했습니다.'); // 오류 처리
-      } finally {
-        setLoading(false); // 로딩 상태 종료
-      }
-    };
+const MealInfo: React.FC = () => {
+    const [meals, setMeals] = useState<MealInfo[]>([]);
+    const [error, setError] = useState<string>('');
+    const token = localStorage.getItem('token'); // JWT 토큰을 로컬 스토리지에서 가져옴
 
-    fetchMealData(); // 컴포넌트가 마운트될 때 데이터 가져오기
-  }, []);
+    useEffect(() => {
+        const fetchMeals = async () => {
+            try {
+                const response = await axios.get('https://localhost:8080/api/searchMeal', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    params: {
+                        month: new Date().getMonth() + 1, // 현재 월을 가져옴
+                    },
+                });
+                setMeals(response.data.data); // 급식 정보를 상태에 저장
+            } catch (error) {
+                console.error('급식 정보를 가져오는 중 오류 발생:', error);
+                setError('급식 정보를 가져오는 데 실패했습니다.');
+            }
+        };
 
-  if (loading) {
-    return <div>로딩 중...</div>; // 로딩 중일 때 표시
-  }
+        fetchMeals();
+    }, [token]);
 
-  if (error) {
-    return <div>{error}</div>; // 오류가 발생했을 때 표시
-  }
-
-  return (
-    <div style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-      <h1 style={{ textAlign: 'center', color: '#333' }}>급식표</h1>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>학교명</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>식사명</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>급식일자</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>요리명</th>
-          </tr>
-        </thead>
-        <tbody>
-          {mealData.map((meal) => (
-            <tr key={meal.MMEAL_SC_CODE}>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{meal.SCHUL_NM}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{meal.MMEAL_SC_NM}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{meal.MLSV_YMD}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{meal.DDISH_NM}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+    return (
+        <div style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+            <h2 style={{ textAlign: 'center', color: '#333' }}>급식 정보</h2>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {meals.length > 0 ? (
+                <ul>
+                    {meals.map((meal, index) => (
+                        <li key={index} style={{ margin: '10px 0', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}>
+                            <h4>{meal.MMEAL_SC_NM} ({meal.MLSV_YMD})</h4>
+                            <p>메뉴: {meal.DDISH_NM}</p>
+                            <p>원산지: {meal.ORPLC_INFO}</p>
+                            <p>칼로리: {meal.CAL_INFO}</p>
+                            <p>영양 정보: {meal.NTR_INFO}</p>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>급식 정보가 없습니다.</p>
+            )}
+        </div>
+    );
 };
 
-export default MealSchedule;
+export default MealInfo;

@@ -6,7 +6,7 @@ import { auth } from "../authMiddleware";
 const router = express.Router();
 
 router.post('/signup_setting',async (req: Request, res: Response) => {
-    const { Gid, email, nickname, school, grade, classroom }: { Gid: string, email: string, nickname: string, school?: string, grade?: number, classroom?: number } = req.body;
+    const { Gid, email, nickname, school, grade, classroom,SHcode }: { Gid: string, email: string, nickname: string, school?: string, grade?: number, classroom?: number,SHcode?:string } = req.body;
 
     if (!Gid || !email || !nickname ) {
         res.status(400).json({ message: 'All fields are required' });

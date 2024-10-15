@@ -22,19 +22,20 @@ interface user_data{
     shcode?:string|null;
 }
 
-export const insert_user=async (idid:string,email:string,nickname:string,school?:string|null,grade?:number|null,classroom?:number|null):Promise<boolean>=>{
+export const insert_user=async (idid:string,email:string,nickname:string,school?:string|null,grade?:number|null,classroom?:number|null,SHcode?:string|null):Promise<boolean>=>{
     const client = await pool.connect();
     school = school!==undefined ? school : null;
     grade = grade!==undefined ? grade : null;
     classroom = classroom!==undefined ? classroom : null;
+    SHcode = SHcode||null;
     try{
         await client.query(`
             INSERT INTO users(
-                Gid, email, nickname, school, grade, classroom
+                Gid, email, nickname, school, grade, classroom, shcode
             ) VALUES (
-                $1, $2, $3, $4, $5, $6
+                $1, $2, $3, $4, $5, $6, $7
             )`,
-            [idid,email,nickname,school,grade,classroom]
+            [idid,email,nickname,school,grade,classroom,SHcode]
         );
         return true;
 
@@ -60,16 +61,17 @@ export const find_user_data = async (email:string):Promise<user_data[]>=>{
     }
 };
 
-export const update_user_data = async (Gid:string,nickname:string,school?:string|null,grade?:number|null,classroom?:number|null)=>{
+export const update_user_data = async (Gid:string,nickname:string,school?:string|null,grade?:number|null,classroom?:number|null,SHcode?:string|null)=>{
     const client = await pool.connect();
     school = school!==undefined ? school : null;
     grade = grade!==undefined ? grade : null;
     classroom = classroom!==undefined ? classroom : null;
+    SHcode = SHcode||null;
     try{
         client.query(`
-            UPDATE users SET nickname = $1, school = $2, grade = $3, classroom = $4, deleted_at=$5
+            UPDATE users SET nickname = $1, school = $2, grade = $3, classroom = $4, deleted_at = $5, shcode=$7
             WHERE Gid=$6
-            `,[nickname,school,grade,classroom,null,Gid]);
+            `,[nickname,school,grade,classroom,null,Gid,SHcode]);
     }catch(error){
         throw error;
     }finally{
@@ -148,4 +150,4 @@ export async function getUserIdByGid(Gid: string): Promise<number | null> {
         console.error('Error fetching user id:', error);
         return null;
     }
-}
+};

@@ -25,7 +25,7 @@ const storage = new Storage({
 });
 
 //버켓 설정
-const bucketName = 'post-img-video';
+const bucketName = process.env.bucketName as string;
 const bucket = storage.bucket(bucketName);
 
 // 파일 이름 변환 함수 (영어, 숫자 외의 문자는 제거하거나 인코딩)
@@ -176,6 +176,10 @@ router.post('/create_post',auth,async (req:Request,res:Response)=>{
 
 router.get('/posts',async(req:Request,res:Response)=>{
     const { offset: offsetStr, limit: limitStr } = req.query;
+    if (!/^\d+$/.test(offsetStr as string) || !/^\d+$/.test(limitStr as string)){
+        res.status(400).json({code:200,message:"invail url"});
+        return;
+    }
     const offset = parseInt(offsetStr as string, 10) || 0;
     const limit = parseInt(limitStr as string, 10) || 10;
     try{
@@ -195,7 +199,12 @@ router.get('/posts',async(req:Request,res:Response)=>{
 });
 
 router.get('/posts/:id',async (req:Request,res:Response)=>{
+    if (!/^\d+$/.test(req.params.id as string)){
+        res.status(400).json({code:200,message:"invail url"});
+        return;
+    }
     const id=parseInt(req.params.id as string, 10);
+    
     if (!id){
         res.status(400).json({code:400,message:"id is not provide"});
         return;
@@ -217,6 +226,10 @@ router.get('/posts/:id',async (req:Request,res:Response)=>{
 });
 
 router.get('/posts/:id/comments',async (req:Request,res:Response)=>{
+    if (!/^\d+$/.test(req.params.id as string)){
+        res.status(400).json({code:200,message:"invail url"});
+        return;
+    }
     const id=parseInt(req.params.id as string, 10);
     if (!id){
         res.status(400).json({code:400,message:"id is not provide"});
@@ -233,6 +246,10 @@ router.get('/posts/:id/comments',async (req:Request,res:Response)=>{
 });
 
 router.post('/posts/:id/like',auth,async (req:Request,res:Response)=>{
+    if (!/^\d+$/.test(req.params.id as string)){
+        res.status(400).json({code:200,message:"invail url"});
+        return;
+    }
     const id=parseInt(req.params.id as string, 10);
     if (!id){
         res.status(400).json({code:400,message:"id is not provide"});
@@ -249,6 +266,10 @@ router.post('/posts/:id/like',auth,async (req:Request,res:Response)=>{
 });
 
 router.post('/posts/:id/dislike',auth,async (req:Request,res:Response)=>{
+    if (!/^\d+$/.test(req.params.id as string)){
+        res.status(400).json({code:200,message:"invail url"});
+        return;
+    }
     const id=parseInt(req.params.id as string, 10);
     if (!id){
         res.status(400).json({code:400,message:"id is not provide"});
@@ -265,6 +286,10 @@ router.post('/posts/:id/dislike',auth,async (req:Request,res:Response)=>{
 });
 
 router.post('/posts/:id/comments',auth,async (req:Request,res:Response)=>{
+    if (!/^\d+$/.test(req.params.id as string)){
+        res.status(400).json({code:200,message:"invail url"});
+        return;
+    }
     const id=parseInt(req.params.id as string, 10);
     const {content}:{content:string}=req.body;
     const Gid: string | undefined = req.decoded?.id;
@@ -281,6 +306,10 @@ router.post('/posts/:id/comments',auth,async (req:Request,res:Response)=>{
 });
 
 router.delete('/posts/:id',auth,async(req:Request,res:Response)=>{
+    if (!/^\d+$/.test(req.params.id as string)){
+        res.status(400).json({code:200,message:"invail url"});
+        return;
+    }
     const id=parseInt(req.params.id as string, 10);
     const Gid: string | undefined = req.decoded?.id;
 
@@ -301,6 +330,10 @@ router.delete('/posts/:id',auth,async(req:Request,res:Response)=>{
 });
 
 router.delete('/posts/:id/comments/:commentId',auth,async(req:Request,res:Response)=>{
+    if (!/^\d+$/.test(req.params.id as string) || !/^\d+$/.test(req.params.commentId as string)){
+        res.status(400).json({code:200,message:"invail url"});
+        return;
+    }
     const id=parseInt(req.params.id as string, 10);
     const commentid = parseInt(req.params.commentId as string,10);
     const Gid: string | undefined = req.decoded?.id;
@@ -324,6 +357,10 @@ router.delete('/posts/:id/comments/:commentId',auth,async(req:Request,res:Respon
 });
 
 router.put('/posts/:id/comments/:commentId',auth,async(req:Request,res:Response)=>{
+    if (!/^\d+$/.test(req.params.id as string) || !/^\d+$/.test(req.params.commentId as string)){
+        res.status(400).json({code:200,message:"invail url"});
+        return;
+    }
     const id=parseInt(req.params.id as string, 10);
     const commentid = parseInt(req.params.commentId as string,10);
     const Gid: string | undefined = req.decoded?.id;
@@ -348,6 +385,10 @@ router.put('/posts/:id/comments/:commentId',auth,async(req:Request,res:Response)
 });
 
 router.put('/update_post/:id',auth,async(req:Request,res:Response)=>{
+    if (!/^\d+$/.test(req.params.id as string)){
+        res.status(400).json({code:200,message:"invail url"});
+        return;
+    }
     const id=parseInt(req.params.id as string, 10);
     const Gid: string | undefined = req.decoded?.id;
     const {title, content} : {title:string,content:string}=req.body;
@@ -368,7 +409,7 @@ router.put('/update_post/:id',auth,async(req:Request,res:Response)=>{
         return;
     }
 
-})
+});
 
 
 export default router;

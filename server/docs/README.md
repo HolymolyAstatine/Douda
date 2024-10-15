@@ -644,7 +644,7 @@ async function uploadFile(token, file) {
 ## GET-FILE
 - **Method**: GET
 - **Endpoint**: /post_data/files/:fileName
-- **Description**: 게시글 목록 조회.
+- **Description**: 파일 조회.
 
 ### Request:
 | Parameter | Type     | Description                               |
@@ -714,31 +714,6 @@ async function uploadFile(token, file) {
 }
 ```
 
-## Authentication
-
-- **Method**: `POST`
-- **Endpoint**: `/auth/login`
-- **Description**: User login and token generation.
-
-### Request:
-```json
-{
-  "username": "user@example.com",
-  "password": "password123"
-}
-```
-
-### Response (Success):
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5..."
-}
-```
-
-### Response (Error):
-```json
-{}
-```
 
 
 

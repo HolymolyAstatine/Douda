@@ -125,7 +125,7 @@ app.get('/signup', (req: Request, res: Response) => {
 app.get('/auth/google/login/redirect', async (req: Request, res: Response) => {
   const { code } = req.query;
   if (!code || typeof code !== 'string') {
-    res.status(404).json({ error: 'Authorization code is missing' });
+    res.status(400).json({ code:400,error: 'Authorization code is missing' });
   }
 
   try {
@@ -158,7 +158,7 @@ app.get('/auth/google/login/redirect', async (req: Request, res: Response) => {
     res.status(200).json({ code: 200, message: "Token created", token });
   } catch (err:any) {
     console.error(err.name);
-    res.status(500).json({ code: 'server error' });
+    res.status(500).json({ code: 500,message:"server error" });
   }
 });
 
@@ -192,7 +192,7 @@ app.get('/auth/google/signup/redirect', async (req: Request, res: Response) => {
       res.status(409).json({ code: 409, message: "User already exists" });
       return;
     } else {
-      res.status(200).json({ code: 200, message: "ok", id: id, email: email });
+      res.status(200).json({ code: 200, message: "ok", id, email });
     }
   } catch (err:any) {
     console.error(err.name);
@@ -223,7 +223,6 @@ app.get('/profile', auth, async(req: Request, res: Response) => {
     console.log(error);
     res.status(500).json({code:500,message:"server error"});
   }
-  res.status(200).json({ code: 200, data: { id, email } });
 });
 
 const httpsServer = https.createServer(credentials, app);

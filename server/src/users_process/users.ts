@@ -15,7 +15,7 @@ router.post('/signup_setting',async (req: Request, res: Response) => {
     }
 
     try{
-        await insert_user(Gid,email,nickname,school,grade,classroom);
+        await insert_user(Gid,email,nickname,school,grade,classroom,SHcode);
         res.status(200).json({code:200,message:"success!"});
         return;
 
@@ -28,7 +28,7 @@ router.post('/signup_setting',async (req: Request, res: Response) => {
 });
 
 router.put('/profile_update', auth, async (req: Request, res: Response) => {
-    const { nickname, school, grade, classroom }: { nickname: string; school?: string; grade?: number; classroom?: number } = req.body;
+    const { nickname, school, grade, classroom,SHcode }: { nickname: string; school?: string; grade?: number; classroom?: number,SHcode?:string } = req.body;
     const Gid: string | undefined = req.decoded?.id;
 
     if (!nickname) {
@@ -43,7 +43,7 @@ router.put('/profile_update', auth, async (req: Request, res: Response) => {
             return;
         }
 
-        await update_user_data(Gid as string, nickname, school, grade, classroom);
+        await update_user_data(Gid as string, nickname, school, grade, classroom,SHcode);
         res.status(200).json({ code: 200, message: "update success!" });
         return;
     } catch (error) {

@@ -33,6 +33,10 @@ const router = express.Router();
 
 router.get('/searchSchool',async (req:Request,res:Response)=>{
     const {SchoolName} = req.query;
+    if (!SchoolName){
+        res.status(400).json({code:400,message:"SchoolName missing"});
+        return;
+    }
 
     try{
         const tryAddSchool = await fetchSchoolDataAPI(SchoolName as string);
@@ -41,7 +45,7 @@ router.get('/searchSchool',async (req:Request,res:Response)=>{
             return;
         }
         else{
-            res.status(200).json({code:200,message:"",data:[]});
+            res.status(200).json({code:200,message:"success",data:[]});
             return;
         }
     }catch(error){
@@ -107,25 +111,26 @@ router.get('/searchMeal',auth,async(req:Request,res:Response)=>{
 router.get('/searchTimeTable',auth,async(req:Request,res:Response)=>{
     const Gid: string | undefined = req.decoded?.id;
     const email:string|undefined =req.decoded?.email;
-    const {date,SHcode,grade,classroom,SHname} = req.query;
+    const {date} = req.query;
     if (!Gid || !email || !date){
         res.status(400).json({code:400,message:"missing data"});
         return;
     }
     try{
         const user_datal= await find_user_data(email as string);
-        if (!SHname || !grade || !classroom){
-            res.status(400).json({code:400,message:"missing pramiter"});
+        const {school,grade,classroom,shcode} = user_datal[0];
+        if (!school || !grade || !classroom){
+            res.status(400).json({code:400,message:"E"});
             return;
         }
-        const SHinfo = await fetchSchoolDataAPI(SHname as string);
+        const SHinfo = await fetchSchoolDataAPI(shcode as string);
         if (SHinfo===null){
             res.status(404).json({code:404,message:"school not found. pls update your school"});
             return;
         }
         else if(SHinfo.length>0){
             for(const row of SHinfo){
-                if (row.SD_SCHUL_CODE===SHcode){
+                if (row.SD_SCHUL_CODE===shcode){
                     const rdata = await fetchTimetableDataAPI(row,date as string,`${grade}`,`${classroom}`);
                     res.status(200).json({code:200,message:"success",data:rdata});
                     return;

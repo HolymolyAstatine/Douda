@@ -138,3 +138,19 @@ export interface GoogleUserInfo {
   picture: string;
   locale: string;
 }
+
+interface postsdata{
+  id:number;
+  title:string;
+  content:string;
+  author_id:number;
+  created_at:Date;
+  updated_at:Date;
+  is_deleted:boolean;
+  category_id:number|null;
+  tags:number|null;
+  view_count:number;
+  like_count:number;
+  dislike_count:number;
+  comment_count:number;
+}

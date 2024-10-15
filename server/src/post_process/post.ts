@@ -65,16 +65,16 @@ router.post('/image_upload', auth, upload.single('image'), async (req: Request, 
 
         blobStream.on('error', (err) => {
             console.error('Upload error:', err);
-            res.status(500).send('Failed to upload image.');
+            res.status(500).send('server error');
         });
 
         blobStream.on('finish', async () => {
             try {
                 const publicUrl = `https://localhost:8080/post_data/files/${fileName}`; // 리버스 프록시 사용 URL
-                res.status(200).send({ message: 'Image uploaded successfully', url: publicUrl });
+                res.status(200).send({ code:200,message: 'Image uploaded successfully', url: publicUrl });
             } catch (err) {
                 console.error('Error generating public URL:', err);
-                res.status(500).send('Failed to generate public URL.');
+                res.status(500).send({code:500,message:'server error'});
             }
         });
 
@@ -176,7 +176,10 @@ router.post('/create_post',auth,async (req:Request,res:Response)=>{
 
 router.get('/posts',async(req:Request,res:Response)=>{
     const { offset: offsetStr, limit: limitStr } = req.query;
-    
+    if (!/^\d+$/.test(offsetStr as string)||!/^\d+$/.test(limitStr as string)){
+        res.status(400).json({code:400,message:"invail url"});
+        return;
+    }
     const offset = parseInt(offsetStr as string, 10) || 0;
     const limit = parseInt(limitStr as string, 10) || 10;
     try{

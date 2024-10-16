@@ -1,6 +1,7 @@
 import {Pool} from 'pg'
 import dotenv from 'dotenv';
 import dayjs from 'dayjs';
+import { cli } from 'winston/lib/winston/config';
 
 dotenv.config();
 
@@ -151,3 +152,25 @@ export async function getUserIdByGid(Gid: string): Promise<number | null> {
         return null;
     }
 };
+
+export async function getUserNikByID(ID:number) {
+    const client= await pool.connect();
+    try{
+        const query = `
+            SELECT nickname FROM users WHERE id = $1;
+        `;
+        const res = await pool.query(query, [ID]);
+        if (res.rows.length > 0) {
+            return res.rows[0].nickname;  // id 값 반환
+        } else {
+            console.log('User not found.');
+            return null;
+        }
+
+    }catch(error){
+        throw error;
+    }finally{
+        client.release();
+    }
+    
+}

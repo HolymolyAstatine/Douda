@@ -178,7 +178,7 @@ router.get('/posts',async(req:Request,res:Response)=>{
     const { offset: offsetStr, limit: limitStr } = req.query;
     
     const offset = parseInt(offsetStr as string, 10) || 0;
-    const limit = parseInt(limitStr as string, 10) || 10;
+    const limit = parseInt(limitStr as string, 10) || 20;
     try{
         const rows=await pcdbm.getPosts(offset,limit);
         if (rows.length>0){

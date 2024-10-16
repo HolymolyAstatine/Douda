@@ -439,7 +439,7 @@
 ### Response (Success):
 | value   | Type     | Description              |
 |-------------|----------|--------------------------|
-| `data`  | `MealInfo[]`OR `null` | 학교급식들을 담은 리스트. types/폴더 참고, 해당 달에 급식이 없으면 빈리스트 OR null|
+| `data`  | `MealInfo[][]`OR `null` | 학교급식들을 담은 리스트 [0][]->중식 [1][]->석식. types/폴더 참고, 해당 달에 급식이 없으면 빈리스트 OR null|
 ```json
 {
   "code":200,
@@ -671,6 +671,48 @@ async function uploadFile(token, file) {
 }
 ```
 
+## CREATE-POST
+- **Method**: POST
+- **Endpoint**: /post_data/create_post
+- **Description**: 게시글 등록 조회.
+- **important** : JWT토큰 필요
+
+### Request:
+| Parameter | Type     | Description                               |
+|-----------|----------|-------------------------------------------|
+| `title`   | `string`   | 만들 게시글의 제목 |
+| `content` | `string` | 만들 게시글의 내용 |
+
+```json
+
+"headers": {"Authorization": "Bearer {token}"},
+{
+    "title":"title",
+    "content" : "<div>hi<div>"
+}
+```
+
+### Response (Success):
+```json
+{
+  "code":200,
+  "message": "create post success!",
+
+}
+```
+
+### Response (Error):
+```json
+{
+    "code": 400,
+    "message": "title or content is not provide."
+}
+{
+    "code": 500,
+    "message": "Failed to upload file."
+}
+
+```
 
 ## GET-POSTS
 - **Method**: GET

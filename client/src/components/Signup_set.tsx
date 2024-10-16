@@ -1,9 +1,9 @@
-// client/src/components/Signup_set.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import errorIcon from "../img/error_exclamation_mark.svg";
 import "./css/Signup_set.css";
+import { SchoolInfo } from '../../../server/types/types';
 
 const SignupSet = () => {
     const [nickname, setNickname] = useState('');
@@ -13,6 +13,8 @@ const SignupSet = () => {
     const [error, setError] = useState('');
     const [gradeError, setGradeError] = useState('');
     const [classroomError, setClassroomError] = useState('');
+    const [schoolList, setSchoolList] = useState<SchoolInfo[]>([]);
+    const [selectedSchool, setSelectedSchool] = useState<SchoolInfo | null>(null);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -21,6 +23,31 @@ const SignupSet = () => {
 
     const validateIntegerInput = (value: string) => {
         return value === '' || /^[1-9]\d*$/.test(value);
+    };
+
+    const handleSchoolSearch = async (query: string) => {
+        if (query) {
+            try {
+                const response = await axios.get(`https://localhost:8080/api/searchSchool?SchoolName=${query}`);
+                setSchoolList(response.data.data); // 학교 목록 업데이트
+            } catch (error) {
+                console.error('학교 검색 중 오류 발생:', error);
+            }
+        } else {
+            setSchoolList([]); // 쿼리가 비어있으면 목록 초기화
+        }
+    };
+
+    const handleSchoolSelect = (school: SchoolInfo) => {
+        setSelectedSchool(school);
+        setSchool(school.SCHUL_NM);
+        setSchoolList([]);
+    };
+
+    const handleSchoolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setSchool(value);
+        handleSchoolSearch(value); // 학교 검색 처리
     };
 
     const handleGradeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,14 +77,14 @@ const SignupSet = () => {
             return;
         }
         if (!isFormValid) {
-            setError('모든 필드는 필수입니다.');
+            setError('닉네임 필드는 필수입니다.');
             return;
         }
 
         try {
             const response = await axios.post(
                 'https://localhost:8080/user_data/signup_setting',
-                { Gid, email, nickname, school, grade: grade || undefined, classroom: classroom || undefined },
+                { Gid, email, nickname, school: selectedSchool?.SCHUL_NM, grade: grade || undefined, classroom: classroom || undefined, SHcode: selectedSchool?.SD_SCHUL_CODE },
             );
 
             if (response.status === 200) {
@@ -91,10 +118,19 @@ const SignupSet = () => {
                     <input
                         type="text"
                         value={school}
-                        onChange={(e) => setSchool(e.target.value)}
+                        onChange={handleSchoolChange}
                         required
                         style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '4px', border: '1px solid #ccc' }}
                     />
+                    {schoolList.length > 0 && (
+                        <ul style={{ border: '1px solid #ccc', borderRadius: '4px', maxHeight: '150px', overflowY: 'auto', padding: '0', margin: '5px 0', listStyleType: 'none' }}>
+                            {schoolList.map((school) => (
+                                <li key={school.SD_SCHUL_CODE} onClick={() => handleSchoolSelect(school)} style={{ padding: '8px', cursor: 'pointer', backgroundColor: '#fff', borderBottom: '1px solid #ddd' }}>
+                                    {school.SCHUL_NM}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
                 <div>
                     <label>학년:</label>

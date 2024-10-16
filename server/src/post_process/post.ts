@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 import { auth } from "../authMiddleware";
 import PostCommentDBManager from "./db";
+import logger from '../logger';
+import { error } from 'console';
 
 dotenv.config();
 
@@ -28,6 +30,11 @@ const storage = new Storage({
 const bucketName = process.env.bucketName as string;
 const bucket = storage.bucket(bucketName);
 
+router.use((req, res, next) => {
+    logger.info(`Received request: ${req.method} ${req.url}`);
+    next();
+});
+
 // 파일 이름 변환 함수 (영어, 숫자 외의 문자는 제거하거나 인코딩)
 function sanitizeFileName(filename: string): string {
     // 한글 및 특수 문자는 제거하고, 공백은 '-'로 치환
@@ -40,6 +47,7 @@ function sanitizeFileName(filename: string): string {
 router.post('/image_upload', auth, upload.single('image'), async (req: Request, res: Response) => {
     try {
         if (!req.file) {
+            logger.info('No image uploaded.');
             res.status(400).send('No image uploaded.');
             return;
         }
@@ -48,6 +56,7 @@ router.post('/image_upload', auth, upload.single('image'), async (req: Request, 
         const extension = path.extname(req.file.originalname).toLowerCase();
         const allowedExtensions = ['.png', '.jpg', '.jpeg', '.gif'];
         if (!allowedExtensions.includes(extension)) {
+            logger.info('Only image files are allowed.')
             res.status(400).send('Only image files are allowed.');
             return;
         }
@@ -64,16 +73,17 @@ router.post('/image_upload', auth, upload.single('image'), async (req: Request, 
         });
 
         blobStream.on('error', (err) => {
-            console.error('Upload error:', err);
+            logger.error(err)
             res.status(500).send('server error');
         });
 
         blobStream.on('finish', async () => {
             try {
                 const publicUrl = `https://localhost:8080/post_data/files/${fileName}`; // 리버스 프록시 사용 URL
+                logger.info(`Image uploaded successfully url: ${publicUrl}`);
                 res.status(200).send({ code:200,message: 'Image uploaded successfully', url: publicUrl });
             } catch (err) {
-                console.error('Error generating public URL:', err);
+                logger.error(err);
                 res.status(500).send({code:500,message:'server error'});
             }
         });
@@ -81,7 +91,7 @@ router.post('/image_upload', auth, upload.single('image'), async (req: Request, 
         // 파일 데이터를 스트림에 작성
         blobStream.end(req.file.buffer);
     } catch (error) {
-        console.log(error);
+        logger.error(error);
         res.status(500).json({ code: 500, message: 'Server error' });
     }
 });
@@ -106,7 +116,7 @@ router.post('/file_upload', auth, upload.single('file'), async (req: Request, re
         });
 
         blobStream.on('error', (err) => {
-            console.error('Upload error:', err);
+            logger.error(error);
             res.status(500).send('Failed to upload file.');
         });
 
@@ -114,9 +124,10 @@ router.post('/file_upload', auth, upload.single('file'), async (req: Request, re
             try {
                 // 사용자 정의 URL 생성
                 const publicUrl = `https://localhost:8080/post_data/files/${fileName}`; // 리버스 프록시를 사용할 URL
+                logger.info(`Image uploaded successfully url: ${publicUrl}`)
                 res.status(200).send({ message: 'File uploaded successfully', url: publicUrl });
             } catch (err) {
-                console.error('Error generating public URL:', err);
+                logger.error(err);
                 res.status(500).send('Failed to generate public URL.');
             }
         });
@@ -124,7 +135,7 @@ router.post('/file_upload', auth, upload.single('file'), async (req: Request, re
         // 파일 데이터를 스트림에 작성
         blobStream.end(req.file.buffer);
     } catch (error) {
-        console.log(error);
+        logger.error(error);
         res.status(500).json({ code: 500, message: 'Server error' });
     }
 });
@@ -145,12 +156,12 @@ router.get('/files/:fileName', async (req: Request, res: Response)=>{
         // GCS에서 파일을 스트림으로 클라이언트에 전달
         file.createReadStream()
             .on('error', (err) => {
-                console.error('Error reading file from GCS:', err);
+                logger.error(err);
                 res.status(500).send('Error retrieving file.');
             })
             .pipe(res); // 파일을 클라이언트로 스트림 전송
     } catch (error) {
-        console.error('Error accessing GCS file:', error);
+        logger.error(error);
         res.status(500).send('Server error.');
     }
 });
@@ -166,10 +177,11 @@ router.post('/create_post',auth,async (req:Request,res:Response)=>{
     try{
     const idid=await pcdbm.getUserIdByGid(Gid as string);
     pcdbm.insertPost(title,content,idid as number)
+    logger.info('create post success!');
     res.status(200).json({code:200,message:"create post success!"});
     return;
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
     }
 });
@@ -182,22 +194,24 @@ router.get('/posts',async(req:Request,res:Response)=>{
     try{
         const rows=await pcdbm.getPosts(offset,limit);
         if (rows.length>0){
+            logger.info(`load post success!`);
             res.status(200).json({code:200,message:"load post success!",data:rows});
             return;
         }
         else{
+            logger.info(`load post success!`);
             res.status(200).json({code:200,message:"load post success! but no data found.",data:[]});
             return;
         }
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
     }
 });
 
 router.get('/posts/:id',async (req:Request,res:Response)=>{
     if (!/^\d+$/.test(req.params.id as string)){
-        res.status(400).json({code:200,message:"invail url"});
+        res.status(400).json({code:400,message:"invail url"});
         return;
     }
     const id=parseInt(req.params.id as string, 10);
@@ -210,6 +224,7 @@ router.get('/posts/:id',async (req:Request,res:Response)=>{
         const post_data=await pcdbm.getPostbyid(id);
         console.log(post_data);
         if(post_data){
+            logger.info(`${id} post get`);
             res.status(200).json({code:200,message:"success!",data:post_data});
             return;
         }
@@ -218,14 +233,14 @@ router.get('/posts/:id',async (req:Request,res:Response)=>{
             return;
         }
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
     }
 });
 
 router.get('/posts/:id/comments',async (req:Request,res:Response)=>{
     if (!/^\d+$/.test(req.params.id as string)){
-        res.status(400).json({code:200,message:"invail url"});
+        res.status(400).json({code:400,message:"invail url"});
         return;
     }
     const id=parseInt(req.params.id as string, 10);
@@ -235,18 +250,20 @@ router.get('/posts/:id/comments',async (req:Request,res:Response)=>{
     }
     try{
         const comment_row = await pcdbm.getCommentsByPostId(id);
-        console.log(comment_row)
+        logger.info(`${id} load comment success! `)
+
         res.status(200).json({code:200,message:"load comment success!",data:comment_row});
         return;
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
     }
 });
 
 router.post('/posts/:id/like',auth,async (req:Request,res:Response)=>{
+    const Gid: string | undefined = req.decoded?.id;
     if (!/^\d+$/.test(req.params.id as string)){
-        res.status(400).json({code:200,message:"invail url"});
+        res.status(400).json({code:400,message:"invail url"});
         return;
     }
     const id=parseInt(req.params.id as string, 10);
@@ -256,17 +273,19 @@ router.post('/posts/:id/like',auth,async (req:Request,res:Response)=>{
     }
     try{
         await pcdbm.increaseLikeCount(id);
+        logger.info(`${id} like success user:${Gid}`);
         res.status(200).json({code:200,message:"success"});
         return;
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
     }
 });
 
 router.post('/posts/:id/dislike',auth,async (req:Request,res:Response)=>{
+    const Gid: string | undefined = req.decoded?.id;
     if (!/^\d+$/.test(req.params.id as string)){
-        res.status(400).json({code:200,message:"invail url"});
+        res.status(400).json({code:400,message:"invail url"});
         return;
     }
     const id=parseInt(req.params.id as string, 10);
@@ -276,17 +295,18 @@ router.post('/posts/:id/dislike',auth,async (req:Request,res:Response)=>{
     }
     try{
         await pcdbm.increaseDislikeCount(id);
+        logger.info(`${id} dislike user:${Gid}`);
         res.status(200).json({code:200,message:"success"});
         return;
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
     }
 });
 
 router.post('/posts/:id/comments',auth,async (req:Request,res:Response)=>{
     if (!/^\d+$/.test(req.params.id as string)){
-        res.status(400).json({code:200,message:"invail url"});
+        res.status(400).json({code:400,message:"invail url"});
         return;
     }
     const id=parseInt(req.params.id as string, 10);
@@ -296,17 +316,18 @@ router.post('/posts/:id/comments',auth,async (req:Request,res:Response)=>{
     try{
         const idid=await pcdbm.getUserIdByGid(Gid as string);
         await pcdbm.insertComment(id,idid as number,content);
+        logger.info(`${id} comments insert success! user:${idid}`);
         res.status(200).json({code:200,message:"comments insert success!"});
         return;
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
     }
 });
 
 router.delete('/posts/:id',auth,async(req:Request,res:Response)=>{
     if (!/^\d+$/.test(req.params.id as string)){
-        res.status(400).json({code:200,message:"invail url"});
+        res.status(400).json({code:400,message:"invail url"});
         return;
     }
     const id=parseInt(req.params.id as string, 10);
@@ -319,10 +340,11 @@ router.delete('/posts/:id',auth,async(req:Request,res:Response)=>{
 
     try{
         pcdbm.deletePost(id);
+        logger.info(`${id} post delete`)
         res.status(200).json({code:200,message:"delete success"});
         return;
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
         return;
     }
@@ -330,7 +352,7 @@ router.delete('/posts/:id',auth,async(req:Request,res:Response)=>{
 
 router.delete('/posts/:id/comments/:commentId',auth,async(req:Request,res:Response)=>{
     if (!/^\d+$/.test(req.params.id as string) || !/^\d+$/.test(req.params.commentId as string)){
-        res.status(400).json({code:200,message:"invail url"});
+        res.status(400).json({code:400,message:"invail url"});
         return;
     }
     const id=parseInt(req.params.id as string, 10);
@@ -344,11 +366,12 @@ router.delete('/posts/:id/comments/:commentId',auth,async(req:Request,res:Respon
 
     try{
         await pcdbm.deleteComment(commentid);
+        logger.info(`${id} post ${commentid} delete `);
         res.status(200).json({code:200,message:"comment delete success!"});
         return;
 
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
         return;
     }
@@ -357,7 +380,7 @@ router.delete('/posts/:id/comments/:commentId',auth,async(req:Request,res:Respon
 
 router.put('/posts/:id/comments/:commentId',auth,async(req:Request,res:Response)=>{
     if (!/^\d+$/.test(req.params.id as string) || !/^\d+$/.test(req.params.commentId as string)){
-        res.status(400).json({code:200,message:"invail url"});
+        res.status(400).json({code:400,message:"invail url"});
         return;
     }
     const id=parseInt(req.params.id as string, 10);
@@ -372,11 +395,12 @@ router.put('/posts/:id/comments/:commentId',auth,async(req:Request,res:Response)
 
     try{
         await pcdbm.updateComment(commentid,content);
+        logger.info(`${id} post ${commentid} update`);
         res.status(200).json({code:200,message:"comment update success!"});
         return;
 
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
         return;
     }
@@ -385,7 +409,7 @@ router.put('/posts/:id/comments/:commentId',auth,async(req:Request,res:Response)
 
 router.put('/update_post/:id',auth,async(req:Request,res:Response)=>{
     if (!/^\d+$/.test(req.params.id as string)){
-        res.status(400).json({code:200,message:"invail url"});
+        res.status(400).json({code:400,message:"invail url"});
         return;
     }
     const id=parseInt(req.params.id as string, 10);
@@ -399,11 +423,12 @@ router.put('/update_post/:id',auth,async(req:Request,res:Response)=>{
 
     try{
         await pcdbm.updatePost(id,title,content);
+        logger.info(`${id} post update`);
         res.status(200).json({code:200,message:"update post success!"});
         return;
 
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
         return;
     }

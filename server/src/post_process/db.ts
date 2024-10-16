@@ -82,7 +82,7 @@ class PostCommentDBManager {
         }
     }
 
-    public async updatePost(postId: number, title?: string, content?: string, categoryId?: number | null, tags?: string | null) {
+    public async updatePost(postId: number, title?: string, content?: string, categoryId?: number | null, tags?: string | null):Promise<boolean> {
         this.client = await this.pool.connect();
         try {
             const setClause = [];
@@ -115,6 +115,7 @@ class PostCommentDBManager {
 
             await this.client.query(query, values);
             console.log(`Post with ID ${postId} updated successfully.`);
+            return true;
         } catch (error) {
             throw error;
         } finally {

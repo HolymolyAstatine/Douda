@@ -4,6 +4,7 @@ import { auth } from "../authMiddleware";
 import { fetchSchoolDataAPI,fetchMealDataAPI,fetchTimetableDataAPI } from "./apiClient";
 import { SchoolInfo, MealInfo, TimetableInfo } from '../../types/types';
 import { find_user_data } from "../users_process/db";
+import logger from '../logger';
 
 dotenv.config();
 
@@ -31,6 +32,11 @@ interface UserInputData {
 
 const router = express.Router();
 
+router.use((req, res, next) => {
+    logger.info(`Received request: ${req.method} ${req.url}`);
+    next();
+});
+
 router.get('/searchSchool',async (req:Request,res:Response)=>{
     const {SchoolName} = req.query;
     if (!SchoolName){
@@ -49,7 +55,7 @@ router.get('/searchSchool',async (req:Request,res:Response)=>{
             return;
         }
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error",data:[]});
         return;
     }
@@ -84,6 +90,7 @@ router.get('/searchMeal',auth,async(req:Request,res:Response)=>{
             for(const row of SHinfo){
                 if (row.SD_SCHUL_CODE===SHcode){
                     const rdata = await fetchMealDataAPI(SHcode,row.ATPT_OFCDC_SC_CODE,month as string,year as string);
+                    logger.info(`success`);
                     res.status(200).json({code:200,message:"success",data:rdata});
                     return;
                 }
@@ -93,13 +100,14 @@ router.get('/searchMeal',auth,async(req:Request,res:Response)=>{
             res.status(404).json({code:404,message:"school not found. pls update your school"});
             return;
         }
+        
         res.status(500).json({code:500,message:"server error"});
 
 
         
 
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
         return;
     }
@@ -133,6 +141,7 @@ router.get('/searchTimeTable',auth,async(req:Request,res:Response)=>{
             for(const row of SHinfo){
                 if (row.SD_SCHUL_CODE===shcode){
                     const rdata = await fetchTimetableDataAPI(row,date as string,`${grade}`,`${classroom}`);
+                    logger.info('success')
                     res.status(200).json({code:200,message:"success",data:rdata});
                     return;
                 }
@@ -145,7 +154,7 @@ router.get('/searchTimeTable',auth,async(req:Request,res:Response)=>{
         res.status(500).json({code:500,message:"server error"});
 
     }catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({code:500,message:"server error"});
         return;
     }

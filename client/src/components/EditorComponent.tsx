@@ -130,13 +130,13 @@ const EditorComponent: React.FC<EditorProps> = ({ initialTitle = '', initialCont
   };
 
   return (
-    <div>
+    <div style={{ padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)' }}>
       <input
         type="text"
         placeholder="제목을 입력하세요"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        style={{ width: '100%', padding: '10px', fontSize: '18px', marginBottom: '10px' }}
+        style={{ width: '100%', padding: '12px', fontSize: '16px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '5px' }}
       />
       
       <div
@@ -149,29 +149,32 @@ const EditorComponent: React.FC<EditorProps> = ({ initialTitle = '', initialCont
           padding: '10px',
           borderRadius: '5px',
           marginBottom: '10px',
+          backgroundColor: '#f9f9f9',
           color: isContentEmpty ? '#999' : '#000',
         }}
       >
         {isContentEmpty ? '본문을 작성하세요' : null}
       </div>
 
-      <input type="file" onChange={handleFileChange} />
+      <input type="file" onChange={handleFileChange} style={{ marginBottom: '10px' }} />
       
       {imagePreview ? (
         <div>
           <p>이미지 미리보기:</p>
-          <img src={imagePreview} alt="Preview" style={{ maxWidth: '200px', marginBottom: '10px' }} />
+          <img src={imagePreview} alt="Preview" style={{ maxWidth: '200px', marginBottom: '10px', borderRadius: '5px' }} />
         </div>
       ) : fileData ? (
         <div>
           <p>파일: {fileData.name}</p>
-          <button disabled>다운로드 불가</button>
+          <button disabled style={{ padding: '5px 10px', backgroundColor: '#ccc', border: 'none', borderRadius: '5px' }}>다운로드 불가</button>
         </div>
       ) : null}
 
-      <button onClick={handleFileUpload}>파일 업로드</button>
+      <button onClick={handleFileUpload} style={{ padding: '10px 20px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '10px' }}>
+        파일 업로드
+      </button>
 
-      <button onClick={handleSubmit} disabled={isButtonDisabled} style={{ marginTop: '10px' }}>
+      <button onClick={handleSubmit} disabled={isButtonDisabled} style={{ marginTop: '10px', padding: '10px 20px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
         게시글 작성
       </button>
     </div>

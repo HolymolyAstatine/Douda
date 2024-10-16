@@ -7,7 +7,7 @@ interface Post {
   title: string;
   author_id: number;
   created_at: string;
-  nickname:string;
+  nickname: string;
 }
 
 interface BoardProps {
@@ -33,11 +33,13 @@ const Board: React.FC<BoardProps> = ({ isLoggedIn }) => {
   return (
     <div style={{ padding: '20px', backgroundColor: '#f9f9f9' }}>
       <h1 style={{ textAlign: 'center', color: '#333' }}>게시판</h1>
-      {isLoggedIn ?<Link to="/ww">
-        <button style={{ margin: '10px 0', padding: '10px 20px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px' }}>
-          글 작성하기
-        </button>
-      </Link> : null}
+      {isLoggedIn ? (
+        <Link to="/create">
+          <button style={{ margin: '10px 0', padding: '10px 20px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px' }}>
+            글 작성하기
+          </button>
+        </Link>
+      ) : null}
       {posts.length > 0 ? (
         posts.map((post) => (
           <div key={post.id} style={{ border: '1px solid #ddd', padding: '15px', marginBottom: '15px', borderRadius: '5px', backgroundColor: '#fff' }}>

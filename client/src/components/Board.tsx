@@ -7,9 +7,14 @@ interface Post {
   title: string;
   author_id: number;
   created_at: string;
+  nickname:string;
 }
 
-const Board: React.FC = () => {
+interface BoardProps {
+  isLoggedIn: boolean;
+}
+
+const Board: React.FC<BoardProps> = ({ isLoggedIn }) => {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
@@ -28,16 +33,16 @@ const Board: React.FC = () => {
   return (
     <div style={{ padding: '20px', backgroundColor: '#f9f9f9' }}>
       <h1 style={{ textAlign: 'center', color: '#333' }}>게시판</h1>
-      <Link to="/ww">
+      {isLoggedIn ?<Link to="/ww">
         <button style={{ margin: '10px 0', padding: '10px 20px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px' }}>
           글 작성하기
         </button>
-      </Link>
+      </Link> : null}
       {posts.length > 0 ? (
         posts.map((post) => (
           <div key={post.id} style={{ border: '1px solid #ddd', padding: '15px', marginBottom: '15px', borderRadius: '5px', backgroundColor: '#fff' }}>
             <h2 style={{ color: '#007bff' }}>{post.title}</h2>
-            <p>작성자 ID: {post.author_id}</p>
+            <p>작성자: {post.nickname}</p>
             <small>작성일: {new Date(post.created_at).toLocaleDateString()}</small>
             <br />
             <Link to={`/post/${post.id}`} style={{ color: '#007bff', textDecoration: 'underline' }}>게시글 보기</Link>

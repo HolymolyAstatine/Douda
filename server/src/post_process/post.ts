@@ -208,6 +208,7 @@ router.get('/posts/:id',async (req:Request,res:Response)=>{
     }
     try{
         const post_data=await pcdbm.getPostbyid(id);
+        console.log(post_data);
         if(post_data){
             res.status(200).json({code:200,message:"success!",data:post_data});
             return;
@@ -234,6 +235,7 @@ router.get('/posts/:id/comments',async (req:Request,res:Response)=>{
     }
     try{
         const comment_row = await pcdbm.getCommentsByPostId(id);
+        console.log(comment_row)
         res.status(200).json({code:200,message:"load comment success!",data:comment_row});
         return;
     }catch(error){

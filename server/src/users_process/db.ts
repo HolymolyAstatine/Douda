@@ -1,7 +1,6 @@
 import {Pool} from 'pg'
 import dotenv from 'dotenv';
 import dayjs from 'dayjs';
-import { cli } from 'winston/lib/winston/config';
 
 dotenv.config();
 

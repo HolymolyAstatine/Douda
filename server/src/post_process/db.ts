@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { Pool, QueryResult } from "pg";
+import { Pool } from "pg";
 import {getUserNikByID} from "../users_process/db"
 
 dotenv.config();

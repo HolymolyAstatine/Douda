@@ -9,9 +9,7 @@ import Home from './components/Home';
 import SignupSet from './components/Signup_set';
 import Profile from './components/Profile';
 import PostForm from "./components/Write_from";
-import Testpost from "./components/testpost";
 import Notfound from "./components/NotFound";
-import Testpost2 from "./components/testpost2";
 import Board from './components/Board';
 import PostDetail from './components/PostDetail';
 import MealSchedule from './components/MealSchedule'; // 급식 스케줄러 컴포넌트 추가
@@ -73,13 +71,13 @@ const App = () => {
           <li style={{ margin: '0 10px' }}>
             <Link to="/" style={{ textDecoration: 'none', color: '#007bff' }}>홈</Link>
           </li>
+          <li style={{ margin: '0 10px' }}>
+                <Link to="/board" style={{ textDecoration: 'none', color: '#007bff' }}>게시판</Link>
+          </li>
           {isLoggedIn && (
             <>
               <li style={{ margin: '0 10px' }}>
                 <Link to="/profile" style={{ textDecoration: 'none', color: '#007bff' }}>프로필</Link>
-              </li>
-              <li style={{ margin: '0 10px' }}>
-                <Link to="/board" style={{ textDecoration: 'none', color: '#007bff' }}>게시판</Link>
               </li>
               <li style={{ margin: '0 10px' }}>
                 <Link to="/meals" style={{ textDecoration: 'none', color: '#007bff' }}>급식표</Link> {/* 급식표 링크 추가 */}
@@ -103,9 +101,8 @@ const App = () => {
           <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} /> {/*프로파일 라우터 */}
           <Route path='/ww' element={<PostForm />} /> {/*게시글 작성 폼 */}
           <Route path='/edit/:postId' element={<PostEdit />} /> {/* 게시글 수정 폼 */}
-          <Route path='/wi' element={<Testpost2 />} />
-          <Route path='/board' element={<Board />} /> {/* 게시판 */}
-          <Route path="/post/:id" element={<PostDetail />} /> {/* 게시글 상세 */}
+          <Route path='/board' element={<Board isLoggedIn={isLoggedIn}/>} /> {/* 게시판 */}
+          <Route path="/post/:id" element={<PostDetail isLoggedIn={isLoggedIn}/>} /> {/* 게시글 상세 */}
           <Route path='/post/*' element={<Navigate to="/board" />} />
           <Route path="/meals" element={<MealSchedule/>} /> {/* 급식표 라우터 추가 */}
           <Route path="/timetable" element={<Timetable />} /> {/* 학급 시간표 라우터 추가 */}
@@ -121,7 +118,7 @@ const App = () => {
         <p style={{ margin: 0 }}>© 2023 DOUDA team. All rights reserved.</p>
         <p style={{ margin: 0 }}>
           Created by 
-          <a href="https://github.com/hafskjfha" target="_blank" rel="noopener noreferrer" style={{ margin: '0 5px', textDecoration: 'none', color: '#007bff' }}>Teawon Jheng</a> 
+          <a href="https://github.com/hafskjfha" target="_blank" rel="noopener noreferrer" style={{ margin: '0 5px', textDecoration: 'none', color: '#007bff' }}>Teawon Jung</a> 
           & 
           <a href="https://github.com/HolymolyAstatine" target="_blank" rel="noopener noreferrer" style={{ margin: '0 5px', textDecoration: 'none', color: '#007bff' }}>Jangho Yoon</a>
         </p>

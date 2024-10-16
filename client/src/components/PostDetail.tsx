@@ -12,6 +12,7 @@ interface Post {
   like_count: number;
   dislike_count: number;
   comment_count: number;
+  nickname:string;
 }
 
 interface Comment {
@@ -19,9 +20,14 @@ interface Comment {
   content: string;
   author_id: number;
   created_at: string;
+  nickname:string;
 }
 
-const PostDetail: React.FC = () => {
+interface PostDetailProps {
+  isLoggedIn: boolean;
+}
+
+const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
   const { id } = useParams<{ id: string }>(); // URL에서 게시글 ID 추출
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -206,7 +212,7 @@ const PostDetail: React.FC = () => {
     <div>
       <h1>{post.title}</h1>
       <div>
-        <p>작성자 ID: {post.author_id}</p>
+        <p>작성자: {post.nickname}</p>
         <p>작성일: {new Date(post.created_at).toLocaleDateString()}</p>
         <p>수정일: {new Date(post.updated_at).toLocaleDateString()}</p>
       </div>
@@ -243,7 +249,7 @@ const PostDetail: React.FC = () => {
               ) : (
                 <div>
                   <p>{comment.content}</p>
-                  <small>작성자 ID: {comment.author_id}</small>
+                  <small>작성자: {comment.nickname}</small>
                   <br />
                   <small>작성일: {new Date(comment.created_at).toLocaleDateString()}</small>
 
@@ -262,7 +268,7 @@ const PostDetail: React.FC = () => {
         )}
       </div>
 
-      <div>
+      {isLoggedIn?<div>
         <textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
@@ -270,7 +276,7 @@ const PostDetail: React.FC = () => {
           style={{ width: '100%', height: '100px', marginBottom: '10px' }}
         />
         <button onClick={handleCommentSubmit}>댓글 작성</button>
-      </div>
+      </div>:null}
     </div>
   );
 };

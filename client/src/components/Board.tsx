@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom'; // 라우팅을 위해 사용
+import { Link } from 'react-router-dom';
 
 interface Post {
   id: number;
@@ -13,17 +13,16 @@ const Board: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
-    // 서버로부터 게시글 목록을 가져오는 함수
     const fetchPosts = async () => {
       try {
         const response = await axios.get('https://localhost:8080/post_data/posts');
-        setPosts(response.data.data); // 게시글 목록 설정
+        setPosts(response.data.data);
       } catch (error) {
         console.error('게시글 불러오기 실패:', error);
       }
     };
 
-    fetchPosts(); // 컴포넌트가 렌더링될 때 게시글 목록을 가져옴
+    fetchPosts();
   }, []);
 
   return (
@@ -41,7 +40,7 @@ const Board: React.FC = () => {
             <p>작성자 ID: {post.author_id}</p>
             <small>작성일: {new Date(post.created_at).toLocaleDateString()}</small>
             <br />
-            <Link to={`/post/${post.id}`} style={{ color: '#007bff', textDecoration: 'underline' }}>게시글 보기</Link> {/* 상세 페이지로 이동 */}
+            <Link to={`/post/${post.id}`} style={{ color: '#007bff', textDecoration: 'underline' }}>게시글 보기</Link>
           </div>
         ))
       ) : (

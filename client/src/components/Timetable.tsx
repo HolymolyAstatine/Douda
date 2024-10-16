@@ -9,8 +9,6 @@ interface TimetableInfo {
     ORD_SC_NM: string; // 계열명
     DDDEP_NM: string; // 학과명
     GRADE: string; // 학년
-    CLRM_NM: string; // 강의실명
-    CLASS_NM: string; // 학급명
     PERIO: string; // 교시
     ITRT_CNTNT: string; // 수업내용
 }
@@ -19,7 +17,6 @@ const Timetable: React.FC = () => {
     const [timetable, setTimetable] = useState<TimetableInfo[]>([]);
     const [error, setError] = useState<string>('');
     const token = localStorage.getItem('token'); // JWT 토큰을 로컬 스토리지에서 가져옴
-    const userId = localStorage.getItem('userId'); // 사용자 ID를 로컬 스토리지에서 가져옴
 
     useEffect(() => {
         const fetchTimetable = async () => {
@@ -45,28 +42,26 @@ const Timetable: React.FC = () => {
     return (
         <div style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
             <h2 style={{ textAlign: 'center', color: '#333' }}>학급 시간표</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
             {timetable.length > 0 ? (
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
                         <tr>
-                            <th style={{ border: '1px solid #ccc', padding: '8px' }}>교시</th>
-                            <th style={{ border: '1px solid #ccc', padding: '8px' }}>수업내용</th>
-                            <th style={{ border: '1px solid #ccc', padding: '8px' }}>강의실</th>
+                            <th style={{ border: '1px solid #ccc', padding: '12px', backgroundColor: '#007bff', color: '#fff' }}>교시</th>
+                            <th style={{ border: '1px solid #ccc', padding: '12px', backgroundColor: '#007bff', color: '#fff' }}>수업내용</th>
                         </tr>
                     </thead>
                     <tbody>
                         {timetable.map((item, index) => (
-                            <tr key={index}>
-                                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{item.PERIO}</td>
-                                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{item.ITRT_CNTNT}</td>
-                                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{item.CLRM_NM}</td>
+                            <tr key={index} style={{ borderBottom: '1px solid #ccc' }}>
+                                <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{item.PERIO}</td>
+                                <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'left' }}>{item.ITRT_CNTNT}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             ) : (
-                <p>시간표 정보가 없습니다.</p>
+                <p style={{ textAlign: 'center' }}>시간표 정보가 없습니다.</p>
             )}
         </div>
     );

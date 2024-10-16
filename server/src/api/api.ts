@@ -123,7 +123,7 @@ router.get('/searchTimeTable',auth,async(req:Request,res:Response)=>{
             res.status(400).json({code:400,message:"E"});
             return;
         }
-        const SHinfo = await fetchSchoolDataAPI(shcode as string);
+        const SHinfo = await fetchSchoolDataAPI(school as string);
         if (SHinfo===null){
             res.status(404).json({code:404,message:"school not found. pls update your school"});
             return;

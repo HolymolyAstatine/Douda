@@ -26,7 +26,7 @@ const PostCreate: React.FC = () => {
       );
 
       alert('게시글 작성 성공!');
-      navigate('/board');
+      navigate('/board'); // 게시글 작성 후 게시판으로 이동
     } catch (error) {
       console.error('게시글 작성 실패:', error);
       alert('게시글 작성 중 오류가 발생했습니다.');

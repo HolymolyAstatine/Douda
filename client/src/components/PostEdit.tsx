@@ -10,7 +10,6 @@ const PostEdit: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 글 수정 시 기존 데이터를 불러오기
     const fetchPost = async () => {
       try {
         const response = await axios.get(`https://localhost:8080/post_data/${postId}`);
@@ -52,13 +51,21 @@ const PostEdit: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-      <h2 style={{ textAlign: 'center' }}>게시글 수정</h2>
+    <div style={{ padding: '30px', backgroundColor: '#f0f4f8', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)' }}>
+      <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}>게시글 수정</h2>
       <EditorComponent 
         initialTitle={initialTitle} 
         initialContent={initialContent} 
         onSubmit={handleSubmit} 
       />
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <button 
+          onClick={() => navigate('/board')} 
+          style={{ padding: '10px 20px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+        >
+          게시판으로 돌아가기
+        </button>
+      </div>
     </div>
   );
 };

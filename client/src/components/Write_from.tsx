@@ -43,11 +43,11 @@ const PostEdit: React.FC = () => {
         }
       );
 
-      alert('게시글 수정 성공!');
+      alert('게시글 작성 성공!');
       navigate('/board');
     } catch (error) {
-      console.error('게시글 수정 실패:', error);
-      alert('게시글 수정 중 오류가 발생했습니다.');
+      console.error('게시글 작성 실패:', error);
+      alert('게시글 작성 중 오류가 발생했습니다.');
     }
   };
 

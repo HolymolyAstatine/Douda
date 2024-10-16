@@ -1,4 +1,4 @@
-//App.tsx
+// App.tsx
 import React, { useState, Dispatch, SetStateAction } from 'react';
 import { Route, Routes, useNavigate, Navigate, Link } from 'react-router-dom'; // Link 추가
 import axios from 'axios';
@@ -16,6 +16,7 @@ import Board from './components/Board';
 import PostDetail from './components/PostDetail';
 import MealSchedule from './components/MealSchedule'; // 급식 스케줄러 컴포넌트 추가
 import PostEdit from './components/PostEdit';
+import Timetable from './components/Timetable'; // 학급 시간표 컴포넌트 추가
 
 // GoogleAuthRedirectProps 인터페이스 정의
 interface GoogleAuthRedirectProps {
@@ -83,6 +84,9 @@ const App = () => {
               <li style={{ margin: '0 10px' }}>
                 <Link to="/meals" style={{ textDecoration: 'none', color: '#007bff' }}>급식표</Link> {/* 급식표 링크 추가 */}
               </li>
+              <li style={{ margin: '0 10px' }}>
+                <Link to="/timetable" style={{ textDecoration: 'none', color: '#007bff' }}>학급 시간표</Link> {/* 학급 시간표 링크 추가 */}
+              </li>
             </>
           )}
         </ul>
@@ -103,6 +107,8 @@ const App = () => {
           <Route path='/board' element={<Board />} /> {/* 게시판 */}
           <Route path="/post/:id" element={<PostDetail />} /> {/* 게시글 상세 */}
           <Route path='/post/*' element={<Navigate to="/board" />} />
+          <Route path="/meals" element={<MealSchedule/>} /> {/* 급식표 라우터 추가 */}
+          <Route path="/timetable" element={<Timetable />} /> {/* 학급 시간표 라우터 추가 */}
           <Route path="/auth/google/signup/redirect" element={<GoogleAuthRedirect setIsLoggedIn={setIsLoggedIn} />} /> {/*구글 로그인 리다이엑션 처리 라우터 */}
           <Route path="/auth/google/login/redirect" element={<GoogleAuthRedirect setIsLoggedIn={setIsLoggedIn} />} />
           <Route path='/*' element={<Notfound />} /> {/** 404 not found처리 라우터 */}

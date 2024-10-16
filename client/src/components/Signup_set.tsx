@@ -84,7 +84,15 @@ const SignupSet = () => {
         try {
             const response = await axios.post(
                 'https://localhost:8080/user_data/signup_setting',
-                { Gid, email, nickname, school: selectedSchool?.SCHUL_NM, grade: grade || undefined, classroom: classroom || undefined, SHcode: selectedSchool?.SD_SCHUL_CODE },
+                {
+                    Gid,
+                    email,
+                    nickname,
+                    school: selectedSchool?.SCHUL_NM, // 선택한 학교 이름
+                    grade: grade || undefined,
+                    classroom: classroom || undefined,
+                    SHcode: selectedSchool?.SD_SCHUL_CODE, // 선택한 학교 코드
+                },
             );
 
             if (response.status === 200) {

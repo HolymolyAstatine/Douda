@@ -122,6 +122,9 @@ const App = () => {
           & 
           <a href="https://github.com/HolymolyAstatine" target="_blank" rel="noopener noreferrer" style={{ margin: '0 5px', textDecoration: 'none', color: '#007bff' }}>Jangho Yoon</a>
         </p>
+        <p style={{ margin: 0 }}>
+          <a href='https://github.com/HolymolyAstatine/Douda' target="_blank" rel="noopener noreferrer" style={{ margin: '0 5px', textDecoration: 'none', color: '#007bff' }}>GitHub</a>
+        </p>
       </footer>
     </div>
   );

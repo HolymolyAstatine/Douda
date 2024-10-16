@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
-import { Pool } from "pg";
+import { Pool, QueryResult } from "pg";
+import {getUserNikByID} from "../users_process/db"
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ interface postsdata{
     like_count:number;
     dislike_count:number;
     comment_count:number;
+    nickname:string;
 }
 
 interface Comment {
@@ -26,6 +28,7 @@ interface Comment {
     content: string;
     created_at: Date;
     updated_at: Date;
+    nickname:string;
   }
 
 class PostCommentDBManager {
@@ -199,9 +202,16 @@ class PostCommentDBManager {
             `;
 
           const values = [offset, limit];  // Use offset and limit for pagination
+          const res:postsdata[]=[]
       
-          const { rows } = await this.client.query(query, values);
-          return rows;
+          const { rows }:{rows:postsdata[]} = await this.client.query(query, values);
+          for (const row of rows){
+            const nik=await getUserNikByID(row.author_id);
+            row.nickname=nik || '탈퇴한 사용자';
+            console.log(nik);
+            res.push(row);
+          }
+          return res;
         } catch (error) {
           console.error('Error fetching posts:', error);
           throw error;
@@ -213,12 +223,18 @@ class PostCommentDBManager {
     public async getPostbyid(id:number):Promise<postsdata[]|null>{
         this.client = await this.pool.connect();
         try{
-            const res = await this.client.query(
+            const {rows} = await this.client.query(
                 'SELECT * FROM posts WHERE id = $1 AND is_deleted = false',
                 [id]
               );
-          
-              return res.rows.length > 0 ? res.rows[0] : null;
+              const res=[]
+              for (const row of rows){
+                const nik=await getUserNikByID(row.author_id);
+                row.nickname=nik || '탈퇴한 사용자';
+                console.log(nik);
+                res.push(row);
+              }
+              return res.length > 0 ? res[0] : null;
         }catch(error){
             throw error;
         }finally{
@@ -229,12 +245,17 @@ class PostCommentDBManager {
     public async getCommentsByPostId(postId: number): Promise<Comment[]> {
         const client = await this.pool.connect(); // 로컬 변수를 사용하여 클라이언트를 관리합니다.
         try {
-            const res = await client.query(
+            const {rows} = await client.query<Comment>(
                 'SELECT * FROM comments WHERE post_id = $1',
                 [postId]
             );
-    
-            return res.rows; // 댓글 목록을 반환
+            const res=[]
+            for (const row of rows){
+                const nik=await getUserNikByID(row.author_id);
+                row.nickname=nik || '탈퇴한 사용자';
+                res.push(row);
+            }
+            return res; // 댓글 목록을 반환
         } catch (error) {
             console.error('Error querying comments:', error);
             throw error; // 에러를 다시 던집니다.

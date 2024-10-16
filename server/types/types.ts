@@ -153,4 +153,5 @@ interface postsdata{
   like_count:number;
   dislike_count:number;
   comment_count:number;
+  nickname:string;
 }

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { MealInfo } from "../../../server/types/types";
 
-
 const MealSchedule: React.FC = () => {
     const [meals, setMeals] = useState<MealInfo[][]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -27,9 +26,20 @@ const MealSchedule: React.FC = () => {
         }
     };
 
+    const filterTodayMeals = (meals: MealInfo[][]) => {
+        const today = new Date();
+        const todayString = today.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD 포맷으로 변환
+
+        return meals.filter(meal => {
+            return meal[0].MLSV_YMD.replace(/-/g, '') === todayString; // 당일 급식만 필터링
+        });
+    };
+
     useEffect(() => {
         fetchMeals();
     }, []);
+
+    const filteredMeals = filterTodayMeals(meals);
 
     return (
         <div style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
@@ -38,9 +48,9 @@ const MealSchedule: React.FC = () => {
                 <p style={{ textAlign: 'center' }}>로딩 중...</p> // 로딩 중일 때 표시
             ) : error ? (
                 <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>
-            ) : meals.length > 0 ? (
+            ) : filteredMeals.length > 0 ? (
                 <ul style={{ listStyleType: 'none', padding: 0 }}>
-                    {meals.map((meal, index) => (
+                    {filteredMeals.map((meal, index) => (
                         <li key={index} style={{ margin: '10px 0', padding: '15px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
                             <div style={{ marginBottom: '15px', borderBottom: '2px solid #007bff', paddingBottom: '10px' }}>
                                 <h4 style={{ margin: '0 0 10px', color: '#007bff' }}>{meal[0].MMEAL_SC_NM} ({meal[0].MLSV_YMD})</h4>

@@ -59,9 +59,10 @@ router.get('/searchSchool',async (req:Request,res:Response)=>{
 router.get('/searchMeal',auth,async(req:Request,res:Response)=>{
     const Gid: string | undefined = req.decoded?.id;
     const email:string|undefined =req.decoded?.email;
-    const {month} = req.query;
+    const {month,year} = req.query;
+    console.log(year)
 
-    if(!Gid || !email || !month){
+    if(!Gid || !email || !month || !year){
         res.status(400).json({code:400,message:"E"});
         return;
     }
@@ -82,7 +83,7 @@ router.get('/searchMeal',auth,async(req:Request,res:Response)=>{
         else if(SHinfo.length>0){
             for(const row of SHinfo){
                 if (row.SD_SCHUL_CODE===SHcode){
-                    const rdata = await fetchMealDataAPI(SHcode,row.ATPT_OFCDC_SC_CODE,month as string);
+                    const rdata = await fetchMealDataAPI(SHcode,row.ATPT_OFCDC_SC_CODE,month as string,year as string);
                     res.status(200).json({code:200,message:"success",data:rdata});
                     return;
                 }

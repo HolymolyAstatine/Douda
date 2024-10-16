@@ -56,12 +56,13 @@ export const fetchSchoolDataAPI = async (schoolName: string): Promise<SchoolInfo
  * @returns {Promise<Array<MealInfo[] | null>>} 결과있으면 리스트로 반환, 없으면 빈리스트
  * @throws {Error} api호출중 생기는 에러 던짐
  */
-export const fetchMealDataAPI = async (schoolCode: string, atptCode: string, month: string): Promise<Array<MealInfo[] | null>> => {
+export const fetchMealDataAPI = async (schoolCode: string, atptCode: string, month: string,year:string): Promise<Array<MealInfo[] | null>> => {
   try {
     const result: Array<MealInfo[] | null> = [];
 
     for (let day = 1; day <= 30; day++) {
-      const date = `${month}${day.toString().padStart(2, '0')}`;
+      const date = `${year}${month}${day.toString().padStart(2, '0')}`;
+      console.log(date)
 
       const response = await axios.get<MealAPIResponse>(MEAL_API_URL, {
         params: {

@@ -14,6 +14,9 @@ yarn-error.log*
 /build
 /client/build
 /server/build
+/server/logs
+/server/temp
+/server/src/client
 
 .env
 .env.local
@@ -23,3 +26,7 @@ yarn-error.log*
 
 .DB_Store
 Thumbs.db
+/server/src/db/userdatadb.ts
+/server/src/db/db_temp.ts
+/server/keys
+/client/keys

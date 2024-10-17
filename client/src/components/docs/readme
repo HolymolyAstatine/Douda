@@ -1,0 +1,17 @@
+##Borad.tsx
+
+게시판 목록 게시글 작성이동 제목 이동
+
+
+#EditorComponent
+
+게시판 작성및 수정 콜백 전달
+
+#PostCreate
+
+게시글 작성 
+
+#PostDetail
+
+게시글 상세, 댓글 수정 및 작성
+

@@ -1,0 +1,9 @@
+/*회원가입 css */
+.error-icon {
+    width: 24px; /* Adjust the size as needed */
+    height: auto; /* Maintain aspect ratio */
+    margin-left: 5px; /* Space between the input and the error icon */
+  }
+.required{
+    color: #e81c1c;
+}  

@@ -20,7 +20,7 @@ const Board: React.FC<BoardProps> = ({ isLoggedIn }) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('https://localhost:443/post_data/posts');
+        const response = await axios.get('https://douda.kro.kr:443/post_data/posts');
         // 게시글을 역순으로 배열
         setPosts(response.data.data.reverse());
       } catch (error) {

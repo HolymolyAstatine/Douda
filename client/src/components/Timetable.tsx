@@ -23,7 +23,7 @@ const Timetable: React.FC = () => {
         const fetchTimetable = async () => {
             try {
                 setLoading(true); // Set loading to true before starting the fetch
-                const response = await axios.get('https://localhost:443/api/searchTimeTable', {
+                const response = await axios.get('https://douda.kro.kr:443/api/searchTimeTable', {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },

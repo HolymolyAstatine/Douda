@@ -45,7 +45,6 @@ router.put('/profile_update', auth, async (req: Request, res: Response) => {
 
         const ch = await getUserByGid(Gid as string);
         if (ch&& ch.length>0 && ch[0].nickname===nickname){
-            
         }
         else{
             const exists = await check_nickname_exists(nickname);

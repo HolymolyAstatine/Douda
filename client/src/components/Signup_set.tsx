@@ -28,7 +28,7 @@ const SignupSet = () => {
     const handleSchoolSearch = async (query: string) => {
         if (query) {
             try {
-                const response = await axios.get(`https://localhost:443/api/searchSchool?SchoolName=${query}`);
+                const response = await axios.get(`https://douda.kro.kr:443/api/searchSchool?SchoolName=${query}`);
                 setSchoolList(response.data.data); // 학교 목록 업데이트
             } catch (error) {
                 console.error('학교 검색 중 오류 발생:', error);
@@ -83,7 +83,7 @@ const SignupSet = () => {
 
         try {
             const response = await axios.post(
-                'https://localhost:443/user_data/signup_setting',
+                'https://douda.kro.kr:443/user_data/signup_setting',
                 {
                     Gid,
                     email,

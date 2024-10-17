@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL of the backend server
-const API_BASE_URL = 'https://localhost:8080';
+const API_BASE_URL = 'https://douda.kro.kr:443';
 
 export const loginWithGoogle = () => {
   window.location.href = `${API_BASE_URL}/login-server`;

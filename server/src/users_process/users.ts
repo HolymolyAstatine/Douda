@@ -1,6 +1,6 @@
 //server/src/users_pro/users.ts
 import express, { Request, Response } from 'express';
-import { insert_user,update_user_data,check_nickname_exists,delete_user,getUserIdByGid } from "./db";
+import { insert_user,update_user_data,check_nickname_exists,delete_user,getUserIdByGid,getUserByGid } from "./db";
 import { auth } from "../authMiddleware";
 import logger from '../logger';
 
@@ -42,11 +42,20 @@ router.put('/profile_update', auth, async (req: Request, res: Response) => {
     }
 
     try {
-        const exists = await check_nickname_exists(nickname);
+
+        const ch = await getUserByGid(Gid as string);
+        if (ch&& ch.length>0 && ch[0].nickname===nickname){
+            
+        }
+        else{
+            const exists = await check_nickname_exists(nickname);
         if (exists) {
             res.status(400).json({ code: 400, message: "Nickname already taken." });
             return;
         }
+        }
+
+        
 
         await update_user_data(Gid as string, nickname, school, grade, classroom,SHcode);
         logger.info(`${Gid} updete userinfo`);

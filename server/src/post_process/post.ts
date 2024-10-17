@@ -79,7 +79,7 @@ router.post('/image_upload', auth, upload.single('image'), async (req: Request, 
 
         blobStream.on('finish', async () => {
             try {
-                const publicUrl = `https://localhost:8080/post_data/files/${fileName}`; // 리버스 프록시 사용 URL
+                const publicUrl = `https://douda.kro.kr:443/post_data/files/${fileName}`; // 리버스 프록시 사용 URL
                 logger.info(`Image uploaded successfully url: ${publicUrl}`);
                 res.status(200).send({ code:200,message: 'Image uploaded successfully', url: publicUrl });
             } catch (err) {
@@ -123,7 +123,7 @@ router.post('/file_upload', auth, upload.single('file'), async (req: Request, re
         blobStream.on('finish', async () => {
             try {
                 // 사용자 정의 URL 생성
-                const publicUrl = `https://localhost:8080/post_data/files/${fileName}`; // 리버스 프록시를 사용할 URL
+                const publicUrl = `https://douda.kro.kr:443/post_data/files/${fileName}`; // 리버스 프록시를 사용할 URL
                 logger.info(`Image uploaded successfully url: ${publicUrl}`)
                 res.status(200).send({ message: 'File uploaded successfully', url: publicUrl });
             } catch (err) {

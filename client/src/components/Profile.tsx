@@ -25,7 +25,7 @@ const Profile: React.FC<ProfileProps> = ({ setIsLoggedIn }) => {
       throw new Error('No token found');
     }
     return axios
-      .get('https://localhost:8080/profile-server', {
+      .get('https://localhost:443/profile-server', {
         headers: { Authorization: `Bearer ${token}` }, // Authorization 헤더 설정
         withCredentials: true,
       })
@@ -71,7 +71,7 @@ const Profile: React.FC<ProfileProps> = ({ setIsLoggedIn }) => {
     }
 
     axios
-      .delete('https://localhost:8080/user_data/delete_account', {
+      .delete('https://localhost:443/user_data/delete_account', {
         headers: { Authorization: `Bearer ${token}` }, // Authorization 헤더 설정
         withCredentials: true,
       })

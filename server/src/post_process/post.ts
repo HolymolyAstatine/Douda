@@ -222,7 +222,6 @@ router.get('/get-posts/:id',async (req:Request,res:Response)=>{
     }
     try{
         const post_data=await pcdbm.getPostbyid(id);
-        console.log(post_data);
         if(post_data){
             logger.info(`${id} post get`);
             res.status(200).json({code:200,message:"success!",data:post_data});

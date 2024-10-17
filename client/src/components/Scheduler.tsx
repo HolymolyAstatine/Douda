@@ -21,7 +21,7 @@ const Scheduler: React.FC = () => {
     useEffect(() => {
         const fetchSchedules = async () => {
             try {
-                const response = await axios.get('https://localhost:8080/api/getSchedules', {
+                const response = await axios.get('https://localhost:443/api/getSchedules', {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -43,7 +43,7 @@ const Scheduler: React.FC = () => {
         }
 
         try {
-            const response = await axios.post('https://localhost:8080/api/addSchedule', {
+            const response = await axios.post('https://localhost:443/api/addSchedule', {
                 title,
                 description,
                 date,

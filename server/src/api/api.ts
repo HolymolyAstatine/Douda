@@ -66,10 +66,9 @@ router.get('/searchMeal',auth,async(req:Request,res:Response)=>{
     const Gid: string | undefined = req.decoded?.id;
     const email:string|undefined =req.decoded?.email;
     const {month,year} = req.query;
-    console.log(year)
 
     if(!Gid || !email || !month || !year){
-        res.status(400).json({code:400,message:"E"});
+        res.status(400).json({code:400,message:"no month or year"});
         return;
     }
 
@@ -78,7 +77,7 @@ router.get('/searchMeal',auth,async(req:Request,res:Response)=>{
         const SHcode= user_datal[0].shcode;
         const SHname:string|undefined|null = user_datal[0].school;
         if(!SHcode){
-            res.status(400).json({code:400,message:"E"});
+            res.status(400).json({code:400,message:"school not found. pls update your school"});
             return;
         }
         const SHinfo = await fetchSchoolDataAPI(SHname as string);

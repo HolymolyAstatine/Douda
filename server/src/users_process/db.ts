@@ -143,12 +143,10 @@ export async function getUserIdByGid(Gid: string): Promise<number | null> {
         if (res.rows.length > 0) {
             return res.rows[0].id;  // id 값 반환
         } else {
-            console.log('User not found.');
             return null;
         }
     } catch (error) {
-        console.error('Error fetching user id:', error);
-        return null;
+        throw error;
     }
 };
 
@@ -162,7 +160,6 @@ export async function getUserNikByID(ID:number) {
         if (res.rows.length > 0) {
             return res.rows[0].nickname;  // id 값 반환
         } else {
-            console.log('User not found.');
             return null;
         }
 

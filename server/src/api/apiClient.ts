@@ -62,7 +62,6 @@ export const fetchMealDataAPI = async (schoolCode: string, atptCode: string, mon
 
     for (let day = 1; day <= 30; day++) {
       const date = `${year}${month}${day.toString().padStart(2, '0')}`;
-      console.log(date)
 
       const response = await axios.get<MealAPIResponse>(MEAL_API_URL, {
         params: {

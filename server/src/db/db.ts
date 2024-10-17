@@ -111,8 +111,8 @@ export const finduser = async (idid:string,email:string):Promise<boolean>=>{
       `, [email]);
       return !!result.rows.length;
   }catch(err){
-      console.log(err);
-      return false;
+      throw err;
+
   }finally{
       client.release();
   }

@@ -20,7 +20,7 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ profileData, onClose }) => {
   const handleSave = async () => {
     const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
     try {
-      const response = await axios.put('https://localhost:8080/user_data/profile_update', {
+      const response = await axios.put('https://localhost:443/user_data/profile_update', {
         nickname,
         school,
         grade,

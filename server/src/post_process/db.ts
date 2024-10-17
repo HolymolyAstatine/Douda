@@ -54,12 +54,10 @@ class PostCommentDBManager {
             if (res.rows.length > 0) {
                 return res.rows[0].id;  // id 값 반환
             } else {
-                console.log('User not found.');
                 return null;
             }
         }catch (error) {
-            console.error('Error fetching user id:', error);
-            return null;
+            throw error;
         }
     };
 
@@ -74,7 +72,6 @@ class PostCommentDBManager {
                 RETURNING *; 
             `;
             const res = await this.client.query(query, [title, content, authorId, categoryId, tags]);
-            console.log('Inserted Post:', res.rows[0]);
         } catch (error) {
             throw error;
         } finally {
@@ -114,7 +111,6 @@ class PostCommentDBManager {
             `;
 
             await this.client.query(query, values);
-            console.log(`Post with ID ${postId} updated successfully.`);
             return true;
         } catch (error) {
             throw error;
@@ -132,7 +128,6 @@ class PostCommentDBManager {
                 WHERE id = $1;
             `;
             await this.client.query(query, [postId]);
-            console.log(`Post with ID ${postId} deleted successfully.`);
         } catch (error) {
             throw error;
         } finally {
@@ -149,7 +144,6 @@ class PostCommentDBManager {
                 RETURNING *;  
             `;
             const res = await this.client.query(query, [postId, authorId, content]);
-            console.log('Inserted Comment:', res.rows[0]);
         } catch (error) {
             throw error;
         } finally {
@@ -166,7 +160,6 @@ class PostCommentDBManager {
                 WHERE id = $2;
             `;
             await this.client.query(query, [content, commentId]);
-            console.log(`Comment with ID ${commentId} updated successfully.`);
         } catch (error) {
             throw error;
         } finally {
@@ -182,7 +175,6 @@ class PostCommentDBManager {
                 WHERE id = $1;
             `;
             await this.client.query(query, [commentId]);
-            console.log(`Comment with ID ${commentId} deleted successfully.`);
         } catch (error) {
             throw error;
         } finally {
@@ -209,12 +201,10 @@ class PostCommentDBManager {
           for (const row of rows){
             const nik=await getUserNikByID(row.author_id);
             row.nickname=nik || '탈퇴한 사용자';
-            console.log(nik);
             res.push(row);
           }
           return res;
         } catch (error) {
-          console.error('Error fetching posts:', error);
           throw error;
         }finally{
             this.client.release();
@@ -232,7 +222,6 @@ class PostCommentDBManager {
               for (const row of rows){
                 const nik=await getUserNikByID(row.author_id);
                 row.nickname=nik || '탈퇴한 사용자';
-                console.log(nik);
                 res.push(row);
               }
               return res.length > 0 ? res[0] : null;
@@ -258,7 +247,6 @@ class PostCommentDBManager {
             }
             return res; // 댓글 목록을 반환
         } catch (error) {
-            console.error('Error querying comments:', error);
             throw error; // 에러를 다시 던집니다.
         } finally {
             client.release(); // 항상 클라이언트를 반환합니다.

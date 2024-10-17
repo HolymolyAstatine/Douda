@@ -48,7 +48,6 @@ const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
 const logDir = path.join(__dirname, '../logs');
 
 const app = express();
-// app.use(express.static(path.join(__dirname, 'client/build')));
 
 
 app.use(express.json());
@@ -84,10 +83,6 @@ app.use('/post_data', PostRouter);
 app.use('/api',APIRouter);
 
 
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-// });
-
 
 app.get('/login-server', (req: Request, res: Response) => {
   let url = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -107,7 +102,7 @@ app.get('/signup-server', (req: Request, res: Response) => {
   res.redirect(url);
 });
 
-app.get('/auth/google/login/redirect', async (req: Request, res: Response) => {
+app.get('/auth/google/login/redirect-server', async (req: Request, res: Response) => {
   const { code } = req.query;
   if (!code || typeof code !== 'string') {
     res.status(400).json({ code:400,error: 'Authorization code is missing' });
@@ -139,7 +134,6 @@ app.get('/auth/google/login/redirect', async (req: Request, res: Response) => {
       privateRSAKey,
       { algorithm: 'RS512', expiresIn: "12h", issuer: "your_issuer" }
     );
-    console.log('su');
     res.status(200).json({ code: 200, message: "Token created", token });
   } catch (err:any) {
     logger.error(err);
@@ -147,7 +141,7 @@ app.get('/auth/google/login/redirect', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/auth/google/signup/redirect', async (req: Request, res: Response) => {
+app.get('/auth/google/signup/redirect-server', async (req: Request, res: Response) => {
   const { code } = req.query;
   if (!code || typeof code !== 'string') {
     res.status(404).json({ error: 'Authorization code is missing' });
@@ -209,7 +203,13 @@ app.get('/profile-server', auth, async(req: Request, res: Response) => {
   }
 });
 
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+const PORT = 443;
 const httpsServer = https.createServer(credentials, app);
-httpsServer.listen(8080, () => {
-  console.log(`HTTPS Server running on port 8080`);
+httpsServer.listen(PORT, () => {
+  console.log(`HTTPS Server running on port ${PORT}`);
 });

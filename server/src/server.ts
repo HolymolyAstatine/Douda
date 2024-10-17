@@ -32,7 +32,7 @@ const credentials = { key: privateKey, cert: certificate };
 
 //cors config
 const corsOptions = {
-  origin: ['https://localhost:443','https://localhost'], // 허용할 도메인
+  origin: ['https://douda.kro.kr:443:443','https://douda.kro.kr'], // 허용할 도메인
   methods: ['GET', 'POST','PUT','DELETE'], // 허용할 HTTP 메서드
   credentials: true, // 쿠키 등 credentials 사용 허용
 };
@@ -40,8 +40,8 @@ const corsOptions = {
 //google oauth
 const GOOGLE_CLIENT_ID = process.env.ClientID || '';
 const GOOGLE_CLIENT_SECRET = process.env.Clientsecret || '';
-const GOOGLE_LOGIN_REDIRECT_URI = 'https://localhost:443/auth/google/login/redirect';
-const GOOGLE_SIGNUP_REDIRECT_URI = 'https://localhost:443/auth/google/signup/redirect';
+const GOOGLE_LOGIN_REDIRECT_URI = 'https://douda.kro.kr:443/auth/google/login/redirect';
+const GOOGLE_SIGNUP_REDIRECT_URI = 'https://douda.kro.kr:443/auth/google/signup/redirect';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
 

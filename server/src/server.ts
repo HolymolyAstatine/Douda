@@ -21,18 +21,19 @@ dotenv.config();
 // SSL 인증서 파일 경로 설정
 const privateKey = fs.readFileSync(path.join(__dirname, process.env.privateKey as string), 'utf8');
 const certificate = fs.readFileSync(path.join(__dirname, process.env.certificate as string), 'utf8');
+const ca = fs.readFileSync(path.join(__dirname,process.env.ca as string),'utf-8');
 
 // Load RSA keys for RS512
 const privateRSAKey = fs.readFileSync(path.join(__dirname, process.env.privateRSAKey as string), 'utf8');
 const publicRSAKey = fs.readFileSync(path.join(__dirname, process.env.publicRSAKey as string), 'utf8');
 
-const credentials = { key: privateKey, cert: certificate };
+const credentials = { key: privateKey, cert: certificate,ca:ca };
 
 
 
 //cors config
 const corsOptions = {
-  origin: ['https://douda.kro.kr:443:443','https://douda.kro.kr'], // 허용할 도메인
+  origin: ['https://douda.kro.kr:443','https://douda.kro.kr'], // 허용할 도메인
   methods: ['GET', 'POST','PUT','DELETE'], // 허용할 HTTP 메서드
   credentials: true, // 쿠키 등 credentials 사용 허용
 };

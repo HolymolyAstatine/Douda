@@ -12,7 +12,7 @@ const PostEdit: React.FC = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`https://localhost:8080/post_data/${postId}`);
+        const response = await axios.get(`https://localhost:8080/get-post_data/${postId}`);
         setInitialTitle(response.data.title);
         setInitialContent(response.data.content);
       } catch (error) {

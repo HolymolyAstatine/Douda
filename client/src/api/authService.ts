@@ -4,11 +4,11 @@ import axios from 'axios';
 const API_BASE_URL = 'https://localhost:8080';
 
 export const loginWithGoogle = () => {
-  window.location.href = `${API_BASE_URL}/login`;
+  window.location.href = `${API_BASE_URL}/login-server`;
 }; //로그인
 
 export const signupWithGoogle = () => {
-  window.location.href = `${API_BASE_URL}/signup`;
+  window.location.href = `${API_BASE_URL}/signup-server`;
 }; //회원가입
 
 export const fetchProfile = async () => {
@@ -17,7 +17,7 @@ export const fetchProfile = async () => {
     throw new Error('No token found');
   }
 
-  const response = await axios.get(`${API_BASE_URL}/profile`, {
+  const response = await axios.get(`${API_BASE_URL}/profile-server`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

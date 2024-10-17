@@ -28,6 +28,8 @@ const publicRSAKey = fs.readFileSync(path.join(__dirname, process.env.publicRSAK
 
 const credentials = { key: privateKey, cert: certificate };
 
+
+
 //cors config
 const corsOptions = {
   origin: ['https://localhost:443','https://localhost'], // 허용할 도메인
@@ -46,7 +48,9 @@ const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
 const logDir = path.join(__dirname, '../logs');
 
 const app = express();
-const port: number = parseInt(process.env.PORT || '3000', 10);
+// app.use(express.static(path.join(__dirname, 'client/build')));
+
+
 app.use(express.json());
 app.use(cors(corsOptions));
 interface UserInputData {
@@ -99,9 +103,9 @@ app.use('/post_data', PostRouter);
 app.use('/api',APIRouter);
 
 
-app.get('/', (req: Request, res: Response) => {
-  res.status(404).send('?')
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+// });
 
 
 app.get('/login', (req: Request, res: Response) => {

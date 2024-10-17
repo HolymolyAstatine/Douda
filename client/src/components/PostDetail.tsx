@@ -42,7 +42,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`https://localhost:8080/post_data/posts/${id}`);
+        const response = await axios.get(`https://localhost:8080/post_data/get-posts/${id}`);
         const fetchedPost = response.data.data;
         setPost(fetchedPost);
         setLikeCount(fetchedPost.like_count);
@@ -55,7 +55,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
     
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`https://localhost:8080/post_data/posts/${id}/comments`);
+        const response = await axios.get(`https://localhost:8080/post_data/get-posts/${id}/comments`);
         setComments(response.data.data);
       } catch (error) {
         console.error('댓글 불러오기 실패:', error);

@@ -16,6 +16,7 @@ yarn-error.log*
 /server/build
 /server/logs
 /server/temp
+/server/src/client
 
 .env
 .env.local

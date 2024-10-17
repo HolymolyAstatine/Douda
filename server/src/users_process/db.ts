@@ -175,7 +175,7 @@ export async function getUserNikByID(ID:number) {
     
 }
 
-async function getUserByGid(Gid: string): Promise<user_data[] | null> {
+export async function getUserByGid(Gid: string): Promise<user_data[] | null> {
     try {
         const query = `
             SELECT * FROM users WHERE Gid = $1;

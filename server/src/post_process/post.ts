@@ -209,7 +209,7 @@ router.get('/posts',async(req:Request,res:Response)=>{
     }
 });
 
-router.get('/posts/:id',async (req:Request,res:Response)=>{
+router.get('/get-posts/:id',async (req:Request,res:Response)=>{
     if (!/^\d+$/.test(req.params.id as string)){
         res.status(400).json({code:400,message:"invail url"});
         return;
@@ -238,7 +238,7 @@ router.get('/posts/:id',async (req:Request,res:Response)=>{
     }
 });
 
-router.get('/posts/:id/comments',async (req:Request,res:Response)=>{
+router.get('/get-posts/:id/comments',async (req:Request,res:Response)=>{
     if (!/^\d+$/.test(req.params.id as string)){
         res.status(400).json({code:400,message:"invail url"});
         return;

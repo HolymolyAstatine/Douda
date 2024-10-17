@@ -1,5 +1,5 @@
 import express, { Request, Response,NextFunction } from 'express';
-import { SchoolInfo,MealInfo,GoogleTokenResponse,GoogleUserInfo } from '../types/types';
+import { GoogleTokenResponse,GoogleUserInfo } from '../types/types';
 import winston from 'winston';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -53,25 +53,6 @@ const app = express();
 
 app.use(express.json());
 app.use(cors(corsOptions));
-interface UserInputData {
-  SchoolName: string;
-}
-
-interface UserInputData2{
-  schoolCode:string;
-  atptCode:string;
-  month:string;
-}
-
-interface ApiResponseSchoolData {
-  data: SchoolInfo[]|null;
-  success: boolean;
-}
-
-interface ApiResponseMealData{
-  data:Array<MealInfo[]|null>;
-  success:boolean;
-}
 
 const logger = winston.createLogger({
   level: 'info',
@@ -108,7 +89,7 @@ app.use('/api',APIRouter);
 // });
 
 
-app.get('/login', (req: Request, res: Response) => {
+app.get('/login-server', (req: Request, res: Response) => {
   let url = 'https://accounts.google.com/o/oauth2/v2/auth';
   url += `?client_id=${GOOGLE_CLIENT_ID}`;
   url += `&redirect_uri=${GOOGLE_LOGIN_REDIRECT_URI}`;
@@ -117,7 +98,7 @@ app.get('/login', (req: Request, res: Response) => {
   res.redirect(url);
 });
 
-app.get('/signup', (req: Request, res: Response) => {
+app.get('/signup-server', (req: Request, res: Response) => {
   let url = 'https://accounts.google.com/o/oauth2/v2/auth';
   url += `?client_id=${GOOGLE_CLIENT_ID}`;
   url += `&redirect_uri=${GOOGLE_SIGNUP_REDIRECT_URI}`;
@@ -156,12 +137,12 @@ app.get('/auth/google/login/redirect', async (req: Request, res: Response) => {
     const token = jwt.sign(
       { id, email },
       privateRSAKey,
-      { algorithm: 'RS512', expiresIn: "6h", issuer: "your_issuer" }
+      { algorithm: 'RS512', expiresIn: "12h", issuer: "your_issuer" }
     );
     console.log('su');
     res.status(200).json({ code: 200, message: "Token created", token });
   } catch (err:any) {
-    console.error(err.name);
+    logger.error(err);
     res.status(500).json({ code: 500,message:"server error" });
   }
 });
@@ -199,12 +180,12 @@ app.get('/auth/google/signup/redirect', async (req: Request, res: Response) => {
       res.status(200).json({ code: 200, message: "ok", id, email });
     }
   } catch (err:any) {
-    console.error(err.name);
+    logger.error(err);
     res.status(500).json({ code: 'server error' });
   }
 });
 
-app.get('/profile', auth, async(req: Request, res: Response) => {
+app.get('/profile-server', auth, async(req: Request, res: Response) => {
   const id:string|undefined = req.decoded?.id;
   const email:string|undefined = req.decoded?.email;
 
@@ -220,11 +201,10 @@ app.get('/profile', auth, async(req: Request, res: Response) => {
       return;
     }
   else{
-      console.log(id,email)
       res.status(500).json({code:500,message:"why?"});
     }
   }catch(error){
-    console.log(error);
+    logger.error(error);
     res.status(500).json({code:500,message:"server error"});
   }
 });

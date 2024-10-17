@@ -63,10 +63,14 @@ export const find_user_data = async (email:string):Promise<user_data[]>=>{
 
 export const update_user_data = async (Gid:string,nickname:string,school?:string|null,grade?:number|null,classroom?:number|null,SHcode?:string|null)=>{
     const client = await pool.connect();
-    school = school!==undefined ? school : null;
-    grade = grade!==undefined ? grade : null;
-    classroom = classroom!==undefined ? classroom : null;
+    school = school || null;
+    grade = grade || null;
+    classroom = classroom ||null;
     SHcode = SHcode||null;
+    const ch = await getUserByGid(Gid);
+    if (ch!==null && ch.length>0 && school && ch[0].school===school){
+            SHcode=ch[0].shcode;
+    }
     try{
         client.query(`
             UPDATE users SET nickname = $1, school = $2, grade = $3, classroom = $4, deleted_at = $5, shcode=$7
@@ -170,3 +174,20 @@ export async function getUserNikByID(ID:number) {
     }
     
 }
+
+async function getUserByGid(Gid: string): Promise<user_data[] | null> {
+    try {
+        const query = `
+            SELECT * FROM users WHERE Gid = $1;
+        `;
+        const res = await pool.query(query, [Gid]);
+
+        if (res.rows.length > 0) {
+            return res.rows;  // id 값 반환
+        } else {
+            return null;
+        }
+    } catch (error) {
+        throw error;
+    }
+};

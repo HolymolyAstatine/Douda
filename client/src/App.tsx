@@ -144,8 +144,8 @@ const GoogleAuthRedirect: React.FC<GoogleAuthRedirectProps> = ({ setIsLoggedIn }
     [queryKey, code],
     () => {
       const url = isSignup
-        ? `https://localhost:443/auth/google/signup/redirect-server?code=${code}`
-        : `https://localhost:443/auth/google/login/redirect-server?code=${code}`;
+        ? `https://localhost:8080/auth/google/signup/redirect-server?code=${code}`
+        : `https://localhost:8080/auth/google/login/redirect-server?code=${code}`;
       return axios.get(url);
     },
     {

@@ -203,12 +203,12 @@ app.get('/profile-server', auth, async(req: Request, res: Response) => {
   }
 });
 
-app.use(express.static(path.join(__dirname, 'client/build')));
+// app.use(express.static(path.join(__dirname, 'client/build')));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});
-const PORT = 443;
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+// });
+const PORT = 8080;
 const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(PORT, () => {
   console.log(`HTTPS Server running on port ${PORT}`);

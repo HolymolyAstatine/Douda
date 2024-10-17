@@ -67,49 +67,41 @@ const EditorComponent: React.FC<EditorProps> = ({ initialTitle = '', initialCont
 
   const handleFileUpload = async () => {
     if (!fileData) {
-      alert('파일을 선택해주세요.');
-      return;
+        alert('파일을 선택해주세요.');
+        return;
     }
 
     const fileUrl = await uploadFile(fileData);
 
     if (fileUrl && editorRef.current) {
-      const content = editorRef.current.innerHTML.trim();
-      if (!window.getSelection()?.rangeCount || content === '' || content === '<br>') {
-        editorRef.current.innerHTML = ''; // 본문이 비었으면 기본 텍스트 제거
+        const content = editorRef.current.innerHTML.trim();
+        const fileSize = (fileData.size / 1024).toFixed(2); // 파일 크기 (KB)
 
-        if (fileData.type.startsWith('image/')) {
-          editorRef.current.innerHTML = `<img src="${fileUrl}" alt="Uploaded Image" style="max-width: 100%;" />`;
+        // 파일 링크와 다운로드 버튼 생성
+        const fileLink = `<div style="display: flex; align-items: center; margin: 10px 0;">
+            <p style="margin: 0;">${fileData.name} (${(fileData.size / (1024 * 1024)).toFixed(2)}MB)</p>
+            <button onclick="window.open('${fileUrl}')" style="margin-left: 10px; padding: 5px 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
+                다운로드
+            </button>
+        </div>`;
+
+        if (!window.getSelection()?.rangeCount || content === '' || content === '<br>') {
+            editorRef.current.innerHTML = ''; // 본문이 비었으면 기본 텍스트 제거
+            editorRef.current.innerHTML = fileLink; // 파일 링크 추가
         } else {
-          editorRef.current.innerHTML = `<a href="${fileUrl}" style="display: block;">${fileData.name}</a>`;
-        }
-      } else {
-        const selection = window.getSelection();
-        if (!selection || selection.rangeCount === 0) return;
+            const selection = window.getSelection();
+            if (!selection || selection.rangeCount === 0) return;
 
-        const range = selection.getRangeAt(0);
-
-        if (fileData.type.startsWith('image/')) {
-          const imgElement = document.createElement('img');
-          imgElement.src = fileUrl;
-          imgElement.alt = 'Uploaded Image';
-          imgElement.style.maxWidth = '100%';
-          range.insertNode(imgElement);
-        } else {
-          const fileLink = document.createElement('a');
-          fileLink.href = fileUrl;
-          fileLink.textContent = fileData.name;
-          fileLink.style.display = 'block';
-          range.insertNode(fileLink);
+            const range = selection.getRangeAt(0);
+            range.insertNode(document.createRange().createContextualFragment(fileLink)); // 파일 링크 추가
+            range.collapse(false);
         }
 
-        range.collapse(false);
-      }
-
-      setFileData(null);
-      setImagePreview(null);
+        setFileData(null);
+        setImagePreview(null);
     }
-  };
+};
+
 
   const handleInput = () => {
     if (editorRef.current) {

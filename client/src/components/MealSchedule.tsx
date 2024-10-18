@@ -13,7 +13,7 @@ const MealSchedule: React.FC = () => {
             const currentMonth = new Date().getMonth() + 1; // 현재 달 (1~12)
             const currentYear = new Date().getFullYear();
             const response = await axios.get(
-                `https://localhost:8080/api/searchMeal?month=${currentMonth}&year=${currentYear}`, {
+                `https://douda.kro.kr:443/api/searchMeal?month=${currentMonth}&year=${currentYear}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }

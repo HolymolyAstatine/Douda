@@ -21,19 +21,19 @@ dotenv.config();
 // SSL 인증서 파일 경로 설정
 const privateKey = fs.readFileSync(path.join(__dirname, process.env.privateKey as string), 'utf8');
 const certificate = fs.readFileSync(path.join(__dirname, process.env.certificate as string), 'utf8');
-//const ca = fs.readFileSync(path.join(__dirname,process.env.ca as string),'utf-8');
+const ca = fs.readFileSync(path.join(__dirname,process.env.ca as string),'utf-8');
 
 // Load RSA keys for RS512
 const privateRSAKey = fs.readFileSync(path.join(__dirname, process.env.privateRSAKey as string), 'utf8');
 const publicRSAKey = fs.readFileSync(path.join(__dirname, process.env.publicRSAKey as string), 'utf8');
 
-const credentials = { key: privateKey, cert: certificate };
+const credentials = { key: privateKey, cert: certificate,ca:ca };
 
 
 
 //cors config
 const corsOptions = {
-  origin: ['https://localhost','https://localhost'], // 허용할 도메인
+  origin: ['https://douda.kro.kr','https://douda.kro.kr'], // 허용할 도메인
   methods: ['GET', 'POST','PUT','DELETE'], // 허용할 HTTP 메서드
   credentials: true, // 쿠키 등 credentials 사용 허용
 };
@@ -41,8 +41,8 @@ const corsOptions = {
 //google oauth
 const GOOGLE_CLIENT_ID = process.env.ClientID || '';
 const GOOGLE_CLIENT_SECRET = process.env.Clientsecret || '';
-const GOOGLE_LOGIN_REDIRECT_URI = 'https://localhost:443/auth/google/login/redirect';
-const GOOGLE_SIGNUP_REDIRECT_URI = 'https://localhost:443/auth/google/signup/redirect';
+const GOOGLE_LOGIN_REDIRECT_URI = 'https://douda.kro.kr:443/auth/google/login/redirect';
+const GOOGLE_SIGNUP_REDIRECT_URI = 'https://douda.kro.kr:443/auth/google/signup/redirect';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
 
@@ -204,12 +204,12 @@ app.get('/profile-server', auth, async(req: Request, res: Response) => {
   }
 });
 
-// app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, 'client/build')));
 
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-// });
-const PORT = 8080;
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+const PORT = 443;
 const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(PORT, () => {
   console.log(`HTTPS Server running on port ${PORT}`);

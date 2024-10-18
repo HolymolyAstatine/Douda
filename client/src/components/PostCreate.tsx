@@ -15,7 +15,7 @@ const PostCreate: React.FC = () => {
 
     try {
       await axios.post(
-        'https://localhost:8080/post_data/create_post',
+        'https://douda.kro.kr:443/post_data/create_post',
         { title, content },
         {
           headers: {

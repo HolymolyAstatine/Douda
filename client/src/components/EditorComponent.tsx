@@ -51,7 +51,7 @@ const EditorComponent: React.FC<EditorProps> = ({ initialTitle = '', initialCont
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await axios.post('https://localhost:8080/post_data/file_upload', formData, {
+      const response = await axios.post('https://douda.kro.kr:443/post_data/file_upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`,

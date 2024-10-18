@@ -26,7 +26,7 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ profileData, onClose }) => {
   const handleSchoolSearch = async (query: string) => {
     if (query) {
       try {
-        const response = await axios.get(`https://localhost:8080/api/searchSchool?SchoolName=${query}`);
+        const response = await axios.get(`https://douda.kro.kr:443/api/searchSchool?SchoolName=${query}`);
         setSchoolList(response.data.data); // 학교 목록 업데이트
       } catch (error) {
         console.error('학교 검색 중 오류 발생:', error);
@@ -52,7 +52,7 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ profileData, onClose }) => {
   const handleSave = async () => {
     const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
     try {
-      const response = await axios.put('https://localhost:8080/user_data/profile_update', {
+      const response = await axios.put('https://douda.kro.kr:443/user_data/profile_update', {
         nickname,
         school: selectedSchool?.SCHUL_NM, // 선택한 학교 이름
         grade,

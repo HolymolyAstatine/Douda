@@ -41,9 +41,16 @@
   - [Get File](#get-file)
   
 - [Posts](#posts)
-  - [Create Post](#create-post)
-  - [Get Posts](#get-posts)
-  - [Get Single Post](#get-single-post)
+    - [Create Post](#create-post)
+    - [Get Posts](#get-posts)
+    - [Get Single Post](#get-single-post)
+    - [Update Post](#update-post)
+    - [Delete Post](#delete-post)
+    - [Like Post](#like-post)
+    - [Dislike Post](#dislike-post)
+    - [Get Post Reactions](#get-post-reactions)
+    - [Comment on Post](#comment-on-post)
+    - [Delete Comment](#delete-comment)
 
 
 # EndPoint

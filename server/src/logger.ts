@@ -1,8 +1,13 @@
-// server/src/logger.ts
 import winston from 'winston';
 import path from 'path';
 
 const logDir = path.join(__dirname, '../logs');
+
+// 커스텀 포맷 정의
+const logFormat = winston.format.printf(({ level, message, timestamp, stack, err_message }) => {
+    const logMessage = stack ? `${message} - ${err_message}\n${stack}` : message;
+    return `[${timestamp}] ${level.toUpperCase()}: ${logMessage}`;
+});
 
 class Logger {
     private logger: winston.Logger;
@@ -11,8 +16,8 @@ class Logger {
         this.logger = winston.createLogger({
             level: 'info',
             format: winston.format.combine(
-                winston.format.timestamp(),
-                winston.format.json()
+                winston.format.timestamp(), // 타임스탬프 추가
+                logFormat // 커스텀 포맷 사용
             ),
             transports: [
                 new winston.transports.Console(),
@@ -22,11 +27,11 @@ class Logger {
         });
     }
 
-    error(error?: Error|any ,message?: string, ) {
+    error(error?: Error | any, message?: string) {
         this.logger.error({
             message,
             stack: error?.stack,
-            err_message:error?.message
+            err_message: error?.message
         });
     }
 
@@ -34,7 +39,6 @@ class Logger {
         this.logger.info(message);
     }
 
-    // 다른 로그 레벨에 대한 메서드 추가 가능
     warn(message: string) {
         this.logger.warn(message);
     }

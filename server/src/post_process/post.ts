@@ -245,7 +245,7 @@ router.get('/get-posts/:id/comments',async (req:Request,res:Response)=>{
     const id=parseInt(req.params.id as string, 10);
     try{
         const comment_row = await pcdbm.getCommentsByPostId(id);
-        logger.info(`${id} load comment success! `)
+        logger.info(`${id} load comment success! `);
 
         res.status(200).json({code:200,message:"load comment success!",data:comment_row});
         return;
@@ -330,10 +330,19 @@ router.delete('/posts/:id',auth,async(req:Request,res:Response)=>{
     }
 
     try{
-        pcdbm.deletePost(id);
-        logger.info(`${id} post delete`)
-        res.status(200).json({code:200,message:"delete success"});
-        return;
+        const chid = await pcdbm.getUserIdByGid(Gid as string);
+        const chpid = await pcdbm.getPostbyid(id);
+        if (chpid!==null && chpid.length>0 && chpid[0].author_id===chid){
+            await pcdbm.deletePost(id);
+            logger.info(`${id} post delete`);
+            res.status(200).json({code:200,message:"delete success"});
+            return;
+        }
+        else{
+            logger.info(`${id} post try delete but reject ${chid}-${chpid?.[0]?.author_id}`);
+            res.status(403).json({code:403,message:"reject"});
+            return;
+        }
     }catch(error){
         logger.error(error);
         res.status(500).json({code:500,message:"server error"});
@@ -356,10 +365,19 @@ router.delete('/posts/:id/comments/:commentId',auth,async(req:Request,res:Respon
     }
 
     try{
-        await pcdbm.deleteComment(commentid);
-        logger.info(`${id} post ${commentid} delete `);
-        res.status(200).json({code:200,message:"comment delete success!"});
-        return;
+        const chid = await pcdbm.getUserIdByGid(Gid as string);
+        const chpid = await pcdbm.getCommentsByPostId(commentid);
+        if (chpid!==null && chpid.length>0 && chpid[0].author_id===chid){
+            await pcdbm.deleteComment(commentid);
+            logger.info(`${id} comments delete`);
+            res.status(200).json({code:200,message:"comment delete success!"});
+            return;
+        }
+        else{
+            logger.info(`${id} comments try delete but reject ${chid}-${chpid?.[0]?.author_id}`);
+            res.status(403).json({code:403,message:"reject"});
+            return;
+        }
 
     }catch(error){
         logger.error(error);
@@ -385,10 +403,19 @@ router.put('/posts/:id/comments/:commentId',auth,async(req:Request,res:Response)
     }
 
     try{
-        await pcdbm.updateComment(commentid,content);
-        logger.info(`${id} post ${commentid} update`);
-        res.status(200).json({code:200,message:"comment update success!"});
-        return;
+        const chid = await pcdbm.getUserIdByGid(Gid as string);
+        const chpid = await pcdbm.getCommentsByPostId(commentid);
+        if (chpid!==null && chpid.length>0 && chpid[0].author_id===chid){
+            await pcdbm.updateComment(commentid,content);
+            logger.info(`${id}post ${commentid} added`);
+            res.status(200).json({code:200,message:"comment update success!"});
+            return;
+        }
+        else{
+            logger.info(`${id}post ${commentid} comments try update but reject ${chid}-${chpid?.[0]?.author_id}`);
+            res.status(403).json({code:403,message:"reject"});
+            return;
+        }
 
     }catch(error){
         logger.error(error);
@@ -413,10 +440,19 @@ router.put('/update_post/:id',auth,async(req:Request,res:Response)=>{
     }
 
     try{
-        await pcdbm.updatePost(id,title,content);
-        logger.info(`${id} post update`);
-        res.status(200).json({code:200,message:"update post success!"});
-        return;
+        const chid = await pcdbm.getUserIdByGid(Gid as string);
+        const chpid = await pcdbm.getPostbyid(id);
+        if (chpid!==null && chpid.length>0 && chpid[0].author_id===chid){
+            await pcdbm.updatePost(id,title,content);
+            logger.info(`${id} post update`);
+            res.status(200).json({code:200,message:"update post success!"});
+            return;
+        }
+        else{
+            logger.info(`${id} post try delete but reject ${chid}-${chpid?.[0]?.author_id}`);
+            res.status(403).json({code:403,message:"reject"});
+            return;
+        }
 
     }catch(error){
         logger.error(error);

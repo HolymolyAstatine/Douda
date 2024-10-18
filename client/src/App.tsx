@@ -15,6 +15,7 @@ import PostDetail from './components/PostDetail';
 import MealSchedule from './components/MealSchedule'; // 급식 스케줄러 컴포넌트 추가
 import PostEdit from './components/PostEdit';
 import Timetable from './components/Timetable'; // 학급 시간표 컴포넌트 추가
+import UnderConstruction from './components/UnderConstruction';
 
 // GoogleAuthRedirectProps 인터페이스 정의
 interface GoogleAuthRedirectProps {
@@ -37,7 +38,7 @@ const App = () => {
         setIsLoggedIn(false);
         return Promise.reject('n');
       }
-      return axios.get('https://douda.kro.kr:443/profile', {
+      return axios.get('https://localhost:8080/profile', {
         headers: { Authorization: `Bearer ${token}` },
       });
     },
@@ -99,11 +100,11 @@ const App = () => {
           <Route path="/signup" element={<Signup />} /> {/* 회원가입 라우터 */}
           <Route path="/signsettig" element={<SignupSet />} /> {/* 회원가입 추가정보 라우터 */}
           <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} /> {/*프로파일 라우터 */}
-          <Route path='/ww' element={<PostForm />} /> {/*게시글 작성 폼 */}
-          <Route path='/edit/:postId' element={<PostEdit />} /> {/* 게시글 수정 폼 */}
-          <Route path='/board' element={<Board isLoggedIn={isLoggedIn}/>} /> {/* 게시판 */}
-          <Route path="/post/:id" element={<PostDetail isLoggedIn={isLoggedIn}/>} /> {/* 게시글 상세 */}
-          <Route path='/post/*' element={<Navigate to="/board" />} />
+          {/*<Route path='/ww' element={<PostForm />} /> {/*게시글 작성 폼 */}
+          {/*<Route path='/edit/:postId' element={<PostEdit />} /> {/* 게시글 수정 폼 */}
+          <Route path='/board' element={<UnderConstruction />} /> {/* 게시판 */}
+          {/*<Route path="/post/:id" element={<PostDetail isLoggedIn={isLoggedIn}/>} /> {/* 게시글 상세 */}
+          {/*<Route path='/post/*' element={<Navigate to="/board" />} />*/}
           <Route path="/meals" element={<MealSchedule/>} /> {/* 급식표 라우터 추가 */}
           <Route path="/timetable" element={<Timetable />} /> {/* 학급 시간표 라우터 추가 */}
           <Route path="/auth/google/signup/redirect" element={<GoogleAuthRedirect setIsLoggedIn={setIsLoggedIn} />} /> {/*구글 로그인 리다이엑션 처리 라우터 */}
@@ -144,8 +145,8 @@ const GoogleAuthRedirect: React.FC<GoogleAuthRedirectProps> = ({ setIsLoggedIn }
     [queryKey, code],
     () => {
       const url = isSignup
-        ? `https://douda.kro.kr:443/auth/google/signup/redirect-server?code=${code}`
-        : `https://douda.kro.kr:443/auth/google/login/redirect-server?code=${code}`;
+        ? `https://localhost:8080/auth/google/signup/redirect-server?code=${code}`
+        : `https://localhost:8080/auth/google/login/redirect-server?code=${code}`;
       return axios.get(url);
     },
     {

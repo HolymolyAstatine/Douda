@@ -9,6 +9,43 @@
 - 404: Not Found – 찾을수 없음
 - 500: Internal Server Error – 서버에러(문의)
 
+# API Documentation Table of Contents
+
+- [Base URL](#base-url)
+- [Error Codes](#error-codes)
+- [Endpoints](#endpoints)
+
+## Endpoints
+
+- [Login/SignUp](#loginsignup)
+  - [login](#login)
+  - [signup](#signup)
+  - [login-redirect](#login-redirect)
+  - [signup-redirect](#signup-redirect)
+  
+- [Profile](#profile)
+  - [Get Profile](#get-profile)
+  - [Signup Setting](#signup-setting)
+  - [Profile Update](#profile-update)
+  - [Delete Account](#delete-account)
+  - [Auth User](#auth-user)
+  
+- [School Information](#school-information)
+  - [Search School](#search-school)
+  - [Search Meal](#search-meal)
+  - [Search Timetable](#search-timetable)
+  
+- [File Handling](#file-handling)
+  - [Image Upload](#image-upload)
+  - [File Upload](#file-upload)
+  - [Get File](#get-file)
+  
+- [Posts](#posts)
+  - [Create Post](#create-post)
+  - [Get Posts](#get-posts)
+  - [Get Single Post](#get-single-post)
+
+
 # EndPoint
 
 
@@ -756,6 +793,302 @@ async function uploadFile(token, file) {
 }
 ```
 
+## GET-POST
+- **Method**: GET
+- **Endpoint**: /post_data/get-posts/:id
+- **Description**: 게시글 조회.
+
+### Request:
+| Parameter | Type     | Description                               |
+|-----------|----------|-------------------------------------------|
+| `id`   | `number`   | 조회를 할 게시글 |
+```
+/post_data/get-posts/1
+```
+
+### Response (Success):
+| value   | Type     | Description              |
+|-------------|----------|--------------------------|
+| `data`  | `postsdata[]` | 게시글을 담은 리스트. types/폴더 참고|
+```json
+{
+  "code":200,
+  "message": "success!",
+  "data":postsdata[]
+
+}
+```
+
+### Response (Error):
+```json
+{
+    "code":400,
+    "message":"invail url"
+}
+{
+    "code":404,
+    "message":"Not found the post."
+}
+{
+    "code":500,
+    "message":"server error"
+}
+```
+
+## GET-POST-COMMENTS
+- **Method**: GET
+- **Endpoint**: /post_data/get-posts/:id/comments
+- **Description**: 게시글 조회.
+
+### Request:
+| Parameter | Type     | Description                               |
+|-----------|----------|-------------------------------------------|
+| `id`   | `number`   | 댓글을 조회할 게시글 |
+```
+/post_data/get-posts/1/comments
+```
+
+### Response (Success):
+| value   | Type     | Description              |
+|-------------|----------|--------------------------|
+| `data`  | `Comment[]` | 게시글의 댓글을 담은 리스트. types/폴더 참고|
+```json
+{
+  "code":200,
+  "message": "load comment success!",
+  "data":Comment[]
+
+}
+```
+
+### Response (Error):
+```json
+{
+    "code":400,
+    "message":"invail url"
+}
+{
+    "code":500,
+    "message":"server error"
+}
+```
+
+## POST-LIKE
+- **Method**: POST
+- **Endpoint**: /post_data/posts/:id/like
+- **Description**: 게시글 좋아요.
+- **important** : JWT토큰 필요
+
+### Request:
+JWT토큰 넣고 post요청
+```/post_data/posts/1/like```
+
+### Response (Error):
+```json
+{
+    "code":400,
+    "message":"invail url"
+}
+{
+    "code":500,
+    "message":"server error"
+}
+```
 
 
+## POST-DISLIKE
+- **Method**: POST
+- **Endpoint**: /post_data/posts/:id/dislike
+- **Description**: 게시글 싫어요.
+- **important** : JWT토큰 필요
+
+### Request:
+JWT토큰 넣고 post요청
+```/post_data/posts/1/dislike```
+
+### Response (Error):
+```json
+{
+    "code":400,
+    "message":"invail url"
+}
+{
+    "code":500,
+    "message":"server error"
+}
+```
+
+## CREATE-COMMENT
+- **Method**: POST
+- **Endpoint**: /post_data/posts/:id/comment
+- **Description**: 댓글 작성.
+- **important** : JWT토큰 필요
+
+
+### Request
+| value   | Type     | Description              |
+|-------------|----------|--------------------------|
+| `content`  | `string` | 작성할 댓글 내용|
+```json
+{
+  "content":"댓글"
+
+}
+```
+### Response (Success):
+```json
+{
+  "code":200,
+  "message": "comments insert success!",
+
+}
+```
+### Response (Error):
+```json
+{
+    "code":400,
+    "message":"invail url"
+}
+{
+    "code":500,
+    "message":"server error"
+}
+```
+
+## DELETE-POST
+- **Method**: DELETE
+- **Endpoint**: /post_data/posts/:id
+- **Description**: 게시글 삭제.
+- **important** : JWT토큰 필요
+
+### Request
+```/posts/1 ```
+
+### Response (Success):
+```json
+{
+  "code":200,
+  "message": "delete success",
+
+}
+```
+
+### Response (Error):
+```json
+{
+    "code":400,
+    "message":"invail url"
+}
+{
+    "code":500,
+    "message":"server error"
+}
+```
+
+## DELETE-COMMENT
+- **Method**: DELETE
+- **Endpoint**: /post_data/posts/:id/comments/:commentId
+- **Description**: 댓글 삭제.
+- **important** : JWT토큰 필요
+
+### Request
+```/posts/1/comment/1 ```
+
+### Response (Success):
+```json
+{
+  "code":200,
+  "message": "comment delete success!",
+
+}
+```
+
+### Response (Error):
+```json
+{
+    "code":400,
+    "message":"invail url"
+}
+{
+    "code":500,
+    "message":"server error"
+}
+```
+
+## UPDTATE-COMMENT
+- **Method**: PUT
+- **Endpoint**: /post_data/posts/:id/comments/:commentId
+- **Description**: 댓글 업데이트(수정).
+- **important** : JWT토큰 필요
+
+### Request
+| value   | Type     | Description              |
+|-------------|----------|--------------------------|
+| `content`  | `string` | 업데이트할 댓글 내용|
+```json
+{
+  "content":"댓글 수정"
+
+}
+```
+
+### Response (Success):
+```json
+{
+  "code":200,
+  "message": "comment update success!",
+
+}
+```
+
+### Response (Error):
+```json
+{
+    "code":400,
+    "message":"invail url"
+}
+{
+    "code":500,
+    "message":"server error"
+}
+```
+
+## UPDTATE-POST
+- **Method**: PUT
+- **Endpoint**: /post_data/update_post/:id
+- **Description**: 게시글 업데이트(수정).
+- **important** : JWT토큰 필요
+
+
+### Request
+| value   | Type     | Description              |
+|-------------|----------|--------------------------|
+| `title`  | `string` | 업데이트할 게시글 제목|
+| `content`  | `string` | 업데이트할 게시글 내용|
+```json
+{
+    "title":"제목수정",
+    "contnet":"게시글 수정"
+
+}
+```
+### Response (Success):
+```json
+{
+  "code":200,
+  "message": "update post success!",
+
+}
+```
+### Response (Error):
+```json
+{
+    "code":400,
+    "message":"invail url"
+}
+{
+    "code":500,
+    "message":"server error"
+}
+```
 

@@ -243,10 +243,6 @@ router.get('/get-posts/:id/comments',async (req:Request,res:Response)=>{
         return;
     }
     const id=parseInt(req.params.id as string, 10);
-    if (!id){
-        res.status(400).json({code:400,message:"id is not provide"});
-        return;
-    }
     try{
         const comment_row = await pcdbm.getCommentsByPostId(id);
         logger.info(`${id} load comment success! `)
@@ -266,10 +262,6 @@ router.post('/posts/:id/like',auth,async (req:Request,res:Response)=>{
         return;
     }
     const id=parseInt(req.params.id as string, 10);
-    if (!id){
-        res.status(400).json({code:400,message:"id is not provide"});
-        return;
-    }
     try{
         await pcdbm.increaseLikeCount(id);
         logger.info(`${id} like success user:${Gid}`);

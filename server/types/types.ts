@@ -155,3 +155,13 @@ interface postsdata{
   comment_count:number;
   nickname:string;
 }
+
+interface Comment {
+  id: number;
+  post_id: number;
+  author_id: number;
+  content: string;
+  created_at: Date;
+  updated_at: Date;
+  nickname:string;
+}

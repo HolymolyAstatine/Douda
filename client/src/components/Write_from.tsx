@@ -13,7 +13,7 @@ const PostEdit: React.FC = () => {
     // 글 수정 시 기존 데이터를 불러오기
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`https://douda.kro.kr:443/post_data/${postId}`);
+        const response = await axios.get(`https://localhost:8080/post_data/${postId}`);
         setInitialTitle(response.data.title);
         setInitialContent(response.data.content);
       } catch (error) {
@@ -33,7 +33,7 @@ const PostEdit: React.FC = () => {
 
     try {
       await axios.put(
-        `https://douda.kro.kr:443/post_data/update_post/${postId}`,
+        `https://localhost:8080/post_data/update_post/${postId}`,
         { title, content },
         {
           headers: {

@@ -42,7 +42,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`https://douda.kro.kr:443/post_data/get-posts/${id}`);
+        const response = await axios.get(`https://localhost:8080/post_data/get-posts/${id}`);
         const fetchedPost = response.data.data;
         setPost(fetchedPost);
         setLikeCount(fetchedPost.like_count);
@@ -55,7 +55,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
     
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`https://douda.kro.kr:443/post_data/get-posts/${id}/comments`);
+        const response = await axios.get(`https://localhost:8080/post_data/get-posts/${id}/comments`);
         setComments(response.data.data);
       } catch (error) {
         console.error('댓글 불러오기 실패:', error);
@@ -66,7 +66,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const userResponse = await axios.get('https://douda.kro.kr:443/user_data/auth/user', {
+          const userResponse = await axios.get('https://localhost:8080/user_data/auth/user', {
             headers: { Authorization: `Bearer ${token}` }
           });
           setCurrentUserId(userResponse.data.id);
@@ -85,7 +85,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
     if (window.confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`https://douda.kro.kr:443/post_data/posts/${id}`, {
+        await axios.delete(`https://localhost:8080/post_data/posts/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert('게시글이 삭제되었습니다.');
@@ -105,7 +105,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
       return;
     }
     try {
-      await axios.post(`https://douda.kro.kr:443/post_data/posts/${id}/like`,{},{headers:{'Authorization': `Bearer ${token}`,}});
+      await axios.post(`https://localhost:8080/post_data/posts/${id}/like`,{},{headers:{'Authorization': `Bearer ${token}`,}});
       setLikeCount(likeCount + 1); // 좋아요 수 증가
     } catch (error) {
       console.error('좋아요 실패:', error);
@@ -121,7 +121,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
       return;
     }
     try {
-      await axios.post(`https://douda.kro.kr:443/post_data/posts/${id}/dislike`,{},{headers:{'Authorization': `Bearer ${token}`,}});
+      await axios.post(`https://localhost:8080/post_data/posts/${id}/dislike`,{},{headers:{'Authorization': `Bearer ${token}`,}});
       setDislikeCount(dislikeCount + 1); // 싫어요 수 증가
     } catch (error) {
       console.error('싫어요 실패:', error);
@@ -132,7 +132,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
     if (window.confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`https://douda.kro.kr:443/post_data/posts/${id}/comments/${commentId}`, {
+        await axios.delete(`https://localhost:8080/post_data/posts/${id}/comments/${commentId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setComments((prevComments) => prevComments.filter((comment) => comment.id !== commentId));
@@ -163,7 +163,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `https://douda.kro.kr:443/post_data/posts/${id}/comments/${commentId}`,
+        `https://localhost:8080/post_data/posts/${id}/comments/${commentId}`,
         { content: editedCommentContent },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -192,12 +192,12 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
       }
 
       await axios.post(
-        `https://douda.kro.kr:443/post_data/posts/${id}/comments`,
+        `https://localhost:8080/post_data/posts/${id}/comments`,
         { content: newComment },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setNewComment('');
-      const updatedComments = await axios.get(`https://douda.kro.kr:443/post_data/posts/${id}/comments`);
+      const updatedComments = await axios.get(`https://localhost:8080/post_data/posts/${id}/comments`);
       setComments(updatedComments.data.data);
     } catch (error) {
       console.error('댓글 작성 실패:', error);

@@ -20,7 +20,7 @@ const MealSchedule: React.FC = () => {
         setLoading(true);
         try {
             const response = await axios.get(
-                `https://localhost:8080/api/searchMeal?month=${month}&year=${year}`, {
+                `https://douda.kro.kr/api/searchMeal?month=${month}&year=${year}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }

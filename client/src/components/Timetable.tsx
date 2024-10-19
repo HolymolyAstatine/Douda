@@ -28,7 +28,7 @@ const Timetable: React.FC = () => {
         try {
             setLoading(true);
             const formattedDate = date.toISOString().split('T')[0];
-            const response = await axios.get('https://localhost:8080/api/searchTimeTable', {
+            const response = await axios.get('https://douda.kro.kr/api/searchTimeTable', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

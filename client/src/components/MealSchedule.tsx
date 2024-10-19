@@ -130,8 +130,7 @@ const MealSchedule: React.FC = () => {
 
             {/* 날짜 정보 표시 */}
             <div className="date-display">
-                <span>{year}년 {month}월 {day}일</span>
-                <span>({weekday}요일)</span>
+                <span>{year}년 {month}월 {day}일 ({weekday}요일)</span>
             </div>
 
             {/* 달력 표시 */}

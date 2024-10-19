@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import DatePicker from 'react-datepicker'; // react-datepicker 패키지 설치 필요
+import 'react-datepicker/dist/react-datepicker.css'; // 날짜 선택 스타일
+import './css/Timetable.css'; // CSS 파일 가져오기
 
 interface TimetableInfo {
     AY: string; // 학년도
@@ -16,61 +19,97 @@ interface TimetableInfo {
 const Timetable: React.FC = () => {
     const [timetable, setTimetable] = useState<TimetableInfo[]>([]);
     const [error, setError] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(true); // Loading state added
-    const token = localStorage.getItem('token'); // JWT 토큰을 로컬 스토리지에서 가져옴
+    const [loading, setLoading] = useState<boolean>(true);
+    const [currentDate, setCurrentDate] = useState<Date>(new Date());
+    const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
+    const token = localStorage.getItem('token');
+
+    const fetchTimetable = async (date: Date) => {
+        try {
+            setLoading(true);
+            const formattedDate = date.toISOString().split('T')[0];
+            const response = await axios.get('https://localhost:8080/api/searchTimeTable', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                params: { date: formattedDate },
+            });
+            setTimetable(response.data.data);
+            setError('');
+        } catch (error) {
+            console.error('시간표 정보를 가져오는 중 오류 발생:', error);
+            setError('시간표 정보를 가져오는 데 실패했습니다.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchTimetable = async () => {
-            try {
-                setLoading(true); // Set loading to true before starting the fetch
-                const response = await axios.get('https://localhost:8080/api/searchTimeTable', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                    params: {
-                        date: new Date().toISOString().split('T')[0], // 현재 날짜를 yyyy-mm-dd 형식으로 가져옴
-                    },
-                });
-                setTimetable(response.data.data); // 시간표 정보를 상태에 저장
-                setError('');
-            } catch (error) {
-                console.error('시간표 정보를 가져오는 중 오류 발생:', error);
-                setError('시간표 정보를 가져오는 데 실패했습니다.');
-            } finally {
-                setLoading(false); // Set loading to false after the fetch completes
-            }
-        };
+        fetchTimetable(currentDate);
+    }, [currentDate, token]);
 
-        fetchTimetable();
-    }, [token]);
+    const handleDateChange = (date: Date | null) => {
+        if (date) setCurrentDate(date);
+    };
+
+    const handlePrevDay = () => {
+        setCurrentDate(new Date(currentDate.setDate(currentDate.getDate() - 1)));
+    };
+
+    const handleNextDay = () => {
+        setCurrentDate(new Date(currentDate.setDate(currentDate.getDate() + 1)));
+    };
+
+    const formattedDate = `${currentDate.getFullYear()}년 ${currentDate.getMonth() + 1}월 ${currentDate.getDate()}일 (${currentDate.toLocaleDateString('ko-KR', { weekday: 'long' })})`;
 
     return (
-        <div style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-            <h2 style={{ textAlign: 'center', color: '#333' }}>학급 시간표</h2>
+        <div className="container">
+            <h2 className="title">학급 시간표</h2>
+            <div className="button-container">
+                <button className="button" onClick={handlePrevDay}>&larr;</button>
+                <button className="button" onClick={() => setCurrentDate(new Date())}>오늘</button>
+                <button className="button" onClick={handleNextDay}>&rarr;</button>
+                <button className="button" onClick={() => setIsCalendarOpen(!isCalendarOpen)}>
+                    {isCalendarOpen ? '달력 닫기' : '달력 열기'}
+                </button>
+                <br/>
+            </div>
+            <div className="date-display">
+                <span >{formattedDate}</span>
+            </div>
+            {isCalendarOpen && (
+                <div className="calendar-container">
+                    <DatePicker
+                        selected={currentDate}
+                        onChange={handleDateChange}
+                        inline
+                    />
+                </div>
+            )}
             {loading ? (
-                <p style={{ textAlign: 'center' }}>로딩중...</p> // Loading message
+                <p className="loading-message">로딩중...</p>
             ) : error ? (
-                <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>
+                <p className="error-message">{error}</p>
             ) : (
                 timetable.length > 0 ? (
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <table className="timetable-table">
                         <thead>
                             <tr>
-                                <th style={{ border: '1px solid #ccc', padding: '12px', backgroundColor: '#007bff', color: '#fff' }}>교시</th>
-                                <th style={{ border: '1px solid #ccc', padding: '12px', backgroundColor: '#007bff', color: '#fff' }}>수업내용</th>
+                                <th className="table-header">교시</th>
+                                <th className="table-header">수업내용</th>
                             </tr>
                         </thead>
                         <tbody>
                             {timetable.map((item, index) => (
-                                <tr key={index} style={{ borderBottom: '1px solid #ccc' }}>
-                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{item.PERIO}</td>
-                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'left' }}>{item.ITRT_CNTNT}</td>
+                                <tr key={index} className="table-row">
+                                    <td className="table-cell">{item.PERIO}</td>
+                                    <td className="table-cell">{item.ITRT_CNTNT}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 ) : (
-                    <p style={{ textAlign: 'center' }}>시간표 정보가 없습니다.</p>
+                    <p className="no-data-message">시간표 정보가 없습니다.</p>
                 )
             )}
         </div>

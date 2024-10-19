@@ -1,0 +1,93 @@
+/* MealSchedule.css */
+
+.container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    text-align: center;
+    color: #333;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+.meal-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.meal-item {
+    margin: 10px 0;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.meal-header {
+    margin-bottom: 15px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+}
+
+.meal-header h4 {
+    margin: 0 0 10px;
+    color: #007bff;
+}
+
+.meal-details {
+    margin: 5px 0;
+}
+
+.meal-dinner {
+    margin-top: 15px;
+    border-top: 2px solid #ff5722;
+    padding-top: 10px;
+}
+
+.meal-dinner h4 {
+    color: #ff5722;
+}
+
+.date-display {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 18px;
+    color: #555;
+}
+
+.date-display span {
+    display: block;
+}
+
+.calendar-container {
+    display: flex;
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    margin-bottom: 20px;
+}

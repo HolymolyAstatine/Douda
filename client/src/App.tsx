@@ -116,7 +116,7 @@ const App = () => {
 
       {/* 푸터 추가 */}
       <footer style={{ padding: '10px', backgroundColor: '#f1f1f1', textAlign: 'center', marginTop: 'auto' }}>
-        <p style={{ margin: 0 }}>© 2023 DOUDA team. All rights reserved.</p>
+        <p style={{ margin: 0 }}>© 2024 DOUDA team. All rights reserved.</p>
         <p style={{ margin: 0 }}>
           Created by 
           <a href="https://github.com/hafskjfha" target="_blank" rel="noopener noreferrer" style={{ margin: '0 5px', textDecoration: 'none', color: '#007bff' }}>Teawon Jung</a> 

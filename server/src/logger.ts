@@ -16,11 +16,10 @@ class Logger {
         this.logger = winston.createLogger({
             level: 'info',
             format: winston.format.combine(
-                winston.format.timestamp(), // 타임스탬프 추가
-                logFormat // 커스텀 포맷 사용
+                winston.format.timestamp(),
+                logFormat
             ),
             transports: [
-                new winston.transports.Console(),
                 new winston.transports.File({ filename: path.join(logDir, 'error.log'), level: 'error' }),
                 new winston.transports.File({ filename: path.join(logDir, 'combined.log') }),
             ],
@@ -44,4 +43,4 @@ class Logger {
     }
 }
 
-export default new Logger(); // Singleton 패턴으로 인스턴스 내보내기
+export default new Logger();

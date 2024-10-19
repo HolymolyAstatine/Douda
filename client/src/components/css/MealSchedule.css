@@ -91,3 +91,10 @@
     align-items: center; /* 수직 중앙 정렬 */
     margin-bottom: 20px;
 }
+
+@media (max-width: 768px) {
+    .button {
+        font-size: 14px; /* 모바일에서 글자 크기 줄이기 */
+        padding: 8px; /* 패딩 줄이기 */
+    }
+}

@@ -120,9 +120,9 @@ const MealSchedule: React.FC = () => {
         <div className="container">
             <h2 className="title">급식 정보</h2>
             <div className="button-container">
-                <button className="button" onClick={handlePrevDay}>&larr; 이전</button>
-                <button className="button" onClick={handleToday}>오늘로 이동</button>
-                <button className="button" onClick={handleNextDay}>다음 &rarr;</button>
+                <button className="button" onClick={handlePrevDay}>&larr;</button>
+                <button className="button" onClick={handleToday}>오늘</button>
+                <button className="button" onClick={handleNextDay}>&rarr;</button>
                 <button className="button" onClick={() => setShowCalendar(!showCalendar)}>
                     {showCalendar ? '달력 닫기' : '달력 열기'}
                 </button> {/* 달력 보기 버튼 */}

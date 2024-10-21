@@ -1,71 +1,79 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import EditorComponent from './EditorComponent';
+import React, { useState } from 'react';
+import { Editor, EditorState, RichUtils } from 'draft-js';
+import 'draft-js/dist/Draft.css';
 
-const PostCreate: React.FC = () => {
-  const navigate = useNavigate();
-
-  const handleSubmit = async (title: string, content: string) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('로그인 토큰이 없습니다. 다시 로그인해주세요.');
-      return;
+const PostCreate = () => {
+  const [editorState, setEditorState] = useState(() =>
+    EditorState.createEmpty()
+  );
+  const [title, setTitle] = useState('');
+  // Bold, Italic 등 텍스트 스타일을 적용하는 함수
+  const handleKeyCommand = (command: string) => {
+    const newState = RichUtils.handleKeyCommand(editorState, command);
+    if (newState) {
+      setEditorState(newState);
+      return 'handled';
     }
+    return 'not-handled';
+  };
 
-    try {
-      await axios.post(
-        'https://localhost:8080/post_data/create_post',
-        { title, content },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        }
-      );
+  // Bold 버튼 클릭 시 텍스트를 Bold로 변환
+  const toggleBold = () => {
+    setEditorState(RichUtils.toggleInlineStyle(editorState, 'BOLD'));
+  };
 
-      alert('게시글 작성 성공!');
-      navigate('/board'); // 게시글 작성 후 게시판으로 이동
-    } catch (error) {
-      console.error('게시글 작성 실패:', error);
-      alert('게시글 작성 중 오류가 발생했습니다.');
-    }
+  // 게시글 저장 함수
+  const handleSubmit = () => {
+    const contentState = editorState.getCurrentContent();
+    const plainText = contentState.getPlainText(); // 에디터의 내용을 가져옴
+
+    // 서버로 전송하는 API 호출 (예시)
+    fetch('/api/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title, // 게시글 제목
+        content: plainText, // 게시글 내용 (plain text 형식)
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('게시글이 성공적으로 전송되었습니다.', data);
+        // 성공적으로 작성된 후 로직 추가 (예: 목록으로 이동)
+      })
+      .catch((error) => {
+        console.error('게시글 전송 중 오류가 발생했습니다.', error);
+      });
   };
 
   return (
-    <div style={{ 
-      padding: '30px', 
-      backgroundColor: '#f0f4f8', 
-      borderRadius: '10px', 
-      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)', 
-      maxWidth: '600px', 
-      margin: '0 auto' 
-    }}>
-      <h2 style={{ 
-        textAlign: 'center', 
-        color: '#333', 
-        marginBottom: '20px' 
-      }}>게시글 작성</h2>
-      <EditorComponent onSubmit={handleSubmit} />
-      <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <button 
-          onClick={() => navigate('/board')} 
-          style={{ 
-            padding: '10px 20px', 
-            backgroundColor: '#007bff', 
-            color: '#fff', 
-            border: 'none', 
-            borderRadius: '5px', 
-            cursor: 'pointer', 
-            transition: 'background-color 0.3s' 
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#0056b3'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#007bff'}
-        >
-          게시판으로 돌아가기
+    <div>
+      <h2>게시글 작성</h2>
+      <input
+        type="text"
+        placeholder="제목을 입력하세요"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        style={{ width: '100%', padding: '10px', marginBottom: '20px', fontSize: '18px' }}
+      />
+      <div style={{ border: '1px solid #ddd', padding: '10px', minHeight: '300px' }}>
+        <button onClick={toggleBold} style={{ marginBottom: '10px', cursor: 'pointer' }}>
+          Bold
         </button>
+        <Editor
+          editorState={editorState}
+          handleKeyCommand={handleKeyCommand}
+          onChange={setEditorState}
+        />
       </div>
+      <button
+        onClick={handleSubmit}
+        style={{ marginTop: '20px', padding: '10px 20px', fontSize: '18px', cursor: 'pointer' }}
+      >
+        게시글 저장
+      </button>
     </div>
   );
 };

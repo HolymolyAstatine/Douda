@@ -8,12 +8,12 @@ import Signup from './components/Signup';
 import Home from './components/Home';
 import SignupSet from './components/Signup_set';
 import Profile from './components/Profile';
-import PostForm from "./components/Write_from";
 import Notfound from "./components/NotFound";
 import Board from './components/Board';
 import PostDetail from './components/PostDetail';
+import PostCreate from './components/PostCreate';
 import MealSchedule from './components/MealSchedule'; // 급식 스케줄러 컴포넌트 추가
-import PostEdit from './components/PostEdit';
+import EditPost from './components/EditPost';
 import Timetable from './components/Timetable'; // 학급 시간표 컴포넌트 추가
 import UnderConstruction from './components/UnderConstruction';
 
@@ -100,11 +100,11 @@ const App = () => {
           <Route path="/signup" element={<Signup />} /> {/* 회원가입 라우터 */}
           <Route path="/signsettig" element={<SignupSet />} /> {/* 회원가입 추가정보 라우터 */}
           <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} /> {/*프로파일 라우터 */}
-          {/*<Route path='/ww' element={<PostForm />} /> {/*게시글 작성 폼 */}
-          {/*<Route path='/edit/:postId' element={<PostEdit />} /> {/* 게시글 수정 폼 */}
-          <Route path='/board' element={<UnderConstruction />} /> {/* 게시판 */}
-          {/*<Route path="/post/:id" element={<PostDetail isLoggedIn={isLoggedIn}/>} /> {/* 게시글 상세 */}
-          {/*<Route path='/post/*' element={<Navigate to="/board" />} />*/}
+          <Route path='/edit/:postId' element={<EditPost />} /> {/* 게시글 수정 폼 */} 
+          <Route path='/board' element={<Board isLoggedIn={isLoggedIn}/>} /> {/* 게시판 */}
+          <Route path="/post/:id" element={<PostDetail/>} /> {/* 게시글 상세*/}
+          <Route path="/create" element={<PostCreate />} /> {/* 게시글 작성 폼 */}
+          <Route path='/post/*' element={<Navigate to="/board" />} />
           <Route path="/meals" element={<MealSchedule/>} /> {/* 급식표 라우터 추가 */}
           <Route path="/timetable" element={<Timetable />} /> {/* 학급 시간표 라우터 추가 */}
           <Route path="/auth/google/signup/redirect" element={<GoogleAuthRedirect setIsLoggedIn={setIsLoggedIn} />} /> {/*구글 로그인 리다이엑션 처리 라우터 */}

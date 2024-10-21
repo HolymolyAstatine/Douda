@@ -2,42 +2,23 @@ import React, { useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import { EditorState } from 'draft-js';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import axios from 'axios';
 
-const PostCreate: React.FC = () => {
+const WysiwygEditor: React.FC = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [title, setTitle] = useState('');
 
   const handleEditorStateChange = (state: EditorState) => {
     setEditorState(state);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
+    // 에디터 내용 가져오기
     const content = editorState.getCurrentContent().getPlainText();
-    try {
-      const response = await axios.post('/post_data/create_post', {
-        title,
-        content,
-      }, {
-        headers: {
-          'Authorization': `Bearer {token}`, // JWT 토큰 추가
-        },
-      });
-      console.log(response.data);
-    } catch (error: any) {
-      console.error('게시글 작성 실패:', error.response.data);
-    }
+    console.log(content); // 예시: 콘솔에 내용 출력
   };
 
   return (
     <div>
       <h1>게시글 작성</h1>
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="제목을 입력하세요"
-      />
       <Editor
         editorState={editorState}
         onEditorStateChange={handleEditorStateChange}
@@ -51,4 +32,4 @@ const PostCreate: React.FC = () => {
   );
 };
 
-export default PostCreate;
+export default WysiwygEditor;

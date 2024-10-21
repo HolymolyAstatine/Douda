@@ -1,78 +1,77 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Editor, EditorState, convertToRaw, convertFromRaw } from 'draft-js';
-import 'draft-js/dist/Draft.css';
+import { Editor } from 'react-draft-wysiwyg';
+import { EditorState, ContentState } from 'draft-js';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import axios from 'axios';
+import { useParams } from 'react-router-dom'; // useParams 추가
 
-const EditPost: React.FC = () => {
+interface EditPostProps {
+  postId: number; // 수정할 게시글의 ID
+}
+
+const EditPost: React.FC<EditPostProps> = () => {
+  const { postId } = useParams<{ postId: string }>(); // URL에서 postId 가져오기
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [title, setTitle] = useState('');
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`https://localhost:8080/post_data/posts/${id}`);
-        const { title, content } = response.data.data;
+        const response = await axios.get(`/post_data/get-posts/${postId}`, {
+          headers: {
+            'Authorization': `Bearer {token}`, // JWT 토큰 추가
+          },
+        });
+        const { title, content } = response.data.data; // 기존 게시글 데이터 가져오기
         setTitle(title);
-        const contentState = convertFromRaw(JSON.parse(content));
-        setEditorState(EditorState.createWithContent(contentState));
-      } catch (error) {
-        console.error('Failed to load the post:', error);
-        alert('게시글을 불러오는 데 실패했습니다.');
+        setEditorState(EditorState.createWithContent(ContentState.createFromText(content)));
+      } catch (error: any) {
+        console.error('게시글을 가져오는 데 실패했습니다:', error.response.data);
       }
     };
-
+  
     fetchPost();
-  }, [id]);
+  }, [postId]);
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
+  const handleEditorStateChange = (state: EditorState) => {
+    setEditorState(state);
   };
 
   const handleSubmit = async () => {
-    const contentState = editorState.getCurrentContent();
-    const contentRaw = JSON.stringify(convertToRaw(contentState));
-
+    const content = editorState.getCurrentContent().getPlainText();
     try {
-      const response = await axios.put(`https://localhost:8080/post_data/update_post/${id}`, {
+      const response = await axios.put(`/post_data/update_post/${postId}`, {
         title,
-        content: contentRaw,
+        content,
       }, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer {token}`, // JWT 토큰 추가
         },
       });
-
-      console.log('Post updated:', response.data);
-      alert('게시글이 성공적으로 수정되었습니다.');
-      navigate(`/post/${id}`);
-    } catch (error) {
-      console.error('Failed to update the post:', error);
-      alert('게시글 수정에 실패했습니다.');
+      console.log(response.data);
+    } catch (error: any) {
+      console.error('게시글 수정 실패:', error.response.data);
     }
   };
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div>
       <h1>게시글 수정</h1>
       <input
         type="text"
         value={title}
-        onChange={handleTitleChange}
+        onChange={(e) => setTitle(e.target.value)}
         placeholder="제목을 입력하세요"
-        style={{ width: '100%', marginBottom: '10px', padding: '10px' }}
       />
       <Editor
         editorState={editorState}
-        onChange={setEditorState}
+        onEditorStateChange={handleEditorStateChange}
+        toolbar={{
+          options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 'image', 'history'],
+        }}
         placeholder="내용을 입력하세요"
       />
-      <button onClick={handleSubmit} style={{ marginTop: '10px', padding: '10px 20px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px' }}>
-        게시글 수정
-      </button>
+      <button onClick={handleSubmit}>수정</button>
     </div>
   );
 };

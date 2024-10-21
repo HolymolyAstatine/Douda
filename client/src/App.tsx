@@ -98,10 +98,10 @@ const App = () => {
           <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} /> {/*홈 로그인되어 있으면 로그인 페이지 아니면 따로 처리 */}
           <Route path="/login" element={<Login />} /> {/* 로그인 라우터*/}
           <Route path="/signup" element={<Signup />} /> {/* 회원가입 라우터 */}
-          <Route path="/signsettig" element={<SignupSet />} /> {/* 회원가입 추가정보 라우터 */}
+          <Route path="/signup-set" element={<SignupSet />} /> {/* 회원가입 추가정보 라우터 */}
           <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} /> {/*프로파일 라우터 */}
           <Route path='/edit/:postId' element={<EditPost />} /> {/* 게시글 수정 폼 */} 
-          <Route path='/board' element={<Board isLoggedIn={isLoggedIn}/>} /> {/* 게시판 */}
+          <Route path='/board' element={<Board isLoggedIn={isLoggedIn} />} /> {/* 게시판 */}
           <Route path="/post/:id" element={<PostDetail/>} /> {/* 게시글 상세*/}
           <Route path="/create" element={<PostCreate />} /> {/* 게시글 작성 폼 */}
           <Route path='/post/*' element={<Navigate to="/board" />} />

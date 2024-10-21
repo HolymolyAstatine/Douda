@@ -156,7 +156,6 @@ const GoogleAuthRedirect: React.FC<GoogleAuthRedirectProps> = ({ setIsLoggedIn }
       onSuccess: (response) => {
         if (isSignup) {
           const { id, email } = response.data; // 서버로부터 받은 id와 email
-          console.log(id, email);
           navigate('/signsettig', { state: { id, email } }); // id와 email을 SignupSet으로 전달
         } else {
           const token = response.data.token;

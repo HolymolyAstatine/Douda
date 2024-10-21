@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate, useLocation } from 'react-router-dom';
-import errorIcon from "../img/error_exclamation_mark.svg";
-import "./css/Signup_set.css";
 import { SchoolInfo } from '../../../server/types/types';
+import './css/Signup_set.css';  // CSS 파일을 임포트
 
 const SignupSet = () => {
     const [nickname, setNickname] = useState('');
@@ -15,26 +13,18 @@ const SignupSet = () => {
     const [classroomError, setClassroomError] = useState('');
     const [schoolList, setSchoolList] = useState<SchoolInfo[]>([]);
     const [selectedSchool, setSelectedSchool] = useState<SchoolInfo | null>(null);
-    const navigate = useNavigate();
-    const location = useLocation();
-
-    const { id: Gid, email } = location.state || { id: '', email: '' };
-    const isFormValid = !!nickname;
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const validateIntegerInput = (value: string) => {
         return value === '' || /^[1-9]\d*$/.test(value);
     };
 
-    const handleSchoolSearch = async (query: string) => {
-        if (query) {
-            try {
-                const response = await axios.get(`https://localhost:8080/api/searchSchool?SchoolName=${query}`);
-                setSchoolList(response.data.data); // 학교 목록 업데이트
-            } catch (error) {
-                console.error('학교 검색 중 오류 발생:', error);
-            }
-        } else {
-            setSchoolList([]); // 쿼리가 비어있으면 목록 초기화
+    const handleSchoolSearch = async () => {
+        try {
+            const response = await axios.get(`https://localhost:8080/api/searchSchool?SchoolName=${school}`);
+            setSchoolList(response.data.data);  // 학교 목록 업데이트
+        } catch (error) {
+            console.error('학교 검색 중 오류 발생:', error);
         }
     };
 
@@ -42,41 +32,13 @@ const SignupSet = () => {
         setSelectedSchool(school);
         setSchool(school.SCHUL_NM);
         setSchoolList([]);
-    };
-
-    const handleSchoolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setSchool(value);
-        handleSchoolSearch(value); // 학교 검색 처리
-    };
-
-    const handleGradeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setGrade(value);
-        if (value !== '' && !validateIntegerInput(value)) {
-            setGradeError('유효한 정수를 입력하세요.');
-        } else {
-            setGradeError('');
-        }
-    };
-
-    const handleClassroomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setClassroom(value);
-        if (value !== '' && !validateIntegerInput(value)) {
-            setClassroomError('유효한 정수를 입력하세요.');
-        } else {
-            setClassroomError('');
-        }
+        setIsModalOpen(false);  // 모달 닫기
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!validateIntegerInput(grade) || !validateIntegerInput(classroom)) {
-            setError('입력 오류를 수정한 후 제출하세요.');
-            return;
-        }
-        if (!isFormValid) {
+
+        if (!nickname) {
             setError('닉네임 필드는 필수입니다.');
             return;
         }
@@ -85,19 +47,16 @@ const SignupSet = () => {
             const response = await axios.post(
                 'https://localhost:8080/user_data/signup_setting',
                 {
-                    Gid,
-                    email,
                     nickname,
-                    school: selectedSchool?.SCHUL_NM, // 선택한 학교 이름
+                    school: selectedSchool?.SCHUL_NM,
                     grade: grade || undefined,
                     classroom: classroom || undefined,
-                    SHcode: selectedSchool?.SD_SCHUL_CODE, // 선택한 학교 코드
+                    SHcode: selectedSchool?.SD_SCHUL_CODE,
                 },
             );
 
             if (response.status === 200) {
                 alert('회원가입 정보가 성공적으로 업데이트되었습니다.');
-                navigate('/');
             }
         } catch (error) {
             console.error('회원가입 설정 제출 중 오류 발생:', error);
@@ -106,10 +65,10 @@ const SignupSet = () => {
     };
 
     return (
-        <div style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-            <h2 style={{ textAlign: 'center', color: '#333' }}>추가 회원가입 정보</h2>
-            <h4 className='required'>닉네임은 필수입니다.</h4>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+        <div className="signup-set">
+            <h2>추가 회원가입 정보</h2>
+            {error && <p className="error-message">{error}</p>}
+
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>닉네임:</label>
@@ -118,74 +77,74 @@ const SignupSet = () => {
                         value={nickname}
                         onChange={(e) => setNickname(e.target.value)}
                         required
-                        style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '4px', border: '1px solid #ccc' }}
+                        className="input"
                     />
                 </div>
+
                 <div>
                     <label>학교:</label>
-                    <input
-                        type="text"
-                        value={school}
-                        onChange={handleSchoolChange}
-                        required
-                        style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '4px', border: '1px solid #ccc' }}
-                    />
-                    {schoolList.length > 0 && (
-                        <ul style={{ border: '1px solid #ccc', borderRadius: '4px', maxHeight: '150px', overflowY: 'auto', padding: '0', margin: '5px 0', listStyleType: 'none' }}>
-                            {schoolList.map((school) => (
-                                <li key={school.SD_SCHUL_CODE} onClick={() => handleSchoolSelect(school)} style={{ padding: '8px', cursor: 'pointer', backgroundColor: '#fff', borderBottom: '1px solid #ddd' }}>
-                                    {school.SCHUL_NM}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+                    <button
+                        type="button"
+                        className="search-button"
+                        onClick={() => setIsModalOpen(true)}
+                    >
+                        학교 검색
+                    </button>
+                    {selectedSchool && <p>{selectedSchool.SCHUL_NM}</p>}
                 </div>
+
                 <div>
                     <label>학년:</label>
                     <input
                         type="text"
                         value={grade}
-                        onChange={handleGradeChange}
-                        style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '4px', border: '1px solid #ccc' }}
+                        onChange={(e) => setGrade(e.target.value)}
+                        className="input"
                     />
-                    {gradeError && (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <img src={errorIcon} alt="Error" className="error-icon" />
-                            <span style={{ marginLeft: '8px', color: 'red' }}>{gradeError}</span>
-                        </div>
-                    )}
                 </div>
+
                 <div>
                     <label>반:</label>
                     <input
                         type="text"
                         value={classroom}
-                        onChange={handleClassroomChange}
-                        style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '4px', border: '1px solid #ccc' }}
+                        onChange={(e) => setClassroom(e.target.value)}
+                        className="input"
                     />
-                    {classroomError && (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <img src={errorIcon} alt="Error" className="error-icon" />
-                            <span style={{ marginLeft: '8px', color: 'red' }}>{classroomError}</span>
-                        </div>
-                    )}
                 </div>
-                <button 
-                    type="submit" 
-                    disabled={!isFormValid || !!gradeError || !!classroomError} 
-                    style={{
-                        backgroundColor: isFormValid && !gradeError && !classroomError ? '#4CAF50' : '#ccc',
-                        color: isFormValid && !gradeError && !classroomError ? 'white' : '#777',
-                        cursor: isFormValid && !gradeError && !classroomError ? 'pointer' : 'not-allowed',
-                        padding: '10px 15px',
-                        border: 'none',
-                        borderRadius: '5px',
-                        marginTop: '10px'
-                    }}
-                >
+
+                <button type="submit" className="submit-button">
                     제출
                 </button>
             </form>
+
+            {isModalOpen && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <input
+                            type="text"
+                            className="input"
+                            value={school}
+                            onChange={(e) => setSchool(e.target.value)}
+                        />
+                        <button className="search-button" onClick={handleSchoolSearch}>
+                            검색
+                        </button>
+
+                        <ul className="school-list">
+                            {schoolList.map((school) => (
+                                <li key={school.SD_SCHUL_CODE} className="list-item" onClick={() => handleSchoolSelect(school)}>
+                                    {school.SCHUL_NM}, {school.ORG_RDNMA}, {school.ATPT_OFCDC_SC_NM}
+                                </li>
+                            ))}
+                        </ul>
+
+                        <button className="close-button" onClick={() => setIsModalOpen(false)}>
+                            닫기
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

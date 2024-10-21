@@ -9,6 +9,7 @@ import jwt from "jsonwebtoken";
 import cors from 'cors';
 import fs from 'fs';
 import axios from 'axios';
+import helmet from 'helmet';
 import {finduser} from './db/db'
 import { find_user_data,is_user_deleted_recently } from "./users_process/db";
 import UserRouter from "./users_process/users";
@@ -53,6 +54,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors(corsOptions));
+app.use(helmet());
 
 const logger = winston.createLogger({
   level: 'info',

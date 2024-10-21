@@ -190,7 +190,7 @@ class PostCommentDBManager {
                     category_id, tags, view_count, like_count, dislike_count, comment_count
             FROM posts
             WHERE is_deleted = false  -- Exclude deleted posts
-            ORDER BY id ASC            -- Sort by id in ascending order
+            ORDER BY id DESC          -- Sort by id in ascending order
             OFFSET $1 LIMIT $2;
             `;
 

@@ -1,79 +1,67 @@
 import React, { useEffect, useState } from 'react';
-import { Editor } from 'react-draft-wysiwyg';
-import { EditorState, ContentState } from 'draft-js';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { useParams } from 'react-router-dom'; // useParams 추가
+import WysiwygEditor from './WysiwygEditor'; // 별도의 에디터 컴포넌트가 있다고 가정
 
-interface EditPostProps {
-  postId: number; // 수정할 게시글의 ID
+interface PostEditProps {
+  postId: number; // postId를 props로 받기 위한 인터페이스 정의
 }
 
-const EditPost: React.FC<EditPostProps> = () => {
-  const { postId } = useParams<{ postId: string }>(); // URL에서 postId 가져오기
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [title, setTitle] = useState('');
+const PostEdit: React.FC<PostEditProps> = () => {
+  const { postId } = useParams<{ postId: string }>();
+  const [initialTitle, setInitialTitle] = useState<string>('');
+  const [initialContent, setInitialContent] = useState<string>('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`/post_data/get-posts/${postId}`, {
-          headers: {
-            'Authorization': `Bearer {token}`, // JWT 토큰 추가
-          },
-        });
-        const { title, content } = response.data.data; // 기존 게시글 데이터 가져오기
-        setTitle(title);
-        setEditorState(EditorState.createWithContent(ContentState.createFromText(content)));
-      } catch (error: any) {
-        console.error('게시글을 가져오는 데 실패했습니다:', error.response.data);
+        const response = await axios.get(`https://localhost:8080/post_data/get-posts/${postId}`);
+        const fetchedPost = response.data.data;
+        setInitialTitle(fetchedPost.title);
+        setInitialContent(fetchedPost.content);
+      } catch (error) {
+        console.error('글 불러오기 실패:', error);
       }
     };
-  
+
     fetchPost();
   }, [postId]);
 
-  const handleEditorStateChange = (state: EditorState) => {
-    setEditorState(state);
-  };
+  const handleSubmit = async (title: string, content: string) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('로그인 토큰이 없습니다. 다시 로그인해주세요.');
+      return;
+    }
 
-  const handleSubmit = async () => {
-    const content = editorState.getCurrentContent().getPlainText();
     try {
-      const response = await axios.put(`/post_data/update_post/${postId}`, {
-        title,
-        content,
-      }, {
-        headers: {
-          'Authorization': `Bearer {token}`, // JWT 토큰 추가
-        },
-      });
-      console.log(response.data);
-    } catch (error: any) {
-      console.error('게시글 수정 실패:', error.response.data);
+      await axios.put(
+        `https://localhost:8080/post_data/update_post/${postId}`,
+        { title, content },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert('게시글 수정 성공!');
+      navigate('/board'); // 수정 후 게시판으로 이동
+    } catch (error) {
+      console.error('게시글 수정 실패:', error);
+      alert('게시글 수정 중 오류가 발생했습니다.');
     }
   };
 
   return (
-    <div>
-      <h1>게시글 수정</h1>
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="제목을 입력하세요"
-      />
-      <Editor
-        editorState={editorState}
-        onEditorStateChange={handleEditorStateChange}
-        toolbar={{
-          options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 'image', 'history'],
-        }}
-        placeholder="내용을 입력하세요"
-      />
-      <button onClick={handleSubmit}>수정</button>
-    </div>
+    <WysiwygEditor
+      initialTitle={initialTitle}
+      initialContent={initialContent}
+      onSubmit={handleSubmit}
+    />
   );
 };
 
-export default EditPost;
+export default PostEdit;

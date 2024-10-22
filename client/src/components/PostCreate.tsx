@@ -1,54 +1,39 @@
-import React, { useState } from 'react';
-import { Editor } from 'react-draft-wysiwyg';
-import { EditorState } from 'draft-js';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import EditorComponent from './WysiwygEditor';
 
 const PostCreate: React.FC = () => {
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [title, setTitle] = useState('');
+  const navigate = useNavigate();
 
-  const handleEditorStateChange = (state: EditorState) => {
-    setEditorState(state);
-  };
+  const handleSubmit = async (title: string, content: string) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('로그인 토큰이 없습니다. 다시 로그인해주세요.');
+      return;
+    }
 
-  const handleSubmit = async () => {
-    const content = editorState.getCurrentContent().getPlainText();
     try {
-      const response = await axios.post('/post_data/create_post', {
-        title,
-        content,
-      }, {
-        headers: {
-          'Authorization': `Bearer {token}`, // JWT 토큰 추가
-        },
-      });
-      console.log(response.data);
-    } catch (error: any) {
-      console.error('게시글 작성 실패:', error.response.data);
+      await axios.post(
+        'https://localhost:8080/post_data/create_post',
+        { title, content },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert('게시글 작성 성공!');
+      navigate('/board'); // 게시판으로 리다이렉트
+    } catch (error) {
+      console.error('게시글 작성 실패:', error);
+      alert('게시글 작성 중 오류가 발생했습니다.');
     }
   };
 
-  return (
-    <div>
-      <h1>게시글 작성</h1>
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="제목을 입력하세요"
-      />
-      <Editor
-        editorState={editorState}
-        onEditorStateChange={handleEditorStateChange}
-        toolbar={{
-          options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 'image', 'history'],
-        }}
-        placeholder="내용을 입력하세요"
-      />
-      <button onClick={handleSubmit}>제출</button>
-    </div>
-  );
+  return <EditorComponent onSubmit={handleSubmit} />; // EditorComponent에 onSubmit prop 전달
 };
 
 export default PostCreate;

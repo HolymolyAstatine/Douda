@@ -100,7 +100,7 @@ const App = () => {
           <Route path="/signup" element={<Signup />} /> {/* 회원가입 라우터 */}
           <Route path="/signup-set" element={<SignupSet />} /> {/* 회원가입 추가정보 라우터 */}
           <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} /> {/*프로파일 라우터 */}
-          <Route path='/edit/:postId' element={<EditPost />} /> {/* 게시글 수정 폼 */} 
+          <Route path='/edit/:postId' element={<EditPost postId={0} />} /> {/* 게시글 수정 폼 */} 
           <Route path='/board' element={<Board isLoggedIn={isLoggedIn} />} /> {/* 게시판 */}
           <Route path="/post/:id" element={<PostDetail/>} /> {/* 게시글 상세*/}
           <Route path="/create" element={<PostCreate />} /> {/* 게시글 작성 폼 */}

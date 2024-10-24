@@ -18,7 +18,8 @@
 - [팀원](#팀원)
 
 ## 프로젝트 소개
-
+학교 수업량 유연화 주간에 진행됬던 '공존 프로젝트' 에
+발표하기 위해 제작했던 '도우다' 입니다.
 
 ## 구조
 ![프로젝트 구조](./str.png)
@@ -28,6 +29,9 @@
 <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL Badge" />
 
 ## 기능
+- [급식표 확인]
+- [시간표 확인]
+- [게시판]
 
 ## 기여 & 요청
 
@@ -39,7 +43,7 @@
 <h3>아무나 사용하셔도 됩니다.</h3>
 
 ## 문의
-임시로 이메일 보내주세요 >> (kpa7089@gmail.com) <br>
+임시로 이메일 보내주세요 >> (kpa7089@gmail.com)  << <br>
 
 ## 팀원
 

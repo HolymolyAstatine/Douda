@@ -13,8 +13,9 @@ import helmet from 'helmet';
 import {finduser} from './db/db'
 import { find_user_data,is_user_deleted_recently } from "./users_process/db";
 import UserRouter from "./users_process/users";
-import PostRouter from "./post_process/post"
-import APIRouter from "./api/api"
+import PostRouter from "./post_process/post";
+import APIRouter from "./api/api";
+import crypto from 'crypto';
 
 
 dotenv.config();
@@ -49,12 +50,58 @@ const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
 
 const logDir = path.join(__dirname, '../logs');
 
+const blockedIPs = new Set(['::ffff:47.100.219.102','::ffff:8.216.85.239']);
+
 const app = express();
+
+app.use((req, res, next) => {
+  const clientIp = req.ip || req.socket.remoteAddress; 
+
+  if (clientIp && blockedIPs.has(clientIp)) { 
+      console.log(`Blocked access attempt from IP: ${clientIp}`); 
+      return res.status(403).send('Access Denied'); 
+  }
+
+  next();
+});
 
 
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(helmet());
+
+app.use(helmet.frameguard({ action: 'deny' }));
+
+// Nonce 생성 미들웨어
+app.use((req, res: any, next) => {
+  res.locals.nonce = crypto.randomBytes(16).toString('base64'); // nonce 생성
+  next();
+});
+
+// CSP 직접 설정
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    `default-src 'self'; script-src 'self' https://www.googletagmanager.com 'nonce-${res.locals.nonce}'`
+  );
+  next();
+});
+
+
+app.use((req, res, next) => {
+  if (req.url.includes('/cgi-bin/*')) {
+    const clientIp = req.ip || req.socket.remoteAddress;
+    logger.info(`Blocked access attempt from IP: ${clientIp}`);
+    return res.status(403);
+  }
+  next();
+});
+
+app.use('/vendor/phpunit/*', (req, res) => {
+  const clientIp = req.ip || req.socket.remoteAddress;
+  logger.info(`Blocked access attempt from IP: ${clientIp}`);
+  res.status(403)
+});
 
 const logger = winston.createLogger({
   level: 'info',

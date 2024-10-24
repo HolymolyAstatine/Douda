@@ -42,14 +42,14 @@
   
 - [Posts](#posts)
     - [Create Post](#create-post)
+    - [Create Comment](#create-comment)
     - [Get Posts](#get-posts)
-    - [Get Single Post](#get-single-post)
-    - [Update Post](#update-post)
+    - [Update Post](#updtate-post)
     - [Delete Post](#delete-post)
-    - [Like Post](#like-post)
-    - [Dislike Post](#dislike-post)
-    - [Get Post Reactions](#get-post-reactions)
-    - [Comment on Post](#comment-on-post)
+    - [Like Post](#post-like)
+    - [Dislike Post](#post-dislike)
+    - [Get Post informations](#get-post)
+    - [Comment on Post](#get-post-comments)
     - [Delete Comment](#delete-comment)
 
 

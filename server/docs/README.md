@@ -6,6 +6,7 @@
 # Error Codes
 - 400: Bad Request – 유효하지 않은 요청 OR 파라미터 안넣음.
 - 401: Unauthorized – 유저인증에 실패함
+- 403: Forbidden - 권한없음
 - 404: Not Found – 찾을수 없음
 - 500: Internal Server Error – 서버에러(문의)
 

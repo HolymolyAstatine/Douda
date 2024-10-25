@@ -12,6 +12,7 @@ interface Post {
   like_count: number;
   dislike_count: number;
   comment_count: number;
+  nickname: string;
 }
 
 interface Comment {
@@ -19,6 +20,7 @@ interface Comment {
   content: string;
   author_id: number;
   created_at: string;
+  nickname: string;
 }
 
 const PostDetail: React.FC = () => {
@@ -46,6 +48,7 @@ const PostDetail: React.FC = () => {
       }
     };
 
+    
     const fetchComments = async () => {
       try {
         const response = await axios.get(`https://localhost:8080/post_data/get-posts/${id}/comments`);
@@ -98,9 +101,7 @@ const PostDetail: React.FC = () => {
       return;
     }
     try {
-      await axios.post(`https://localhost:8080/post_data/posts/${id}/like`, {}, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      await axios.post(`https://localhost:8080/post_data/posts/${id}/like`,{},{headers:{'Authorization': `Bearer ${token}`,}});
       setLikeCount(likeCount + 1); // 좋아요 수 증가
     } catch (error) {
       console.error('좋아요 실패:', error);
@@ -116,9 +117,7 @@ const PostDetail: React.FC = () => {
       return;
     }
     try {
-      await axios.post(`https://localhost:8080/post_data/posts/${id}/dislike`, {}, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      await axios.post(`https://localhost:8080/post_data/posts/${id}/dislike`,{},{headers:{'Authorization': `Bearer ${token}`,}});
       setDislikeCount(dislikeCount + 1); // 싫어요 수 증가
     } catch (error) {
       console.error('싫어요 실패:', error);
@@ -162,7 +161,7 @@ const PostDetail: React.FC = () => {
       await axios.put(
         `https://localhost:8080/post_data/posts/${id}/comments/${commentId}`,
         { content: editedCommentContent },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } } 
       );
       setComments((prevComments) =>
         prevComments.map((comment) =>
@@ -209,7 +208,7 @@ const PostDetail: React.FC = () => {
     <div>
       <h1>{post.title}</h1>
       <div>
-        <p>작성자 ID: {post.author_id}</p>
+        <p>작성자 닉네임: {post.nickname}</p>
         <p>작성일: {new Date(post.created_at).toLocaleDateString()}</p>
         <p>수정일: {new Date(post.updated_at).toLocaleDateString()}</p>
       </div>
@@ -223,7 +222,7 @@ const PostDetail: React.FC = () => {
 
       {currentUserId === post.author_id && (
         <div>
-          <button onClick={() => navigate(`/edit/${post.id}`)}>수정</button>
+          <button onClick={() => navigate(`/edit/${post.id}`)}>수정</button> {/* Update to navigate to PostEdit */}
           <button onClick={handleDeletePost}>삭제</button>
         </div>
       )}
@@ -246,7 +245,7 @@ const PostDetail: React.FC = () => {
               ) : (
                 <div>
                   <p>{comment.content}</p>
-                  <small>작성자 ID: {comment.author_id}</small>
+                  <small>작성자 : {comment.nickname}</small>
                   <br />
                   <small>작성일: {new Date(comment.created_at).toLocaleDateString()}</small>
 

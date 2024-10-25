@@ -332,14 +332,15 @@ router.delete('/posts/:id',auth,async(req:Request,res:Response)=>{
     try{
         const chid = await pcdbm.getUserIdByGid(Gid as string);
         const chpid = await pcdbm.getPostbyid(id);
-        if (chpid!==null && chpid.length>0 && chpid[0].author_id===chid){
+        if (chpid!==null && chpid && chpid.author_id===chid){
             await pcdbm.deletePost(id);
             logger.info(`${id} post delete`);
             res.status(200).json({code:200,message:"delete success"});
             return;
         }
         else{
-            logger.info(`${id} post try delete but reject ${chid}-${chpid?.[0]?.author_id}`);
+            console.log(chpid);
+            logger.info(`${id} post try delete but reject ${chid}-${chpid?.author_id}`);
             res.status(403).json({code:403,message:"reject"});
             return;
         }
@@ -374,6 +375,7 @@ router.delete('/posts/:id/comments/:commentId',auth,async(req:Request,res:Respon
             return;
         }
         else{
+            console.log(chpid);
             logger.info(`${id} comments try delete but reject ${chid}-${chpid?.[0]?.author_id}`);
             res.status(403).json({code:403,message:"reject"});
             return;
@@ -442,14 +444,14 @@ router.put('/update_post/:id',auth,async(req:Request,res:Response)=>{
     try{
         const chid = await pcdbm.getUserIdByGid(Gid as string);
         const chpid = await pcdbm.getPostbyid(id);
-        if (chpid!==null && chpid.length>0 && chpid[0].author_id===chid){
+        if (chpid!==null && chpid && chpid.author_id===chid){
             await pcdbm.updatePost(id,title,content);
             logger.info(`${id} post update`);
             res.status(200).json({code:200,message:"update post success!"});
             return;
         }
         else{
-            logger.info(`${id} post try delete but reject ${chid}-${chpid?.[0]?.author_id}`);
+            logger.info(`${id} post try delete but reject ${chid}-${chpid?.author_id}`);
             res.status(403).json({code:403,message:"reject"});
             return;
         }

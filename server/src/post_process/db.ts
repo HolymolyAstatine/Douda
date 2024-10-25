@@ -44,12 +44,12 @@ class PostCommentDBManager {
 
 
     public async getUserIdByGid(Gid: string): Promise<number | null>{
-        this.client = await this.pool.connect();
+        const client = await this.pool.connect();
         try {
             const query = `
                 SELECT id FROM users WHERE Gid = $1;
             `;
-            const res = await this.client.query(query, [Gid]);
+            const res = await client.query(query, [Gid]);
     
             if (res.rows.length > 0) {
                 return res.rows[0].id;  // id 값 반환
@@ -58,11 +58,13 @@ class PostCommentDBManager {
             }
         }catch (error) {
             throw error;
+        } finally {
+            client.release();
         }
     };
 
     public async insertPost(title: string, content: string, authorId: number, categoryId?: number | null, tags?: string | null) {
-        this.client = await this.pool.connect();
+        const client = await this.pool.connect();
         categoryId = categoryId || null;
         tags = tags || null;
         try {
@@ -71,16 +73,16 @@ class PostCommentDBManager {
                 VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, $4, $5, 0, 0, 0, 0)
                 RETURNING *; 
             `;
-            const res = await this.client.query(query, [title, content, authorId, categoryId, tags]);
+            const res = await client.query(query, [title, content, authorId, categoryId, tags]);
         } catch (error) {
             throw error;
         } finally {
-            this.client.release();
+            client.release();
         }
     }
 
     public async updatePost(postId: number, title?: string, content?: string, categoryId?: number | null, tags?: string | null):Promise<boolean> {
-        this.client = await this.pool.connect();
+        const client = await this.pool.connect();
         try {
             const setClause = [];
             const values = [];
@@ -110,80 +112,80 @@ class PostCommentDBManager {
                 WHERE id = $${values.length};
             `;
 
-            await this.client.query(query, values);
+            await client.query(query, values);
             return true;
         } catch (error) {
             throw error;
         } finally {
-            this.client.release();
+            client.release();
         }
     }
 
     public async deletePost(postId: number) {
-        this.client = await this.pool.connect();
+        const client = await this.pool.connect();
         try {
             const query = `
                 UPDATE posts
                 SET is_deleted = TRUE, updated_at = CURRENT_TIMESTAMP
                 WHERE id = $1;
             `;
-            await this.client.query(query, [postId]);
+            await client.query(query, [postId]);
         } catch (error) {
             throw error;
         } finally {
-            this.client.release();
+            client.release();
         }
     }
 
     public async insertComment(postId: number, authorId: number, content: string) {
-        this.client = await this.pool.connect();
+        const client = await this.pool.connect();
         try {
             const query = `
                 INSERT INTO comments (post_id, author_id, content, created_at, updated_at)
                 VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
                 RETURNING *;  
             `;
-            const res = await this.client.query(query, [postId, authorId, content]);
+            const res = await client.query(query, [postId, authorId, content]);
         } catch (error) {
             throw error;
         } finally {
-            this.client.release();
+            client.release();
         }
     }
 
     public async updateComment(commentId: number, content: string) {
-        this.client = await this.pool.connect();
+        const client = await this.pool.connect();
         try {
             const query = `
                 UPDATE comments
                 SET content = $1, updated_at = CURRENT_TIMESTAMP
                 WHERE id = $2;
             `;
-            await this.client.query(query, [content, commentId]);
+            await client.query(query, [content, commentId]);
         } catch (error) {
             throw error;
         } finally {
-            this.client.release();
+            client.release();
         }
     }
 
     public async deleteComment(commentId: number) {
-        this.client = await this.pool.connect();
+        const client = await this.pool.connect();
         try {
             const query = `
                 DELETE FROM comments
                 WHERE id = $1;
             `;
-            await this.client.query(query, [commentId]);
+            await client.query(query, [commentId]);
         } catch (error) {
             throw error;
         } finally {
-            this.client.release();
+            client.release();
         }
     }
 
     public async getPosts(offset: number, limit: number):Promise<postsdata[]>{
-        this.client = await this.pool.connect();
+        const client = await this.pool.connect();
         try {
             const query = `
             SELECT id, title, content, author_id, created_at, updated_at, is_deleted, 
@@ -197,7 +199,7 @@ class PostCommentDBManager {
           const values = [offset, limit];  // Use offset and limit for pagination
           const res:postsdata[]=[]
       
-          const { rows }:{rows:postsdata[]} = await this.client.query(query, values);
+          const { rows }:{rows:postsdata[]} = await client.query(query, values);
           for (const row of rows){
             const nik=await getUserNikByID(row.author_id);
             row.nickname=nik || '탈퇴한 사용자';
@@ -207,14 +209,14 @@ class PostCommentDBManager {
         } catch (error) {
           throw error;
         }finally{
-            this.client.release();
+            client.release();
         }
     }
 
-    public async getPostbyid(id:number):Promise<postsdata[]|null>{
-        this.client = await this.pool.connect();
+    public async getPostbyid(id:number):Promise<postsdata|null>{
+        const client = await this.pool.connect();
         try{
-            const {rows} = await this.client.query(
+            const {rows} = await client.query(
                 'SELECT * FROM posts WHERE id = $1 AND is_deleted = false',
                 [id]
               );
@@ -228,7 +230,7 @@ class PostCommentDBManager {
         }catch(error){
             throw error;
         }finally{
-            this.client.release();
+            client.release();
         }
     }
 

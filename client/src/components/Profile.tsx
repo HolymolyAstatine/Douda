@@ -1,5 +1,4 @@
 // client/src/components/Profile.tsx
-// 사용자 프로파일 데이터를 관리하는 프로파일 컴포넌트
 import React, { useState, Dispatch, SetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -108,19 +107,23 @@ const Profile: React.FC<ProfileProps> = ({ setIsLoggedIn }) => {
         <p><strong>Grade:</strong> {profileData?.grade ? profileData.grade : '없음'}</p>
         <p><strong>Classroom:</strong> {profileData?.classroom ? profileData.classroom : '없음'}</p>
       </div>
-      {/* 프로파일 편집 버튼 */}
-      <button onClick={() => setIsEditing(true)} style={{ margin: '5px', padding: '10px 15px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px' }}>
-        프로필 편집
-      </button>
-      {/* 로그아웃 버튼 */}
-      <button onClick={handleLogout} style={{ margin: '5px', padding: '10px 15px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px' }}>
-        로그아웃
-      </button>
 
-      {/* 계정 삭제 모달 표시 버튼 */}
-      <button onClick={() => setShowDeleteModal(true)} style={{ margin: '5px', padding: '10px 15px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px' }}>
-        계정 삭제
-      </button>
+      {/* 버튼들을 수직으로 배치 */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {/* 프로파일 편집 버튼 */}
+        <button onClick={() => setIsEditing(true)} style={{ margin: '5px', padding: '10px 15px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px' }}>
+          프로필 편집
+        </button>
+        {/* 로그아웃 버튼 */}
+        <button onClick={handleLogout} style={{ margin: '5px', padding: '10px 15px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px' }}>
+          로그아웃
+        </button>
+
+        {/* 계정 삭제 모달 표시 버튼 */}
+        <button onClick={() => setShowDeleteModal(true)} style={{ margin: '5px', padding: '10px 15px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px' }}>
+          계정 삭제
+        </button>
+      </div>
 
       {/* 계정 삭제 모달 */}
       {showDeleteModal && (

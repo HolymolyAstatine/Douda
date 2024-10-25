@@ -2,7 +2,7 @@ import React from 'react';
 
 const Banner = () => {
   const handleClick = () => {
-    window.location.href = 'https://forms.gle/FLNrnNc3reygN15H7'; // 이동할 URL
+    window.open('https://forms.gle/FLNrnNc3reygN15H7', '_blank'); // Opens the URL in a new tab
   };
 
   return (
@@ -11,7 +11,7 @@ const Banner = () => {
       style={{
         width: '100%',
         height: '100px',
-        backgroundImage: `url(${process.env.PUBLIC_URL}/banner_s.png)`, // public 폴더에 있는 이미지 URL
+        backgroundImage: `url(${process.env.PUBLIC_URL}/banner_s.png)`, // URL of the image in the public folder
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         animation: 'slide 10s infinite',

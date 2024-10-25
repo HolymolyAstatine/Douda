@@ -108,8 +108,8 @@ const Profile: React.FC<ProfileProps> = ({ setIsLoggedIn }) => {
         <p><strong>Classroom:</strong> {profileData?.classroom ? profileData.classroom : '없음'}</p>
       </div>
 
-      {/* 버튼들을 수직으로 배치 */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}> {/* alignItems를 flex-start로 변경 */}
         {/* 프로파일 편집 버튼 */}
         <button onClick={() => setIsEditing(true)} style={{ margin: '5px', padding: '10px 15px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px' }}>
           프로필 편집

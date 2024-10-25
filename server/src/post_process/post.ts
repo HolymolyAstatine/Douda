@@ -367,8 +367,8 @@ router.delete('/posts/:id/comments/:commentId',auth,async(req:Request,res:Respon
 
     try{
         const chid = await pcdbm.getUserIdByGid(Gid as string);
-        const chpid = await pcdbm.getCommentsByPostId(commentid);
-        if (chpid!==null && chpid.length>0 && chpid[0].author_id===chid){
+        const chpid = await pcdbm.getCommentsByCommentID(commentid);
+        if (chpid!==null && chpid!==undefined && chpid.author_id===chid){
             await pcdbm.deleteComment(commentid);
             logger.info(`${id} comments delete`);
             res.status(200).json({code:200,message:"comment delete success!"});
@@ -376,7 +376,7 @@ router.delete('/posts/:id/comments/:commentId',auth,async(req:Request,res:Respon
         }
         else{
             console.log(chpid);
-            logger.info(`${id} comments try delete but reject ${chid}-${chpid?.[0]?.author_id}`);
+            logger.info(`${id} comments try delete but reject ${chid}-${chpid.author_id}`);
             res.status(403).json({code:403,message:"reject"});
             return;
         }
@@ -406,15 +406,15 @@ router.put('/posts/:id/comments/:commentId',auth,async(req:Request,res:Response)
 
     try{
         const chid = await pcdbm.getUserIdByGid(Gid as string);
-        const chpid = await pcdbm.getCommentsByPostId(commentid);
-        if (chpid!==null && chpid.length>0 && chpid[0].author_id===chid){
+        const chpid = await pcdbm.getCommentsByCommentID(commentid);
+        if (chpid!==null && chpid!==undefined && chpid.author_id===chid){
             await pcdbm.updateComment(commentid,content);
             logger.info(`${id}post ${commentid} added`);
             res.status(200).json({code:200,message:"comment update success!"});
             return;
         }
         else{
-            logger.info(`${id}post ${commentid} comments try update but reject ${chid}-${chpid?.[0]?.author_id}`);
+            logger.info(`${id}post ${commentid} comments try update but reject ${chid}-${chpid.author_id}`);
             res.status(403).json({code:403,message:"reject"});
             return;
         }

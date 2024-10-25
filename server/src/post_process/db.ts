@@ -255,6 +255,21 @@ class PostCommentDBManager {
         }
     }
 
+    public async getCommentsByCommentID(comment_id:number):Promise<Comment>{
+        const client = await this.pool.connect();
+        try{
+            const {rows} = await client.query<Comment>(`
+                SELECT * FROM comments WHERE id = $1`,
+                [comment_id]
+            );
+            return rows[0]
+        }catch(error){
+            throw error;
+        }finally{
+            client.release();
+        }
+    }
+
     public async increaseLikeCount(postId: number): Promise<void>{
         const client = await this.pool.connect();
         try{

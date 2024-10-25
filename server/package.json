@@ -2,6 +2,7 @@
   "dependencies": {
     "@google-cloud/storage": "^7.13.0",
     "@types/cors": "^2.8.17",
+    "@types/draft-convert": "^2.1.8",
     "@types/draft-js": "^0.11.18",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/multer": "^1.4.12",
@@ -14,6 +15,7 @@
     "csv-parse": "^5.5.6",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
+    "draft-convert": "^2.1.13",
     "draft-js": "^0.11.7",
     "express": "^4.19.2",
     "helmet": "^8.0.0",

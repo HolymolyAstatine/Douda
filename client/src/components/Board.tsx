@@ -22,7 +22,7 @@ const Board: React.FC<BoardProps> = ({ isLoggedIn }) => {
       try {
         const response = await axios.get('https://localhost:8080/post_data/posts');
         // 게시글을 역순으로 배열
-        setPosts(response.data.data.reverse());
+        setPosts(response.data.data);
       } catch (error) {
         console.error('게시글 불러오기 실패:', error);
       }

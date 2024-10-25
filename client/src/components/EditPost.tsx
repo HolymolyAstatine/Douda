@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import EditorComponent from './EditorComponent';
+import WysiwygEditor from './WysiwygEditor'; // 별도의 에디터 컴포넌트가 있다고 가정
 
-const PostEdit: React.FC = () => {
+interface PostEditProps {
+  postId: number; // postId를 props로 받기 위한 인터페이스 정의
+}
+
+const PostEdit: React.FC<PostEditProps> = () => {
   const { postId } = useParams<{ postId: string }>();
   const [initialTitle, setInitialTitle] = useState<string>('');
   const [initialContent, setInitialContent] = useState<string>('');
@@ -12,9 +16,10 @@ const PostEdit: React.FC = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`https://localhost:8080/get-post_data/${postId}`);
-        setInitialTitle(response.data.title);
-        setInitialContent(response.data.content);
+        const response = await axios.get(`https://localhost:8080/post_data/get-posts/${postId}`);
+        const fetchedPost = response.data.data;
+        setInitialTitle(fetchedPost.title);
+        setInitialContent(fetchedPost.content);
       } catch (error) {
         console.error('글 불러오기 실패:', error);
       }
@@ -37,13 +42,13 @@ const PostEdit: React.FC = () => {
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       alert('게시글 수정 성공!');
-      navigate('/board');
+      navigate('/board'); // 수정 후 게시판으로 이동
     } catch (error) {
       console.error('게시글 수정 실패:', error);
       alert('게시글 수정 중 오류가 발생했습니다.');
@@ -51,22 +56,11 @@ const PostEdit: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '30px', backgroundColor: '#f0f4f8', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)' }}>
-      <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}>게시글 수정</h2>
-      <EditorComponent 
-        initialTitle={initialTitle} 
-        initialContent={initialContent} 
-        onSubmit={handleSubmit} 
-      />
-      <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <button 
-          onClick={() => navigate('/board')} 
-          style={{ padding: '10px 20px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-        >
-          게시판으로 돌아가기
-        </button>
-      </div>
-    </div>
+    <WysiwygEditor
+      initialTitle={initialTitle}
+      initialContent={initialContent}
+      onSubmit={handleSubmit}
+    />
   );
 };
 

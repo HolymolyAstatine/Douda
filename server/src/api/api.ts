@@ -159,5 +159,12 @@ router.get('/searchTimeTable',auth,async(req:Request,res:Response)=>{
     }
 });
 
+// router.get('/academiccalendar',auth,async(req:Request,res:Response)=>{
+//     const Gid: string | undefined = req.decoded?.id;
+//     const email:string|undefined =req.decoded?.email;
+//     const {month} = req.query;
+
+
+// })
 
 export default router;

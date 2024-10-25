@@ -134,16 +134,7 @@ export const fetchTimetableDataAPI = async (schoolInfo: SchoolInfo, date: string
   }
 };
 
-export const fetchSchoolScheduleAPI = async (schoolInfo:SchoolInfo, year:string,month:string)=>{
-  const response = await axios.get(Academic_Calendar_API_URL,{
-    params:{
-      KEY: API_KEY,
-      Type: 'json',
-      ATPT_OFCDC_SC_CODE: schoolInfo.ATPT_OFCDC_SC_CODE,
-      SD_SCHUL_CODE: schoolInfo.SD_SCHUL_CODE,
-      AA_FROM_YMD:`${year}${month.padStart(2,'0')}`
-    }
-  })
+
 export const fetchMealDataAPI_day = async (schoolCode: string, atptCode: string, month: string,year:string,day:string): Promise<MealInfo[] | null | undefined> => {
   try {
     const date = `${year}${month}${day.toString().padStart(2, '0')}`;

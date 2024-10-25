@@ -1,4 +1,4 @@
-/* client/src/components/PostDetail.css */
+/* client/src/components/css/PostDetail.css */
 
 .post-detail {
     max-width: 800px;
@@ -10,14 +10,26 @@
 }
 
 .post-title {
-    font-size: 2em;
+    font-size: 2.5em; /* 제목 크기 증가 */
     margin-bottom: 10px;
+    font-weight: bold; /* 제목 강조 */
 }
 
 .post-meta {
-    font-size: 0.9em;
-    color: #555;
+    display: flex; /* Flexbox 사용 */
+    font-size: 0.8em; /* 작성자와 작성일 크기 감소 */
+    color: #777; /* 색상 조정 */
     margin-bottom: 20px;
+}
+
+.post-meta p {
+    margin: 0; /* 기본 마진 제거 */
+    padding: 0 5px; /* 좌우 패딩 추가 */
+}
+
+/* 작성자와 작성일을 가깝게 붙이기 위한 스타일 */
+.post-meta p:first-child {
+    margin-right: 10px; /* 작성자와 작성일 사이의 간격 조정 */
 }
 
 .post-content {
@@ -60,7 +72,7 @@ button {
     padding: 10px 15px;
     border: none;
     border-radius: 5px;
-    background-color: #007bff;
+    background-color: #004ab9;
     color: white;
     cursor: pointer;
 }

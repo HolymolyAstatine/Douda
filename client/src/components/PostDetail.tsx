@@ -194,7 +194,7 @@ const PostDetail: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setNewComment('');
-      const updatedComments = await axios.get(`https://localhost:8080/post_data/posts/${id}/comments`);
+      const updatedComments = await axios.get(`https://localhost:8080/post_data/get-posts/${id}/comments`);
       setComments(updatedComments.data.data);
     } catch (error) {
       console.error('댓글 작성 실패:', error);

@@ -240,8 +240,8 @@ app.get('/profile-server', auth, async(req: Request, res: Response) => {
   const user_data = await find_user_data(email as string);
   try{
   if (user_data.length>0){
-      const {id,email,nickname,school,grade,classroom}=user_data[0];
-      res.status(200).json({code:200,data:{id,email,nickname,school,grade,classroom}});
+      const {id,email,nickname,school,grade,classroom,shcode}=user_data[0];
+      res.status(200).json({code:200,data:{id,email,nickname,school,grade,classroom,shcode}});
       return;
     }
   else{

@@ -1,40 +1,62 @@
+// SchoolSearchModal.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
+import { SchoolInfo } from '../../../server/types/types';
+import './css/SchoolSearchModal.css';
 
 interface SchoolSearchModalProps {
-  onSelect: (school: any) => void; // 학교 선택 핸들러
-  onClose: () => void; // 모달 닫기 핸들러
+    onSelectSchool: (school: SchoolInfo) => void;
+    onClose: () => void;
 }
 
-const SchoolSearchModal: React.FC<SchoolSearchModalProps> = ({ onSelect, onClose }) => {
-  const [searchTerm, setSearchTerm] = useState(''); // 검색어 상태
-  const [schools, setSchools] = useState<any[]>([]); // 검색 결과 상태
+const SchoolSearchModal: React.FC<SchoolSearchModalProps> = ({ onSelectSchool, onClose }) => {
+    const [school, setSchool] = useState('');
+    const [schoolList, setSchoolList] = useState<SchoolInfo[]>([]);
 
-  const handleSearch = async () => {
-    const response = await axios.get(`https://api.example.com/search-school?query=${searchTerm}`);
-    setSchools(response.data); // 검색 결과 설정
-  };
+    const handleSchoolSearch = async () => {
+        try {
+            const response = await axios.get(`https://localhost:8080/api/searchSchool?SchoolName=${school}`);
+            setSchoolList(response.data.data);
+        } catch (error) {
+            console.error('Error occurred while searching for schools:', error);
+        }
+    };
 
-  return (
-    <div className="modal" style={{ padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>
-      <h2>학교 검색</h2>
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)} // 검색어 업데이트
-        placeholder="학교 이름을 입력하세요"
-      />
-      <button onClick={handleSearch} style={{ marginLeft: '10px' }}>검색</button>
-      <ul style={{ marginTop: '10px' }}>
-        {schools.map((school) => (
-          <li key={school.id} onClick={() => onSelect(school)} style={{ cursor: 'pointer' }}>
-            {school.SCHUL_NM} - {school.ADDR}
-          </li>
-        ))}
-      </ul>
-      <button onClick={onClose} style={{ marginTop: '10px' }}>닫기</button>
-    </div>
-  );
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            handleSchoolSearch();
+        }
+    };
+
+    return (
+        <div className="modal">
+            <div className="modal-content">
+                <input
+                    type="text"
+                    className="input"
+                    value={school}
+                    onChange={(e) => setSchool(e.target.value)}
+                    onKeyDown={handleKeyDown}  // Trigger search on Enter
+                />
+                <button className="search-button" onClick={handleSchoolSearch}>
+                    검색
+                </button>
+
+                <ul className="school-list">
+                    {schoolList.map((school) => (
+                        <li key={school.SD_SCHUL_CODE} className="list-item" onClick={() => onSelectSchool(school)}>
+                            {school.SCHUL_NM}, {school.ORG_RDNMA}, {school.ATPT_OFCDC_SC_NM}
+                        </li>
+                    ))}
+                </ul>
+
+                <button className="close-button" onClick={onClose}>
+                    닫기
+                </button>
+            </div>
+        </div>
+    );
 };
 
 export default SchoolSearchModal;

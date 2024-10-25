@@ -144,4 +144,23 @@ export const fetchSchoolScheduleAPI = async (schoolInfo:SchoolInfo, year:string,
       AA_FROM_YMD:`${year}${month.padStart(2,'0')}`
     }
   })
+export const fetchMealDataAPI_day = async (schoolCode: string, atptCode: string, month: string,year:string,day:string): Promise<MealInfo[] | null | undefined> => {
+  try {
+    const date = `${year}${month}${day.toString().padStart(2, '0')}`;
+    const response = await axios.get<MealAPIResponse>(MEAL_API_URL, {
+      params: {
+        KEY: API_KEY,
+        Type: 'json',
+        SD_SCHUL_CODE: schoolCode,
+        ATPT_OFCDC_SC_CODE: atptCode,
+        MLSV_YMD: date,
+      },
+    });
+
+    const meal = response.data.mealServiceDietInfo?.[1]?.row;
+
+  return meal;
+  } catch (error) {
+    throw new Error(`Error fetching data: ${error}`);
+  }
 };

@@ -12,6 +12,7 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "axios": "^1.7.7",
+    "draft-convert": "^2.1.13",
     "date-fns": "^4.1.0",
     "draft-js": "^0.11.7",
     "react": "^18.3.1",
@@ -50,6 +51,7 @@
     ]
   },
   "devDependencies": {
+    "@types/draft-convert": "^2.1.8",
     "@types/draft-js": "^0.11.18",
     "@types/react-draft-wysiwyg": "^1.13.8"
   }

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
-import { EditorState } from 'draft-js';
+import { EditorState, ContentState } from 'draft-js';
+import { convertFromHTML } from 'draft-convert'; // HTML을 ContentState로 변환하기 위한 import
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import axios from 'axios';
 
 interface WysiwygEditorProps {
   initialTitle?: string;
@@ -18,6 +18,12 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ initialTitle = '', initia
   useEffect(() => {
     setTitle(initialTitle);
   }, [initialTitle]);
+
+  useEffect(() => {
+    // HTML 내용을 ContentState로 변환하여 EditorState로 설정
+    const contentState = convertFromHTML(initialContent);
+    setEditorState(EditorState.createWithContent(contentState));
+  }, [initialContent]);
 
   useEffect(() => {
     setIsButtonDisabled(!title.trim() || editorState.getCurrentContent().hasText() === false);

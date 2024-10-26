@@ -8,6 +8,7 @@ const API_KEY = process.env.NEIS_API_KEY; // key
 const SCHOOL_API_URL = 'https://open.neis.go.kr/hub/schoolInfo'; // 학교검색 api링크
 const MEAL_API_URL = 'https://open.neis.go.kr/hub/mealServiceDietInfo'; // 학교급식 api링크
 const TIMETABLE_API_URL = 'https://open.neis.go.kr/hub/'; // 시간표 api링크
+const Academic_Calendar_API_URL = 'https://open.neis.go.kr/hub/SchoolSchedule'; //학사일정 검색 api링크
 
 interface SchoolAPIResponse {
   schoolInfo?: { row: SchoolInfo[] }[];
@@ -128,6 +129,28 @@ export const fetchTimetableDataAPI = async (schoolInfo: SchoolInfo, date: string
       return response.data[timetableType][1].row;
     }
     return [];
+  } catch (error) {
+    throw new Error(`Error fetching data: ${error}`);
+  }
+};
+
+
+export const fetchMealDataAPI_day = async (schoolCode: string, atptCode: string, month: string,year:string,day:string): Promise<MealInfo[] | null | undefined> => {
+  try {
+    const date = `${year}${month}${day.toString().padStart(2, '0')}`;
+    const response = await axios.get<MealAPIResponse>(MEAL_API_URL, {
+      params: {
+        KEY: API_KEY,
+        Type: 'json',
+        SD_SCHUL_CODE: schoolCode,
+        ATPT_OFCDC_SC_CODE: atptCode,
+        MLSV_YMD: date,
+      },
+    });
+
+    const meal = response.data.mealServiceDietInfo?.[1]?.row;
+
+  return meal;
   } catch (error) {
     throw new Error(`Error fetching data: ${error}`);
   }

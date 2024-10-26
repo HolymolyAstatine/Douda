@@ -3,7 +3,7 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 40vmin; /* 비율에 따라 크기 조정 */
   pointer-events: none;
 }
 
@@ -24,8 +24,26 @@
   color: white;
 }
 
+/* 링크 색상 */
 .App-link {
   color: #61dafb;
+}
+
+/* 화면 크기에 따른 스타일 조정 */
+@media (max-width: 768px) { /* 태블릿 및 작은 화면 */
+  .App-header {
+    font-size: calc(8px + 2vmin); /* 폰트 크기 조정 */
+  }
+}
+
+@media (max-width: 480px) { /* 모바일 화면 */
+  .App-header {
+    font-size: calc(6px + 2vmin); /* 폰트 크기 조정 */
+  }
+
+  .App-logo {
+    height: 30vmin; /* 로고 크기 조정 */
+  }
 }
 
 @keyframes App-logo-spin {
@@ -34,5 +52,16 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+@keyframes slide {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
   }
 }

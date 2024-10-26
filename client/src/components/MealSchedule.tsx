@@ -12,6 +12,10 @@ const MealSchedule: React.FC = () => {
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
     const [showCalendar, setShowCalendar] = useState<boolean>(false); // 달력 표시 상태
 
+    useEffect(() => {
+        document.title = "Douda - 급식 조회";
+      }, []);
+
     const fetchMeals = async (month: number, year: number) => {
         const key = `${year}-${month}`;
         if (meals[key]) {

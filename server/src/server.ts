@@ -82,7 +82,7 @@ app.use((req, res: any, next) => {
 app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
-    `default-src 'self'; script-src 'self' https://www.googletagmanager.com 'nonce-${res.locals.nonce}'`
+    `default-src 'self'; script-src 'self' https://www.googletagmanager.com 'nonce-${res.locals.nonce}'; img-src 'self' data:`
   );
   next();
 });

@@ -18,13 +18,34 @@ jobs:
         with:
           node-version: '16' # 사용 중인 Node.js 버전으로 수정하세요.
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests
-        run: npm test
-
-      - name: Lint and build
+      - name: Install server dependencies
         run: |
+          cd server # 서버 디렉토리로 이동
+          npm install
+
+      - name: Install client dependencies
+        run: |
+          cd client # 클라이언트 디렉토리로 이동
+          npm install
+
+      - name: Run server tests
+        run: |
+          cd server # 서버 디렉토리로 이동
+          npm test
+
+      - name: Run client tests
+        run: |
+          cd client # 클라이언트 디렉토리로 이동
+          npm test
+
+      - name: Lint and build server
+        run: |
+          cd server # 서버 디렉토리로 이동
+          npm run lint
+          npm run build
+
+      - name: Lint and build client
+        run: |
+          cd client # 클라이언트 디렉토리로 이동
           npm run lint
           npm run build

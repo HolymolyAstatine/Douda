@@ -17,7 +17,9 @@ const Scheduler: React.FC = () => {
     const [time, setTime] = useState<string>('');
     const [error, setError] = useState<string>('');
     const token = localStorage.getItem('token'); // JWT 토큰을 로컬 스토리지에서 가져옴
-
+    useEffect(() => {
+        document.title = "Douda";
+      }, []);
     useEffect(() => {
         const fetchSchedules = async () => {
             try {

@@ -6,6 +6,7 @@
 # Error Codes
 - 400: Bad Request – 유효하지 않은 요청 OR 파라미터 안넣음.
 - 401: Unauthorized – 유저인증에 실패함
+- 403: Forbidden - 권한없음
 - 404: Not Found – 찾을수 없음
 - 500: Internal Server Error – 서버에러(문의)
 
@@ -42,14 +43,14 @@
   
 - [Posts](#posts)
     - [Create Post](#create-post)
+    - [Create Comment](#create-comment)
     - [Get Posts](#get-posts)
-    - [Get Single Post](#get-single-post)
-    - [Update Post](#update-post)
+    - [Update Post](#updtate-post)
     - [Delete Post](#delete-post)
-    - [Like Post](#like-post)
-    - [Dislike Post](#dislike-post)
-    - [Get Post Reactions](#get-post-reactions)
-    - [Comment on Post](#comment-on-post)
+    - [Like Post](#post-like)
+    - [Dislike Post](#post-dislike)
+    - [Get Post informations](#get-post)
+    - [Comment on Post](#get-post-comments)
     - [Delete Comment](#delete-comment)
 
 

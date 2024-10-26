@@ -1,0 +1,86 @@
+/* client/src/components/css/PostDetail.css */
+
+.post-detail {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.post-title {
+    font-size: 2.5em; /* 제목 크기 증가 */
+    margin-bottom: 10px;
+    font-weight: bold; /* 제목 강조 */
+}
+
+.post-meta {
+    display: flex; /* Flexbox 사용 */
+    font-size: 0.8em; /* 작성자와 작성일 크기 감소 */
+    color: #777; /* 색상 조정 */
+    margin-bottom: 20px;
+}
+
+.post-meta p {
+    margin: 0; /* 기본 마진 제거 */
+    padding: 0 5px; /* 좌우 패딩 추가 */
+}
+
+/* 작성자와 작성일을 가깝게 붙이기 위한 스타일 */
+.post-meta p:first-child {
+    margin-right: 10px; /* 작성자와 작성일 사이의 간격 조정 */
+}
+
+.post-content {
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+.button-group {
+    margin-bottom: 20px;
+}
+
+.comment-section {
+    margin-top: 30px;
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+.comment {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.comment-meta {
+    font-size: 0.8em;
+    color: #777;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #004ab9;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.post-body{
+    margin-bottom: 60px;
+}

@@ -1,3 +1,4 @@
+import '../components/css/PostDetail.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -12,7 +13,7 @@ interface Post {
   like_count: number;
   dislike_count: number;
   comment_count: number;
-  nickname:string;
+  nickname: string;
 }
 
 interface Comment {
@@ -20,14 +21,10 @@ interface Comment {
   content: string;
   author_id: number;
   created_at: string;
-  nickname:string;
+  nickname: string;
 }
 
-interface PostDetailProps {
-  isLoggedIn: boolean;
-}
-
-const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
+const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // URL에서 게시글 ID 추출
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -165,7 +162,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
       await axios.put(
         `https://douda.kro.kr:443/post_data/posts/${id}/comments/${commentId}`,
         { content: editedCommentContent },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } } 
       );
       setComments((prevComments) =>
         prevComments.map((comment) =>
@@ -204,33 +201,34 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
     }
   };
 
+
   if (!post) {
     return <div>게시글을 불러오는 중입니다...</div>;
   }
 
   return (
-    <div>
-      <h1>{post.title}</h1>
-      <div>
+    <div className="post-detail">
+      <button onClick={()=>navigate('/board')}>←게시판으로</button>
+      <h1 className="post-title">{post.title}</h1>
+      <div className="post-meta">
         <p>작성자: {post.nickname}</p>
         <p>작성일: {new Date(post.created_at).toLocaleDateString()}</p>
         <p>수정일: {new Date(post.updated_at).toLocaleDateString()}</p>
       </div>
-
-      <div dangerouslySetInnerHTML={{ __html: post.content }} />
-
-      <div>
-        <button onClick={handleLike}>좋아요 ({likeCount})</button>
-        <button onClick={handleDislike}>싫어요 ({dislikeCount})</button>
+  
+      <div className='post-body' dangerouslySetInnerHTML={{ __html: post.content }} />
+  
+      <div>        <button onClick={handleLike}>&#128077; 좋아요 ({likeCount})</button>
+        <button onClick={handleDislike}>&#128078; 싫어요 ({dislikeCount})</button>
       </div>
-
+  
       {currentUserId === post.author_id && (
         <div>
-          <button onClick={() => navigate(`/edit/${post.id}`)}>수정</button> {/* Update to navigate to PostEdit */}
-          <button onClick={handleDeletePost}>삭제</button>
+          <button onClick={() => navigate(`/edit/${post.id}`)}> &#9999;&#65039; 수정</button>
+          <button onClick={handleDeletePost}> &#10060; 삭제</button>
         </div>
       )}
-
+  
       <h2>댓글 ({comments.length})</h2>
       <div>
         {comments.length > 0 ? (
@@ -252,7 +250,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
                   <small>작성자: {comment.nickname}</small>
                   <br />
                   <small>작성일: {new Date(comment.created_at).toLocaleDateString()}</small>
-
+  
                   {currentUserId === comment.author_id && (
                     <div>
                       <button onClick={() => handleEditComment(comment)}>수정</button>
@@ -267,8 +265,8 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
           <p>댓글이 없습니다.</p>
         )}
       </div>
-
-      {isLoggedIn?<div>
+  
+      <div>
         <textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
@@ -276,7 +274,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ isLoggedIn }) => {
           style={{ width: '100%', height: '100px', marginBottom: '10px' }}
         />
         <button onClick={handleCommentSubmit}>댓글 작성</button>
-      </div>:null}
+      </div>
     </div>
   );
 };

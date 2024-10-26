@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 interface HomeProps {
@@ -6,6 +6,9 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ isLoggedIn }) => {
+  useEffect(() => {
+    document.title = "Douda";
+  }, []);
   return (
     <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
       <h1 style={{ color: '#333' }}>도우다 - Douda</h1>
@@ -22,6 +25,11 @@ const Home: React.FC<HomeProps> = ({ isLoggedIn }) => {
           <Link to="/meals">
             <button style={{ padding: '10px 20px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', marginTop: '10px', marginLeft: '10px' }}>
               오늘의 식단으로 이동
+            </button>
+          </Link>
+          <Link to='/board'>
+            <button style={{ padding: '10px 20px', backgroundColor: '#A020F0', color: '#fff', border: 'none', borderRadius: '5px', marginTop: '10px', marginLeft: '10px' }}>
+              게시판으로 이동
             </button>
           </Link>
         </div>

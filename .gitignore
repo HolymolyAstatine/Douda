@@ -30,3 +30,5 @@ Thumbs.db
 /server/src/db/db_temp.ts
 /server/keys
 /client/keys
+
+pp.py

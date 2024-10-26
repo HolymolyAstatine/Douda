@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 
 interface Post {
   id: number;
@@ -18,7 +17,7 @@ interface BoardProps {
 const Board: React.FC<BoardProps> = ({ isLoggedIn }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 5;
+  const postsPerPage = 20;
   const [hasNextPage, setHasNextPage] = useState(false);
 
   useEffect(() => {

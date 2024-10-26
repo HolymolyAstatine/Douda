@@ -27,6 +27,11 @@ const Home: React.FC<HomeProps> = ({ isLoggedIn }) => {
               오늘의 식단으로 이동
             </button>
           </Link>
+          <Link to='/board'>
+            <button style={{ padding: '10px 20px', backgroundColor: '#A020F0', color: '#fff', border: 'none', borderRadius: '5px', marginTop: '10px', marginLeft: '10px' }}>
+              게시판으로 이동
+            </button>
+          </Link>
         </div>
       ) : (
         <nav>

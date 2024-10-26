@@ -16,7 +16,7 @@ const PostEdit: React.FC<PostEditProps> = () => { // PostEdit 컴포넌트 정�
   useEffect(() => { // 컴포넌트가 마운트될 때 실행되는 useEffect 훅
     const fetchPost = async () => { // 게시글을 가져오는 비동기 함수 정의
       try {
-        const response = await axios.get(`https://localhost:8080/post_data/get-posts/${postId}`); // 게시글 데이터 요청
+        const response = await axios.get(`https://douda.kro.kr/post_data/get-posts/${postId}`); // 게시글 데이터 요청
         const fetchedPost = response.data.data; // 응답에서 게시글 데이터 추출
         setInitialTitle(fetchedPost.title); // 제목 상태 업데이트
         setInitialContent(fetchedPost.content); // 내용 상태 업데이트
@@ -37,7 +37,7 @@ const PostEdit: React.FC<PostEditProps> = () => { // PostEdit 컴포넌트 정�
 
     try {
       await axios.put( // 게시글 수정 요청
-        `https://localhost:8080/post_data/update_post/${postId}`,
+        `https://douda.kro.kr/post_data/update_post/${postId}`,
         { title, content }, // 수정할 제목과 내용을 포함
         {
           headers: {

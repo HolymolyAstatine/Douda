@@ -15,7 +15,7 @@ const SchoolSearchModal: React.FC<SchoolSearchModalProps> = ({ onSelectSchool, o
 
     const handleSchoolSearch = async () => {
         try {
-            const response = await axios.get(`https://localhost:8080/api/searchSchool?SchoolName=${school}`);
+            const response = await axios.get(`https://douda.kro.kr/api/searchSchool?SchoolName=${school}`);
             setSchoolList(response.data.data);
         } catch (error) {
             console.error('Error occurred while searching for schools:', error);

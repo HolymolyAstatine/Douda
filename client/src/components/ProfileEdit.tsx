@@ -26,7 +26,7 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ profileData, onClose }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const k = async (school:string,schoolcode:string)=>{
-    try{const response = await axios.get<SchoolInfo[]>(`https://localhost:8080/api/searchSchool?SchoolName=${school}`);
+    try{const response = await axios.get<SchoolInfo[]>(`https://douda.kro.kr/api/searchSchool?SchoolName=${school}`);
     const schools: SchoolInfo[] = response.data;
     for (const row of schools){
       if (row.SD_SCHUL_CODE===schoolcode){

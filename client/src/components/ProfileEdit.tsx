@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import SchoolSearchModal from './SchoolSearchModal';
-import errorIcon from "../img/error_exclamation_mark.svg"; 
 import "./css/Signup_set.css"; 
 import { SchoolInfo } from '../../../server/types/types';
 

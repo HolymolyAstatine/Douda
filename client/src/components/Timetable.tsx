@@ -24,6 +24,10 @@ const Timetable: React.FC = () => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
     const token = localStorage.getItem('token');
 
+    useEffect(() => {
+        document.title = "Douda - 시간표 조회";
+      }, []);
+
     const fetchTimetable = async (date: Date) => {
         try {
             setLoading(true);

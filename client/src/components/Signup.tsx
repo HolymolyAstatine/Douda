@@ -1,11 +1,15 @@
 // client/src/components/Signup.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { signupWithGoogle } from '../api/authService';
 
 const Signup: React.FC = () => {
   const handleSignup = () => {
     signupWithGoogle();
   };
+
+  useEffect(() => {
+    document.title = "Douda - 회원가입";
+  }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: '#f9f9f9' }}>

@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import EditorComponent from './WysiwygEditor';
 
 const PostCreate: React.FC = () => {
   const navigate = useNavigate();
-
+  useEffect(() => {
+    document.title = "Douda - 게시글 작성";
+  }, []);
   const handleSubmit = async (title: string, content: string) => {
     const token = localStorage.getItem('token');
     if (!token) {

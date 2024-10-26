@@ -201,12 +201,14 @@ const PostDetail: React.FC = () => {
     }
   };
 
+
   if (!post) {
     return <div>게시글을 불러오는 중입니다...</div>;
   }
 
   return (
     <div className="post-detail">
+      <button onClick={()=>navigate('/board')}>←게시판으로</button>
       <h1 className="post-title">{post.title}</h1>
       <div className="post-meta">
         <p>작성자: {post.nickname}</p>
@@ -214,7 +216,7 @@ const PostDetail: React.FC = () => {
         <p>수정일: {new Date(post.updated_at).toLocaleDateString()}</p>
       </div>
   
-      <div dangerouslySetInnerHTML={{ __html: post.content }} />
+      <div className='post-body' dangerouslySetInnerHTML={{ __html: post.content }} />
   
       <div>        <button onClick={handleLike}>&#128077; 좋아요 ({likeCount})</button>
         <button onClick={handleDislike}>&#128078; 싫어요 ({dislikeCount})</button>

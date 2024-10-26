@@ -26,6 +26,7 @@ const queryClient = new QueryClient();
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false); // 네비게이션 바 상태 추가
+  const [isBannerVisible, setIsBannerVisible] = useState(true);
   const navigate = useNavigate();
 
   const { refetch } = useQuery(
@@ -58,6 +59,10 @@ const App = () => {
     setIsNavOpen(!isNavOpen); // 네비게이션 바 열기/닫기
   };
 
+  const toggleBanner = () => {
+    setIsBannerVisible(prevState => !prevState);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {/* 네비게이션 바 */}
@@ -83,6 +88,7 @@ const App = () => {
         listStyleType: 'none',
         display: isNavOpen ? 'block' : 'none', // 네비게이션 바 열기/닫기
         padding: 0,
+        paddingLeft: '10px',
         margin: 0,
         backgroundColor: '#f9f9f9',
         borderBottom: '1px solid #ddd',
@@ -129,8 +135,13 @@ const App = () => {
         </Routes>
       </div>
 
+      {/* 배너 토글 버튼 - 배너 위에 위치 */}
+      <button onClick={toggleBanner} style={{ margin: '10px 0', padding: '10px' }}>
+        {isBannerVisible ? '배너 숨기기' : '배너 보이기'}
+      </button>
+
       {/* 배너 추가 - 푸터 위에 위치 */}
-      <Banner />
+      {isBannerVisible && <Banner />}
 
       {/* 푸터 추가 */}
       <footer style={{ padding: '10px', backgroundColor: '#f1f1f1', textAlign: 'center', marginTop: 'auto' }}>

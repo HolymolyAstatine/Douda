@@ -1,6 +1,6 @@
 // SignupSet.tsx
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { SchoolInfo } from '../../../server/types/types';
 import SchoolSearchModal from './SchoolSearchModal';
@@ -26,6 +26,10 @@ const SignupSet = () => {
         setSchool(school.SCHUL_NM);
         setIsModalOpen(false);  // Close the modal
     };
+
+    useEffect(() => {
+        document.title = "Douda - 회원가입";
+      }, []);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();

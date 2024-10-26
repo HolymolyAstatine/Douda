@@ -33,7 +33,7 @@
 }
 
 .post-content {
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     line-height: 1.6;
 }
 
@@ -79,4 +79,8 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+
+.post-body{
+    margin-bottom: 60px;
 }

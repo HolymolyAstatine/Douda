@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 interface HomeProps {
@@ -6,6 +6,9 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ isLoggedIn }) => {
+  useEffect(() => {
+    document.title = "Douda";
+  }, []);
   return (
     <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
       <h1 style={{ color: '#333' }}>도우다 - Douda</h1>

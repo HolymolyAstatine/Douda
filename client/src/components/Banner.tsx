@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Banner = () => {
   const handleClick = () => {
     window.open('https://forms.gle/FLNrnNc3reygN15H7', '_blank'); // Opens the URL in a new tab

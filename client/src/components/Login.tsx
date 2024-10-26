@@ -1,10 +1,12 @@
 // client/src/components/Login.tsx
 // 로그인 컴포넌트
-import React from 'react';
+import React, { useEffect } from 'react';
 import { loginWithGoogle } from '../api/authService';
 
 const Login: React.FC = () => {
-
+  useEffect(() => {
+    document.title = "Douda - 로그인";
+  }, []);
   const handleLogin = () => {
     loginWithGoogle();
   };

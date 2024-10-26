@@ -1,5 +1,5 @@
 // client/src/components/Profile.tsx
-import React, { useState, Dispatch, SetStateAction } from 'react';
+import React, { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useQuery } from 'react-query';
@@ -15,7 +15,9 @@ const Profile: React.FC<ProfileProps> = ({ setIsLoggedIn }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false); // 계정 삭제 모달 표시 상태
   const [confirmDelete, setConfirmDelete] = useState(false); // 삭제 확인 체크박스 상태
   const navigate = useNavigate(); // 프로그래밍적으로 네비게이션하기 위한 훅
-
+  useEffect(() => {
+    document.title = "Douda - 프로필";
+  }, []);
   // React Query를 사용하여 프로파일 데이터 가져오기
   const { data, error, isLoading } = useQuery('profile', () => {
     const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기

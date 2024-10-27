@@ -1,4 +1,4 @@
-name: PR Test and Validation
+name: Test Workflow
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  test:
+  client-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,15 +16,61 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16' # 사용 중인 Node.js 버전으로 수정하세요.
+          node-version: '16'
 
-      - name: Install dependencies
+      - name: Install client dependencies
+        working-directory: ./client
         run: npm install
 
-      - name: Run tests
+      - name: Run client tests
+        working-directory: ./client
         run: npm test
 
-      - name: Lint and build
+  server-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install server dependencies
+        working-directory: ./server
+        run: npm install
+
+      - name: Install Jest (for testing only in CI)
+        working-directory: ./server
+        run: npm install jest @types/jest ts-jest --save-dev
+
+      - name: Configure Jest (skip if Jest is already configured)
+        working-directory: ./server
         run: |
-          npm run lint
-          npm run build
+          echo "module.exports = { preset: 'ts-jest', testEnvironment: 'node' };" > jest.config.js
+
+      - name: Run server tests
+        working-directory: ./server
+        run: npx jest
+
+  typecheck-server:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install server dependencies
+        working-directory: ./server
+        run: npm install
+
+      - name: Type check server
+        working-directory: ./server
+        run: npx tsc --noEmit

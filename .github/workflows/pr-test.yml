@@ -22,6 +22,21 @@ jobs:
         working-directory: ./client
         run: npm install
 
+      - name: Install Babel for Jest support
+        working-directory: ./client
+        run: |
+          npm install --save-dev @babel/preset-env @babel/preset-react babel-jest identity-obj-proxy
+
+      - name: Add Babel configuration
+        working-directory: ./client
+        run: |
+          echo '{ "presets": ["@babel/preset-env", "@babel/preset-react"] }' > .babelrc
+
+      - name: Configure Jest for TypeScript and ES Modules
+        working-directory: ./client
+        run: |
+          echo "module.exports = { preset: 'ts-jest', testEnvironment: 'node', transform: { '^.+\\\\.(ts|tsx)$': 'ts-jest', '^.+\\\\.(js|jsx)$': 'babel-jest' }, transformIgnorePatterns: ['/node_modules/(?!(axios)/)'], moduleNameMapper: { '\\\\.(css|scss)$': 'identity-obj-proxy' } };" > jest.config.js
+
       - name: Run client tests
         working-directory: ./client
         run: npm test
@@ -42,11 +57,11 @@ jobs:
         working-directory: ./server
         run: npm install
 
-      - name: Install Jest (for testing only in CI)
+      - name: Install Jest for server tests (temporary in CI)
         working-directory: ./server
         run: npm install jest @types/jest ts-jest --save-dev
 
-      - name: Configure Jest (skip if Jest is already configured)
+      - name: Configure Jest for TypeScript (server)
         working-directory: ./server
         run: |
           echo "module.exports = { preset: 'ts-jest', testEnvironment: 'node' };" > jest.config.js

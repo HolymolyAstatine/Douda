@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
-import { EditorState, ContentState } from 'draft-js';
-import { convertFromHTML } from 'draft-convert'; // HTML을 ContentState로 변환하기 위한 import
+import { EditorState, AtomicBlockUtils, ContentState, convertFromRaw } from 'draft-js';
+import { stateToHTML } from 'draft-js-export-html';
+import { stateFromHTML } from 'draft-js-import-html';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import ImageUploadPopup from './ImageUploadPopup';
 
 interface WysiwygEditorProps {
   initialTitle?: string;
@@ -14,19 +16,18 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ initialTitle = '', initia
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [title, setTitle] = useState<string>(initialTitle);
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+  const [showImagePopup, setShowImagePopup] = useState<boolean>(false);
 
   useEffect(() => {
     setTitle(initialTitle);
-  }, [initialTitle]);
+    if (initialContent) {
+      const contentState = stateFromHTML(initialContent);
+      setEditorState(EditorState.createWithContent(contentState));
+    }
+  }, [initialTitle, initialContent]);
 
   useEffect(() => {
-    // HTML 내용을 ContentState로 변환하여 EditorState로 설정
-    const contentState = convertFromHTML(initialContent);
-    setEditorState(EditorState.createWithContent(contentState));
-  }, [initialContent]);
-
-  useEffect(() => {
-    setIsButtonDisabled(!title.trim() || editorState.getCurrentContent().hasText() === false);
+    setIsButtonDisabled(!title.trim() || !editorState.getCurrentContent().hasText());
   }, [title, editorState]);
 
   const handleEditorStateChange = (state: EditorState) => {
@@ -34,8 +35,20 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ initialTitle = '', initia
   };
 
   const handleSubmit = () => {
-    const content = editorState.getCurrentContent().getPlainText();
-    onSubmit(title, content); // 제목과 내용을 onSubmit으로 전달
+    const content = stateToHTML(editorState.getCurrentContent());
+    console.log(content);
+    onSubmit(title, content);
+  };
+
+  const insertImage = (imageUrl: string) => {
+    const contentState = editorState.getCurrentContent();
+    const contentStateWithEntity = contentState.createEntity('IMAGE', 'IMMUTABLE', { src: imageUrl });
+    const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+    
+    // Atomic block을 추가하여 이미지 삽입
+    let newEditorState = AtomicBlockUtils.insertAtomicBlock(editorState, entityKey, ' ');
+
+    setEditorState(newEditorState);
   };
 
   return (
@@ -51,13 +64,17 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ initialTitle = '', initia
         editorState={editorState}
         onEditorStateChange={handleEditorStateChange}
         toolbar={{
-          options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 'image', 'history'],
+          options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 'history'],
         }}
         placeholder="내용을 입력하세요"
       />
+      <button onClick={() => setShowImagePopup(true)} style={{ marginTop: '10px' }}>
+        이미지 추가
+      </button>
       <button onClick={handleSubmit} disabled={isButtonDisabled} style={{ marginTop: '10px' }}>
         게시글 작성
       </button>
+      {showImagePopup && <ImageUploadPopup onImageUpload={insertImage} onClose={() => setShowImagePopup(false)} />}
     </div>
   );
 };

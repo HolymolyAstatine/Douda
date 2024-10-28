@@ -29,7 +29,7 @@ class Logger {
     error(error?: Error | any, message?: string) {
         this.logger.error({
             message,
-            stack: error?.stack,
+            // stack: error?.stack,
             err_message: error?.message
         });
     }

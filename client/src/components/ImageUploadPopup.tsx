@@ -35,6 +35,7 @@ const ImageUploadPopup: React.FC<ImageUploadPopupProps> = ({ onImageUpload, onCl
           'Content-Type': 'multipart/form-data',
         },
       });
+      console.log('Uploaded Image URL:', response.data.url); // URL 확인
       onImageUpload(response.data.url); // 서버에서 반환된 이미지 URL
       onClose();
     } catch (error) {

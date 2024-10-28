@@ -87,6 +87,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
+
 
 app.use((req, res, next) => {
   if (req.url.includes('/cgi-bin/*')) {

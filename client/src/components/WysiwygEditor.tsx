@@ -1,8 +1,8 @@
-// client/src/components/WysiwygEditor.tsx
 import React, { useState, useEffect } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
-import { EditorState, AtomicBlockUtils } from 'draft-js';
-import { convertFromHTML } from 'draft-convert';
+import { EditorState, AtomicBlockUtils, ContentState, convertFromRaw } from 'draft-js';
+import { stateToHTML } from 'draft-js-export-html';
+import { stateFromHTML } from 'draft-js-import-html';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import ImageUploadPopup from './ImageUploadPopup';
 
@@ -20,8 +20,10 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ initialTitle = '', initia
 
   useEffect(() => {
     setTitle(initialTitle);
-    const contentState = convertFromHTML(initialContent);
-    setEditorState(EditorState.createWithContent(contentState));
+    if (initialContent) {
+      const contentState = stateFromHTML(initialContent);
+      setEditorState(EditorState.createWithContent(contentState));
+    }
   }, [initialTitle, initialContent]);
 
   useEffect(() => {
@@ -33,7 +35,8 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ initialTitle = '', initia
   };
 
   const handleSubmit = () => {
-    const content = editorState.getCurrentContent().getPlainText();
+    const content = stateToHTML(editorState.getCurrentContent());
+    console.log(content);
     onSubmit(title, content);
   };
 
@@ -41,7 +44,10 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ initialTitle = '', initia
     const contentState = editorState.getCurrentContent();
     const contentStateWithEntity = contentState.createEntity('IMAGE', 'IMMUTABLE', { src: imageUrl });
     const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-    const newEditorState = AtomicBlockUtils.insertAtomicBlock(editorState, entityKey, ' ');
+    
+    // Atomic block을 추가하여 이미지 삽입
+    let newEditorState = AtomicBlockUtils.insertAtomicBlock(editorState, entityKey, ' ');
+
     setEditorState(newEditorState);
   };
 

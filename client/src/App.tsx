@@ -120,7 +120,7 @@ const App = () => {
           <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/signup-set" element={<SignupSet />} />
+          <Route path="/signsettig" element={<SignupSet />} />
           <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} />
           <Route path='/edit/:postId' element={<EditPost postId={0} />} />
           <Route path='/board' element={<Board isLoggedIn={isLoggedIn} />} />

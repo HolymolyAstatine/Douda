@@ -25,15 +25,15 @@ interface Comment {
 }
 
 const PostDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // URL에서 게시글 ID 추출
+  const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState<string>(''); 
   const [likeCount, setLikeCount] = useState<number>(0);
   const [dislikeCount, setDislikeCount] = useState<number>(0);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-  const [editingCommentId, setEditingCommentId] = useState<number | null>(null); // 수정 중인 댓글 ID
-  const [editedCommentContent, setEditedCommentContent] = useState<string>(''); // 수정할 댓글 내용
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editedCommentContent, setEditedCommentContent] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,7 +49,6 @@ const PostDetail: React.FC = () => {
       }
     };
 
-    
     const fetchComments = async () => {
       try {
         const response = await axios.get(`https://localhost:8080/post_data/get-posts/${id}/comments`);
@@ -78,6 +77,13 @@ const PostDetail: React.FC = () => {
     fetchCurrentUser();
   }, [id]);
 
+  const createLinkifiedContent = (content: string) => {
+    const urlRegex = /(?<!<a href="|<img src="|<iframe src="|<video src=")(https?:\/\/[^\s<>]+)/g;
+    return content.replace(urlRegex, (url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    });
+  };
+
   const handleDeletePost = async () => {
     if (window.confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
       try {
@@ -86,14 +92,13 @@ const PostDetail: React.FC = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert('게시글이 삭제되었습니다.');
-        navigate('/'); // 게시글 삭제 후 메인 페이지로 이동
+        navigate('/');
       } catch (error) {
         console.error('게시글 삭제 실패:', error);
       }
     }
   };
 
-  // 좋아요 버튼 클릭 핸들러
   const handleLike = async () => {
     const token = localStorage.getItem('token');
 
@@ -102,14 +107,13 @@ const PostDetail: React.FC = () => {
       return;
     }
     try {
-      await axios.post(`https://localhost:8080/post_data/posts/${id}/like`,{},{headers:{'Authorization': `Bearer ${token}`,}});
-      setLikeCount(likeCount + 1); // 좋아요 수 증가
+      await axios.post(`https://localhost:8080/post_data/posts/${id}/like`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      setLikeCount(likeCount + 1);
     } catch (error) {
       console.error('좋아요 실패:', error);
     }
   };
 
-  // 싫어요 버튼 클릭 핸들러
   const handleDislike = async () => {
     const token = localStorage.getItem('token');
 
@@ -118,8 +122,8 @@ const PostDetail: React.FC = () => {
       return;
     }
     try {
-      await axios.post(`https://localhost:8080/post_data/posts/${id}/dislike`,{},{headers:{'Authorization': `Bearer ${token}`,}});
-      setDislikeCount(dislikeCount + 1); // 싫어요 수 증가
+      await axios.post(`https://localhost:8080/post_data/posts/${id}/dislike`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      setDislikeCount(dislikeCount + 1);
     } catch (error) {
       console.error('싫어요 실패:', error);
     }
@@ -139,19 +143,16 @@ const PostDetail: React.FC = () => {
     }
   };
 
-  // 댓글 수정 모드로 전환
   const handleEditComment = (comment: Comment) => {
     setEditingCommentId(comment.id);
     setEditedCommentContent(comment.content);
   };
 
-  // 댓글 수정 취소
   const handleCancelEdit = () => {
     setEditingCommentId(null);
     setEditedCommentContent('');
   };
 
-  // 댓글 수정 저장
   const handleSaveEditComment = async (commentId: number) => {
     if (!editedCommentContent.trim()) {
       return alert('댓글 내용을 입력해주세요.');
@@ -162,14 +163,14 @@ const PostDetail: React.FC = () => {
       await axios.put(
         `https://localhost:8080/post_data/posts/${id}/comments/${commentId}`,
         { content: editedCommentContent },
-        { headers: { Authorization: `Bearer ${token}` } } 
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setComments((prevComments) =>
         prevComments.map((comment) =>
           comment.id === commentId ? { ...comment, content: editedCommentContent } : comment
         )
       );
-      setEditingCommentId(null); // 수정 모드 해제
+      setEditingCommentId(null);
       setEditedCommentContent('');
     } catch (error) {
       console.error('댓글 수정 실패:', error);
@@ -201,34 +202,37 @@ const PostDetail: React.FC = () => {
     }
   };
 
-
   if (!post) {
     return <div>게시글을 불러오는 중입니다...</div>;
   }
 
   return (
     <div className="post-detail">
-      <button onClick={()=>navigate('/board')}>←게시판으로</button>
+      <button onClick={() => navigate('/board')}>←게시판으로</button>
       <h1 className="post-title">{post.title}</h1>
       <div className="post-meta">
         <p>작성자: {post.nickname}</p>
         <p>작성일: {new Date(post.created_at).toLocaleDateString()}</p>
         <p>수정일: {new Date(post.updated_at).toLocaleDateString()}</p>
       </div>
-  
-      <div className='post-body' dangerouslySetInnerHTML={{ __html: post.content }} />
-  
-      <div>        <button onClick={handleLike}>&#128077; 좋아요 ({likeCount})</button>
+
+      <div
+        className="post-body"
+        dangerouslySetInnerHTML={{ __html: createLinkifiedContent(post.content) }}
+      />
+
+      <div>
+        <button onClick={handleLike}>&#128077; 좋아요 ({likeCount})</button>
         <button onClick={handleDislike}>&#128078; 싫어요 ({dislikeCount})</button>
       </div>
-  
+
       {currentUserId === post.author_id && (
         <div>
           <button onClick={() => navigate(`/edit/${post.id}`)}> &#9999;&#65039; 수정</button>
           <button onClick={handleDeletePost}> &#10060; 삭제</button>
         </div>
       )}
-  
+
       <h2>댓글 ({comments.length})</h2>
       <div>
         {comments.length > 0 ? (
@@ -245,19 +249,18 @@ const PostDetail: React.FC = () => {
                   <button onClick={handleCancelEdit}>취소</button>
                 </div>
               ) : (
-                <div>
+                <>
+                  <div>
+                    <strong>{comment.nickname}</strong> ({new Date(comment.created_at).toLocaleDateString()})
+                  </div>
                   <p>{comment.content}</p>
-                  <small>작성자: {comment.nickname}</small>
-                  <br />
-                  <small>작성일: {new Date(comment.created_at).toLocaleDateString()}</small>
-  
                   {currentUserId === comment.author_id && (
                     <div>
                       <button onClick={() => handleEditComment(comment)}>수정</button>
                       <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
                     </div>
                   )}
-                </div>
+                </>
               )}
             </div>
           ))
@@ -265,16 +268,14 @@ const PostDetail: React.FC = () => {
           <p>댓글이 없습니다.</p>
         )}
       </div>
-  
-      <div>
-        <textarea
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="댓글을 작성하세요"
-          style={{ width: '100%', height: '100px', marginBottom: '10px' }}
-        />
-        <button onClick={handleCommentSubmit}>댓글 작성</button>
-      </div>
+
+      <textarea
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)}
+        placeholder="댓글을 작성하세요"
+        style={{ width: '100%', height: '80px', marginTop: '10px' }}
+      />
+      <button onClick={handleCommentSubmit}>댓글 작성</button>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import ReactQueryProvider from "@/components/ReactQueryProvider";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -21,11 +22,13 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${geist.className} min-h-screen flex flex-col`}>
-        <Header />
-        <main className="flex-1 p-5">
-          {children}
-        </main>
-        <Footer />
+        <ReactQueryProvider>
+          <Header />
+          <main className="flex-1 p-5">
+            {children}
+          </main>
+          <Footer />
+        </ReactQueryProvider>
       </body>
     </html>
   );

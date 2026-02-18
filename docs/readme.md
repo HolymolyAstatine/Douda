@@ -49,6 +49,6 @@
 
 | 이름     | 역할            | GitHub                           | 이메일               |
 |----------|-----------------|----------------------------------|----------------------|
-| 윤장호   | 프론트엔드 개발  | [GitHub](https://github.com/HolymolyAstatine)| kpa7089@gmail.com      |
+| 윤현우   | 프론트엔드 개발  | [GitHub](https://github.com/HolymolyAstatine)| kpa7089@gmail.com      |
 | 정태원 | 백엔드 개발/프론트엔드 개발 | [GitHub](https://github.com/hafskjfha) | jtw7913@gmail.com |
 

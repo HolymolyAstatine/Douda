@@ -1,7 +1,7 @@
 # Douda
 도우다<br>
 2024년 고등학교 프로젝트
-
+-현재는 서비스가 중단되었습니다.-
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](VERSION)
 
